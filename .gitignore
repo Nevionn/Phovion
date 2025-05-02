@@ -10,12 +10,25 @@
 !.yarn/releases
 !.yarn/versions
 
+package-lock.json
+
 # testing
 /coverage
 
 # next.js
 /.next/
 /out/
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+prisma/migration_lock.toml
+prisma/migrations/*
+
+# Ignore contents of public/uploads, but keep the folder
+/public/uploads/*
+!/public/uploads/.gitkeep
+
 
 # production
 /build
