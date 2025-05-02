@@ -10,6 +10,7 @@ generator client {
 model Album {
   id     Int     @id @default(autoincrement())
   name   String
+  order     Int      @default(0)
   photos Photo[] // связь с фотографиями
 }
 

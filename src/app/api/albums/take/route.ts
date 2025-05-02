@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const albums = await prisma.album.findMany({
+      orderBy: { order: "asc" },
       include: {
         photos: {
           orderBy: { createdAt: "desc" }, // Сортируем по дате создания (последняя — первая)
