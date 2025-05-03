@@ -47,9 +47,13 @@ const SortableAlbum = ({
   };
 
   return (
-    <div ref={setNodeRef} css={albumCardStyle} style={style} onClick={onClick}>
-      {/* Иконка для drag-and-drop */}
-      <div css={dragHandleStyle} {...attributes} {...listeners}>
+    <div
+      ref={setNodeRef}
+      css={styles.albumCardStyle}
+      style={style}
+      onClick={onClick}
+    >
+      <div css={styles.dragHandleStyle} {...attributes} {...listeners}>
         <SlSizeFullscreen size={24} />
       </div>
       {album.avatar ? (
@@ -57,15 +61,15 @@ const SortableAlbum = ({
           <img
             src={album.avatar}
             alt={album.name}
-            css={albumAvatarStyle}
+            css={styles.albumAvatarStyle}
             loading="lazy"
           />
-          <p css={titleCardAlbumStyle}>{album.name}</p>
+          <p css={styles.titleCardAlbumStyle}>{album.name}</p>
         </>
       ) : (
-        <div css={albumPlaceholderStyle}>
-          <p css={titleCardAlbumStyle}>{album.name}</p>
-          <span css={placeholderTextStyle}>Нет фото</span>
+        <div css={styles.albumPlaceholderStyle}>
+          <p css={styles.titleCardAlbumStyle}>{album.name}</p>
+          <span css={styles.placeholderTextStyle}>Нет фото</span>
         </div>
       )}
     </div>
@@ -114,6 +118,30 @@ export default function Home() {
     }
   }
 
+  async function deleteAllAlbums() {
+    if (
+      !window.confirm(
+        "Вы уверены, что хотите удалить все альбомы и их фотографии?"
+      )
+    ) {
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/albums/deleteAll", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) throw new Error("Ошибка удаления альбомов");
+      setAlbums([]);
+    } catch (error) {
+      console.error("Ошибка удаления альбомов:", error);
+      alert("Ошибка при удалении альбомов");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -126,7 +154,6 @@ export default function Home() {
 
         const newAlbums = arrayMove(prevAlbums, oldIndex, newIndex);
 
-        // Отправляем новый порядок в бд
         const updatedOrder = newAlbums.map((album, index) => ({
           id: album.id,
           order: index,
@@ -146,25 +173,36 @@ export default function Home() {
   const albumIds = useMemo(() => albums.map((album) => album.id), [albums]);
 
   return (
-    <main css={mainStyleCyber}>
-      <h1 css={titleStyle}>Альбомы</h1>
+    <main css={styles.mainStyleCyber}>
+      <h1 css={styles.titleStyle}>Альбомы</h1>
 
-      <div css={createAlbumStyle}>
+      <div css={styles.createAlbumStyle}>
         <input
-          css={inputStyle}
+          css={styles.inputStyle}
           type="text"
           placeholder="Название альбома"
           value={newAlbumName}
           onChange={(e) => setNewAlbumName(e.target.value)}
         />
-        <button css={buttonStyle} onClick={createAlbum} disabled={loading}>
+        <button
+          css={styles.buttonStyle}
+          onClick={createAlbum}
+          disabled={loading}
+        >
           {loading ? "Создание..." : "Создать"}
+        </button>
+        <button
+          css={styles.deleteButtonStyle}
+          onClick={deleteAllAlbums}
+          disabled={loading || albums.length === 0}
+        >
+          {loading ? "Удаление..." : "Удалить все"}
         </button>
       </div>
 
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={albumIds} strategy={rectSortingStrategy}>
-          <div css={albumListStyle}>
+          <div css={styles.albumListStyle}>
             {albums.map((album) => (
               <SortableAlbum
                 key={album.id}
@@ -179,132 +217,154 @@ export default function Home() {
   );
 }
 
-const mainStyleCyber = css({
-  display: "flex",
-  alignItems: "center",
-  flexDirection: "column",
-  minHeight: "90vh",
-  width: "60%",
-  padding: "2rem",
-  margin: "0 auto",
-  marginTop: 14,
-  borderRadius: "1rem",
-  background:
-    "linear-gradient(180deg, rgba(35, 42, 70, 0.4) 0%, rgba(20, 25, 45, 0.4) 100%)",
-  boxShadow: "0 0 30px rgba(0, 0, 0, 0.6)",
-  border: "1px solid rgba(21, 133, 208, 0.94)",
-  color: "white",
-});
-const titleStyle = css({
-  fontSize: "2rem",
-  marginBottom: "1.5rem",
-  color: "white",
-});
-const createAlbumStyle = css({
-  display: "flex",
-  gap: "1rem",
-  marginBottom: "2rem",
-});
-const inputStyle = css({
-  padding: "0.5rem",
-  border: "2px solid purple",
-  borderRadius: "8px",
-  fontSize: "1rem",
-});
-const buttonStyle = css({
-  padding: "0.5rem 1rem",
-  backgroundImage: "linear-gradient(211deg, #846392 0%, #604385 100%)",
-  color: "white",
-  border: "none",
-  borderRadius: "8px",
-  cursor: "pointer",
-  transition: "filter 0.2s, box-shadow 0.2s",
-  fontSize: "1rem",
-  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-  "&:hover": {
-    filter: "brightness(1.15)",
-  },
-  "&:disabled": {
-    backgroundImage: "none",
+const styles = {
+  mainStyleCyber: css({
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "column",
+    minHeight: "90vh",
+    width: "46%",
+    padding: "2rem",
+    margin: "0 auto",
+    marginTop: 14,
+    borderRadius: "1rem",
+    background:
+      "linear-gradient(180deg, rgba(35, 42, 70, 0.4) 0%, rgba(20, 25, 45, 0.4) 100%)",
+    boxShadow: "0 0 30px rgba(0, 0, 0, 0.6)",
+    border: "1px solid rgba(21, 133, 208, 0.94)",
+    color: "white",
+  }),
+  titleStyle: css({
+    fontSize: "2rem",
+    marginBottom: "1.5rem",
+    color: "white",
+  }),
+  createAlbumStyle: css({
+    display: "flex",
+    gap: "1rem",
+    marginBottom: "2rem",
+  }),
+  inputStyle: css({
+    padding: "0.5rem",
+    border: "2px solid purple",
+    borderRadius: "8px",
+    fontSize: "1rem",
+  }),
+  buttonStyle: css({
+    padding: "0.5rem 1rem",
+    backgroundImage: "linear-gradient(211deg, #846392 0%, #604385 100%)",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    transition: "filter 0.2s, box-shadow 0.2s",
+    fontSize: "1rem",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+    "&:hover": {
+      filter: "brightness(1.15)",
+    },
+    "&:disabled": {
+      backgroundImage: "none",
+      backgroundColor: "#ccc",
+      cursor: "not-allowed",
+      boxShadow: "none",
+    },
+  }),
+  deleteButtonStyle: css({
+    padding: "0.5rem 1rem",
+    backgroundImage: "linear-gradient(211deg, #933232 0%, #7a2a2a 100%)",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    transition: "filter 0.2s, box-shadow 0.2s",
+    fontSize: "1rem",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+    "&:hover": {
+      filter: "brightness(1.15)",
+    },
+    "&:disabled": {
+      backgroundImage: "none",
+      backgroundColor: "#ccc",
+      cursor: "not-allowed",
+      boxShadow: "none",
+    },
+  }),
+  albumListStyle: css({
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(265px, 1fr))",
+    gap: "24px",
+    padding: "30px 0",
+    width: "100%",
+    maxWidth: "862px",
+  }),
+  albumCardStyle: css({
+    position: "relative",
+    width: 265,
+    height: 300,
+    borderRadius: "10px",
+    cursor: "pointer",
+    overflow: "hidden",
+    "&:hover": {
+      transform: "scale(1.02)",
+    },
+  }),
+  dragHandleStyle: css({
+    position: "absolute",
+    top: "10px",
+    left: "10px",
+    padding: "5px",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: "4px",
+    cursor: "grab",
+    color: "white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
+    "&:active": {
+      cursor: "grabbing",
+    },
+  }),
+  albumAvatarStyle: css({
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    borderRadius: "10px",
+  }),
+  albumPlaceholderStyle: css({
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#ccc",
-    cursor: "not-allowed",
-    boxShadow: "none",
-  },
-});
-const albumListStyle = css({
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(265px, 1fr))",
-  gap: "24px",
-  padding: "30px 0",
-  width: "100%",
-  maxWidth: "862px",
-});
-const albumCardStyle = css({
-  position: "relative",
-  width: 265,
-  height: 300,
-  borderRadius: "10px",
-  cursor: "pointer",
-  overflow: "hidden",
-  "&:hover": {
-    transform: "scale(1.02)",
-  },
-});
-const dragHandleStyle = css({
-  position: "absolute",
-  top: "10px",
-  left: "10px",
-  padding: "5px",
-  backgroundColor: "rgba(0, 0, 0, 0.5)",
-  borderRadius: "4px",
-  cursor: "grab",
-  color: "white",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 10,
-  "&:active": {
-    cursor: "grabbing",
-  },
-});
-const albumAvatarStyle = css({
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-  borderRadius: "10px",
-});
-const albumPlaceholderStyle = css({
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-  backgroundColor: "#ccc",
-  borderRadius: "10px",
-  color: "#666",
-  fontSize: "0.9rem",
-  position: "relative",
-});
-const titleCardAlbumStyle = css({
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  right: 0,
-  margin: 0,
-  padding: "0.5rem",
-  backgroundColor: "rgba(0, 0, 0, 0.3)",
-  color: "white",
-  fontSize: "1.2rem",
-  textAlign: "center",
-  borderBottomLeftRadius: "10px",
-  borderBottomRightRadius: "10px",
-});
-const placeholderTextStyle = css({
-  fontSize: "0.9rem",
-  color: "#666",
-  marginTop: "0.5rem",
-});
+    borderRadius: "10px",
+    color: "#666",
+    fontSize: "0.9rem",
+    position: "relative",
+  }),
+  titleCardAlbumStyle: css({
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    margin: 0,
+    padding: "0.5rem",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    color: "white",
+    fontSize: "1.2rem",
+    textAlign: "center",
+    borderBottomLeftRadius: "10px",
+    borderBottomRightRadius: "10px",
+  }),
+  placeholderTextStyle: css({
+    fontSize: "0.9rem",
+    color: "#666",
+    marginTop: "0.5rem",
+  }),
+};
 
 // mainStyleGeneral: css({
 //   display: "flex",
