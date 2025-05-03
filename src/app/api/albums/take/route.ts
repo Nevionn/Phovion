@@ -13,6 +13,7 @@ export async function GET() {
           take: 1,
           select: { path: true },
         },
+        _count: { select: { photos: true } },
       },
     });
 
@@ -20,6 +21,7 @@ export async function GET() {
       id: album.id,
       name: album.name,
       avatar: album.photos.length > 0 ? album.photos[0].path : null,
+      photoCount: album._count.photos > 0 ? album._count.photos : null,
     }));
 
     return NextResponse.json(formattedAlbums);

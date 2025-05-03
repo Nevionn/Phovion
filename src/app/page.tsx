@@ -14,7 +14,12 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
 
-type Album = { id: number; name: string; avatar: string | null };
+type Album = {
+  id: number;
+  name: string;
+  avatar: string | null;
+  photoCount: number;
+};
 
 const SortableAlbum = ({
   album,
@@ -64,11 +69,17 @@ const SortableAlbum = ({
             css={styles.albumAvatarStyle}
             loading="lazy"
           />
-          <p css={styles.titleCardAlbumStyle}>{album.name}</p>
+          <p css={styles.titleCardAlbumStyle}>
+            <span>{album.name}</span>
+            <span>{album.photoCount}</span>
+          </p>
         </>
       ) : (
         <div css={styles.albumPlaceholderStyle}>
-          <p css={styles.titleCardAlbumStyle}>{album.name}</p>
+          <p css={styles.titleCardAlbumStyle}>
+            <span>{album.name}</span>
+            <span>{album.photoCount}</span>
+          </p>
           <span css={styles.placeholderTextStyle}>Нет фото</span>
         </div>
       )}
@@ -382,6 +393,9 @@ const styles = {
     position: "relative",
   }),
   titleCardAlbumStyle: css({
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     position: "absolute",
     bottom: 0,
     left: 0,
