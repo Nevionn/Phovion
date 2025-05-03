@@ -18,7 +18,7 @@ type Album = {
   id: number;
   name: string;
   avatar: string | null;
-  photoCount: number;
+  photoCount: number | null;
 };
 
 const SortableAlbum = ({
@@ -405,9 +405,18 @@ const styles = {
     backgroundColor: "rgba(0, 0, 0, 0.3)",
     color: "white",
     fontSize: "1.2rem",
-    textAlign: "center",
     borderBottomLeftRadius: "10px",
     borderBottomRightRadius: "10px",
+    "& > span:first-of-type": {
+      maxWidth: "70%",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+    "& > span:last-of-type": {
+      fontSize: "1rem",
+      opacity: 0.8,
+    },
   }),
   placeholderTextStyle: css({
     fontSize: "0.9rem",
