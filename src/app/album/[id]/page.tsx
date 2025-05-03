@@ -25,7 +25,6 @@ export default function AlbumPage() {
     fetchData();
   }, [id]);
 
-  // Удаление альбома
   async function deleteAlbum() {
     if (!confirm("Удалить альбом?")) return;
     const res = await fetch(`/api/albums/${id}`, { method: "DELETE" });
@@ -33,7 +32,6 @@ export default function AlbumPage() {
     else alert("Ошибка удаления альбома");
   }
 
-  // Загрузка фото
   async function uploadPhoto() {
     if (!file) return;
     setUploading(true);

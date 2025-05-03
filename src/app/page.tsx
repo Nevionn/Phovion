@@ -2,14 +2,14 @@
 "use client";
 import { css } from "@emotion/react";
 import "./globals.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
   useSortable,
-  verticalListSortingStrategy,
+  rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
@@ -23,12 +23,27 @@ const SortableAlbum = ({
   album: Album;
   onClick: () => void;
 }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: album.id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: album.id,
+    transition: {
+      duration: 150,
+      easing: "ease-out",
+    },
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: isDragging ? transition : "none",
+    zIndex: isDragging ? 100 : 0,
+    boxShadow: isDragging ? "0 8px 16px rgba(0, 0, 0, 0.3)" : "none",
+    opacity: isDragging ? 0.8 : 1,
   };
 
   return (
@@ -39,7 +54,12 @@ const SortableAlbum = ({
       </div>
       {album.avatar ? (
         <>
-          <img src={album.avatar} alt={album.name} css={albumAvatarStyle} />
+          <img
+            src={album.avatar}
+            alt={album.name}
+            css={albumAvatarStyle}
+            loading="lazy"
+          />
           <p css={titleCardAlbumStyle}>{album.name}</p>
         </>
       ) : (
@@ -106,7 +126,7 @@ export default function Home() {
 
         const newAlbums = arrayMove(prevAlbums, oldIndex, newIndex);
 
-        // Отправляем новый порядок на сервер
+        // Отправляем новый порядок в бд
         const updatedOrder = newAlbums.map((album, index) => ({
           id: album.id,
           order: index,
@@ -122,6 +142,8 @@ export default function Home() {
       });
     }
   };
+
+  const albumIds = useMemo(() => albums.map((album) => album.id), [albums]);
 
   return (
     <main css={mainStyleCyber}>
@@ -141,10 +163,7 @@ export default function Home() {
       </div>
 
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext
-          items={albums.map((album) => album.id)}
-          strategy={verticalListSortingStrategy}
-        >
+        <SortableContext items={albumIds} strategy={rectSortingStrategy}>
           <div css={albumListStyle}>
             {albums.map((album) => (
               <SortableAlbum
@@ -173,30 +192,25 @@ const mainStyleCyber = css({
   background:
     "linear-gradient(180deg, rgba(35, 42, 70, 0.4) 0%, rgba(20, 25, 45, 0.4) 100%)",
   boxShadow: "0 0 30px rgba(0, 0, 0, 0.6)",
-  backdropFilter: "blur(16px)",
   border: "1px solid rgba(21, 133, 208, 0.94)",
   color: "white",
 });
-
 const titleStyle = css({
   fontSize: "2rem",
   marginBottom: "1.5rem",
   color: "white",
 });
-
 const createAlbumStyle = css({
   display: "flex",
   gap: "1rem",
   marginBottom: "2rem",
 });
-
 const inputStyle = css({
   padding: "0.5rem",
   border: "2px solid purple",
   borderRadius: "8px",
   fontSize: "1rem",
 });
-
 const buttonStyle = css({
   padding: "0.5rem 1rem",
   backgroundImage: "linear-gradient(211deg, #846392 0%, #604385 100%)",
@@ -217,7 +231,6 @@ const buttonStyle = css({
     boxShadow: "none",
   },
 });
-
 const albumListStyle = css({
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(265px, 1fr))",
@@ -226,20 +239,17 @@ const albumListStyle = css({
   width: "100%",
   maxWidth: "862px",
 });
-
 const albumCardStyle = css({
   position: "relative",
   width: 265,
   height: 300,
   borderRadius: "10px",
-  cursor: "pointer", // Курсор для клика
+  cursor: "pointer",
   overflow: "hidden",
-  transition: "transform 0.2s",
   "&:hover": {
     transform: "scale(1.02)",
   },
 });
-
 const dragHandleStyle = css({
   position: "absolute",
   top: "10px",
@@ -257,14 +267,12 @@ const dragHandleStyle = css({
     cursor: "grabbing",
   },
 });
-
 const albumAvatarStyle = css({
   width: "100%",
   height: "100%",
   objectFit: "cover",
   borderRadius: "10px",
 });
-
 const albumPlaceholderStyle = css({
   width: "100%",
   height: "100%",
@@ -278,13 +286,12 @@ const albumPlaceholderStyle = css({
   fontSize: "0.9rem",
   position: "relative",
 });
-
 const titleCardAlbumStyle = css({
   position: "absolute",
   bottom: 0,
-  left: "0px",
-  right: "0px",
-  margin: "0px",
+  left: 0,
+  right: 0,
+  margin: 0,
   padding: "0.5rem",
   backgroundColor: "rgba(0, 0, 0, 0.3)",
   color: "white",
@@ -293,10 +300,9 @@ const titleCardAlbumStyle = css({
   borderBottomLeftRadius: "10px",
   borderBottomRightRadius: "10px",
 });
-
 const placeholderTextStyle = css({
   fontSize: "0.9rem",
-  color: "white",
+  color: "#666",
   marginTop: "0.5rem",
 });
 

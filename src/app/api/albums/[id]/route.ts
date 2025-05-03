@@ -15,7 +15,7 @@ export async function GET(_req: Request, { params }: Context) {
   const album = await prisma.album.findUnique({
     where: { id },
     include: {
-      photos: true, // Включаем связанные фотографии
+      photos: true,
     },
   });
 
@@ -47,17 +47,13 @@ export async function DELETE(req: NextRequest, { params }: Context) {
     for (const photo of photos) {
       const filePath = path.join(process.cwd(), "public", photo.path);
       try {
-        await fs.unlink(filePath); // Удаляем файл
+        await fs.unlink(filePath);
       } catch (err) {
         console.error(`Ошибка удаления файла ${filePath}:`, err);
-        // Можно продолжить, если файл не существует, или обработать ошибку иначе
       }
     }
 
-    // Удаляем записи фотографий из базы данных
     await prisma.photo.deleteMany({ where: { albumId: id } });
-
-    // Удаляем альбом
     await prisma.album.delete({ where: { id } });
 
     return NextResponse.json({ message: "Альбом и связанные файлы удалены" });

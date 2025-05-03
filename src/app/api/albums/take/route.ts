@@ -9,18 +9,17 @@ export async function GET() {
       orderBy: { order: "asc" },
       include: {
         photos: {
-          orderBy: { createdAt: "desc" }, // Сортируем по дате создания (последняя — первая)
-          take: 1, // Берем только одну фотографию
-          select: { path: true }, // Возвращаем только поле path
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          select: { path: true },
         },
       },
     });
 
-    // Форматируем данные, чтобы вернуть плоский объект
     const formattedAlbums = albums.map((album) => ({
       id: album.id,
       name: album.name,
-      avatar: album.photos.length > 0 ? album.photos[0].path : null, // Путь к последней фотографии или null
+      avatar: album.photos.length > 0 ? album.photos[0].path : null,
     }));
 
     return NextResponse.json(formattedAlbums);

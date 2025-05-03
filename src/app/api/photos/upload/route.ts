@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 import path from "path";
 import fs from "fs/promises";
 
-// Отключаем bodyParser
 export const config = {
   api: {
     bodyParser: false,
@@ -12,7 +11,7 @@ export const config = {
 
 const prisma = new PrismaClient();
 
-// Проверяем и создаем папку для загрузки
+// Создаем папку для загрузки
 const uploadDir = path.join(process.cwd(), "public", "uploads");
 
 async function ensureUploadDir() {
@@ -25,7 +24,6 @@ async function ensureUploadDir() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Проверяем Content-Type
     const contentType = request.headers.get("content-type");
     if (!contentType || !contentType.includes("multipart/form-data")) {
       return NextResponse.json(
@@ -46,24 +44,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Проверяем и создаем папку uploads
     await ensureUploadDir();
 
-    // Генерируем уникальное имя файла
     const filename = `${Date.now()}-${file.name}`;
     const filePath = path.join(uploadDir, filename);
     const relativePath = `/uploads/${filename}`;
 
-    // Сохраняем файл
     const buffer = Buffer.from(await file.arrayBuffer());
     await fs.writeFile(filePath, buffer);
 
-    // Получаем количество существующих фото для порядка
     const photoCount = await prisma.photo.count({
       where: { albumId: Number(albumId) },
     });
 
-    // Создаем запись в базе данных
     const photo = await prisma.photo.create({
       data: {
         albumId: Number(albumId),
