@@ -80,11 +80,14 @@ export default function Home() {
   const [albums, setAlbums] = useState<Album[]>([]);
   const [newAlbumName, setNewAlbumName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [albumCount, setAlbumCount] = useState(0);
+  const [photoCount, setPhotoCount] = useState(0);
 
   const router = useRouter();
 
   useEffect(() => {
     fetchAlbums();
+    fetchCounts();
   }, []);
 
   async function fetchAlbums() {
@@ -95,6 +98,27 @@ export default function Home() {
       setAlbums(data);
     } catch (error) {
       console.error("Ошибка:", error);
+    }
+  }
+
+  async function fetchCounts() {
+    try {
+      const [albumRes, photoRes] = await Promise.all([
+        fetch("/api/albums/count"),
+        fetch("/api/photos/count"),
+      ]);
+
+      if (!albumRes.ok) throw new Error("Ошибка получения количества альбомов");
+      if (!photoRes.ok)
+        throw new Error("Ошибка получения количества фотографий");
+
+      const albumData = await albumRes.json();
+      const photoData = await photoRes.json();
+
+      setAlbumCount(albumData.albums);
+      setPhotoCount(photoData.photos);
+    } catch (error) {
+      console.error("Ошибка получения статистики:", error);
     }
   }
 
@@ -109,7 +133,7 @@ export default function Home() {
       });
       if (res.ok) {
         setNewAlbumName("");
-        await fetchAlbums();
+        await Promise.all([fetchAlbums(), fetchCounts()]);
       }
     } catch (error) {
       console.error("Ошибка создания альбома:", error);
@@ -134,6 +158,8 @@ export default function Home() {
       });
       if (!res.ok) throw new Error("Ошибка удаления альбомов");
       setAlbums([]);
+      setAlbumCount(0);
+      setPhotoCount(0);
     } catch (error) {
       console.error("Ошибка удаления альбомов:", error);
       alert("Ошибка при удалении альбомов");
@@ -174,7 +200,12 @@ export default function Home() {
 
   return (
     <main css={styles.mainStyleCyber}>
-      <h1 css={styles.titleStyle}>Альбомы</h1>
+      <div css={styles.headerStyle}>
+        <h1 css={styles.titleStyle}>
+          Альбомы
+          <br /> альбомов: {albumCount} фотографий: {photoCount}
+        </h1>
+      </div>
 
       <div css={styles.createAlbumStyle}>
         <input
@@ -234,9 +265,14 @@ const styles = {
     border: "1px solid rgba(21, 133, 208, 0.94)",
     color: "white",
   }),
+  headerStyle: css({
+    display: "flex",
+    alignItems: "center",
+    gap: "1rem",
+    marginBottom: "1.5rem",
+  }),
   titleStyle: css({
     fontSize: "2rem",
-    marginBottom: "1.5rem",
     color: "white",
   }),
   createAlbumStyle: css({
