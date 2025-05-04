@@ -265,7 +265,8 @@ const styles = {
     alignItems: "center",
     flexDirection: "column",
     minHeight: "90vh",
-    width: "46%",
+    width: 876, // "46%"
+    overflowX: "auto",
     padding: "2rem",
     margin: "0 auto",
     marginTop: 14,
