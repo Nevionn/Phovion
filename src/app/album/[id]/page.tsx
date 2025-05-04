@@ -3,15 +3,14 @@
 import { css } from "@emotion/react";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-
-type Photo = { id: number; path: string; order: number };
+import { Photo } from "./type/typePhoto";
 
 export default function AlbumPage() {
   const router = useRouter();
   const { id } = useParams();
   const [album, setAlbum] = useState<{ id: number; name: string } | null>(null);
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
 
   // Получаем данные альбома и список фото
@@ -32,26 +31,33 @@ export default function AlbumPage() {
     else alert("Ошибка удаления альбома");
   }
 
-  async function uploadPhoto() {
-    if (!file) return;
+  async function uploadPhotos() {
+    if (files.length === 0) return;
     setUploading(true);
+
     const form = new FormData();
     form.append("albumId", String(id));
-    form.append("photo", file);
+    files.forEach((file) => form.append("photos", file)); // Добавляем все файлы
 
-    const res = await fetch("/api/photos/upload", {
-      method: "POST",
-      body: form,
-    });
-    if (res.ok) {
-      setFile(null);
-      // обновляем списки
-      const newPhoto: Photo = await res.json();
-      setPhotos((prev) => [...prev, newPhoto]);
-    } else {
-      alert("Ошибка загрузки");
+    try {
+      const res = await fetch("/api/photos/upload", {
+        method: "POST",
+        body: form,
+      });
+
+      if (res.ok) {
+        const newPhotos: Photo[] = await res.json();
+        setFiles([]);
+        setPhotos((prev) => [...prev, ...newPhotos]);
+      } else {
+        alert("Ошибка загрузки фотографий");
+      }
+    } catch (error) {
+      console.error("Ошибка загрузки:", error);
+      alert("Ошибка загрузки фотографий");
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   }
 
   return (
@@ -68,14 +74,21 @@ export default function AlbumPage() {
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              multiple
+              onChange={(e) =>
+                setFiles(e.target.files ? Array.from(e.target.files) : [])
+              }
             />
             <button
               css={style.uploadButton}
-              onClick={uploadPhoto}
-              disabled={!file || uploading}
+              onClick={uploadPhotos}
+              disabled={files.length === 0 || uploading}
             >
-              {uploading ? "Загрузка..." : "Загрузить фото"}
+              {uploading
+                ? "Загрузка..."
+                : files.length > 0
+                ? `Загрузить ${files.length} фото`
+                : "Загрузить фото"}
             </button>
           </div>
 

@@ -1,76 +1,67 @@
-import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
+import { writeFile } from "fs/promises";
 import path from "path";
-import fs from "fs/promises";
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+import { randomUUID } from "crypto";
+import { Photo } from "@/app/album/[id]/type/typePhoto";
 
 const prisma = new PrismaClient();
 
-// Создаем папку для загрузки
-const uploadDir = path.join(process.cwd(), "public", "uploads");
-
-async function ensureUploadDir() {
+export async function POST(request: Request) {
   try {
-    await fs.mkdir(uploadDir, { recursive: true });
-  } catch (err) {
-    console.error("Ошибка при создании папки uploads:", err);
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const contentType = request.headers.get("content-type");
-    if (!contentType || !contentType.includes("multipart/form-data")) {
-      return NextResponse.json(
-        { error: "Неверный тип содержимого" },
-        { status: 400 }
-      );
-    }
-
-    // Получаем данные формы
     const formData = await request.formData();
     const albumId = formData.get("albumId") as string;
-    const file = formData.get("photo") as File;
+    const files = formData.getAll("photos") as File[];
 
-    if (!albumId || !file) {
+    if (!albumId) {
       return NextResponse.json(
-        { error: "albumId и файл обязательны" },
+        { error: "albumId обязателен" },
         { status: 400 }
       );
     }
 
-    await ensureUploadDir();
+    if (files.length === 0) {
+      return NextResponse.json({ error: "Файлы не выбраны" }, { status: 400 });
+    }
 
-    const filename = `${Date.now()}-${file.name}`;
-    const filePath = path.join(uploadDir, filename);
-    const relativePath = `/uploads/${filename}`;
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    const createdPhotos: Photo[] = [];
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await fs.writeFile(filePath, buffer);
+    for (const file of files) {
+      const fileExtension = path.extname(file.name);
+      const fileName = `${randomUUID()}${fileExtension}`;
+      const filePath = path.join(uploadDir, fileName);
+      const fileUrl = `/uploads/${fileName}`;
 
-    const photoCount = await prisma.photo.count({
-      where: { albumId: Number(albumId) },
-    });
+      // Сохраняем файл
+      const buffer = Buffer.from(await file.arrayBuffer());
+      await writeFile(filePath, buffer);
 
-    const photo = await prisma.photo.create({
-      data: {
-        albumId: Number(albumId),
-        path: relativePath,
-        order: photoCount + 1,
-      },
-    });
+      // Получаем текущий максимальный order для альбома
+      const maxOrder = await prisma.photo.findFirst({
+        where: { albumId: Number(albumId) },
+        orderBy: { order: "desc" },
+        select: { order: true },
+      });
 
-    return NextResponse.json(photo);
-  } catch (err) {
-    console.error("Ошибка при загрузке файла:", err);
-    return NextResponse.json(
-      { error: "Ошибка при загрузке файла" },
-      { status: 500 }
-    );
+      const photo = await prisma.photo.create({
+        data: {
+          path: fileUrl,
+          albumId: Number(albumId),
+          order: (maxOrder?.order ?? -1) + 1, // Увеличиваем order
+        },
+      });
+
+      createdPhotos.push({
+        id: photo.id,
+        path: photo.path,
+        order: photo.order,
+      });
+    }
+
+    return NextResponse.json(createdPhotos);
+  } catch (error) {
+    console.error("Ошибка при загрузке фотографий:", error);
+    return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 });
   }
 }
