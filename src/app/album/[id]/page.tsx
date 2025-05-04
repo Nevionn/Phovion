@@ -112,6 +112,7 @@ export default function AlbumPage() {
 
 const style = {
   main: css({
+    height: "100vh",
     padding: "2rem",
     textAlign: "center",
     backgroundColor: "grey",
@@ -119,7 +120,7 @@ const style = {
   title: css({
     fontSize: "2rem",
     marginBottom: "1rem",
-    color: "#111",
+    color: "white",
   }),
   loadingText: css({
     color: "#555",
@@ -159,14 +160,17 @@ const style = {
   }),
   photoGrid: css({
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+    gridTemplateColumns: "repeat(4, 1fr)",
     gap: "1rem",
     marginTop: "2rem",
-    backgroundColor: "white",
+    maxWidth: "1200px",
+    marginLeft: "auto",
+    marginRight: "auto",
   }),
   photo: css({
     width: "100%",
     borderRadius: 8,
     objectFit: "cover",
+    aspectRatio: "1 / 1",
   }),
 };
