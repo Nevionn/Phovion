@@ -1,9 +1,57 @@
 /** @jsxImportSource @emotion/react */
 "use client";
 import { css } from "@emotion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Photo } from "./type/typePhoto";
+import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  arrayMove,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { SlSizeFullscreen } from "react-icons/sl";
+
+const SortablePhoto = ({ photo }: { photo: Photo }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: photo.id,
+    transition: {
+      duration: 150,
+      easing: "ease-out",
+    },
+  });
+
+  const styleDnd = {
+    transform: CSS.Transform.toString(transform),
+    transition: isDragging ? transition : "none",
+    zIndex: isDragging ? 100 : 0,
+    boxShadow: isDragging ? "0 8px 16px rgba(0, 0, 0, 0.3)" : "none",
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} css={style.photoContainer} style={styleDnd}>
+      <div css={style.dragHandle} {...attributes} {...listeners}>
+        <SlSizeFullscreen size={20} />
+      </div>
+      <img
+        src={photo.path}
+        alt={`Фото ${photo.id}`}
+        css={style.photo}
+        loading="lazy"
+      />
+    </div>
+  );
+};
 
 export default function AlbumPage() {
   const router = useRouter();
@@ -37,7 +85,7 @@ export default function AlbumPage() {
 
     const form = new FormData();
     form.append("albumId", String(id));
-    files.forEach((file) => form.append("photos", file)); // Добавляем все файлы
+    files.forEach((file) => form.append("photos", file));
 
     try {
       const res = await fetch("/api/photos/upload", {
@@ -59,6 +107,37 @@ export default function AlbumPage() {
       setUploading(false);
     }
   }
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      setPhotos((prevPhotos) => {
+        const oldIndex = prevPhotos.findIndex(
+          (photo) => photo.id === active.id
+        );
+        const newIndex = prevPhotos.findIndex((photo) => photo.id === over?.id);
+
+        const newPhotos = arrayMove(prevPhotos, oldIndex, newIndex);
+
+        // Отправляем новый порядок на сервер
+        const updatedOrder = newPhotos.map((photo, index) => ({
+          id: photo.id,
+          order: index,
+        }));
+
+        fetch("/api/photos/reorder", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ photos: updatedOrder }),
+        }).catch((error) => console.error("Ошибка сохранения порядка:", error));
+
+        return newPhotos;
+      });
+    }
+  };
+
+  const photoIds = useMemo(() => photos.map((photo) => photo.id), [photos]);
 
   return (
     <main css={style.main}>
@@ -92,16 +171,22 @@ export default function AlbumPage() {
             </button>
           </div>
 
-          <div css={style.photoGrid}>
-            {photos.map((ph) => (
-              <img
-                key={ph.id}
-                src={ph.path}
-                alt={`Фото ${ph.id}`}
-                css={style.photo}
-              />
-            ))}
-          </div>
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext items={photoIds} strategy={rectSortingStrategy}>
+              <div css={style.photoGrid}>
+                {photos.length === 0 ? (
+                  <p css={style.loadingText}>Фотографии отсутствуют</p>
+                ) : (
+                  photos.map((photo) => (
+                    <SortablePhoto key={photo.id} photo={photo} />
+                  ))
+                )}
+              </div>
+            </SortableContext>
+          </DndContext>
         </>
       ) : (
         <p css={style.loadingText}>Загрузка альбома...</p>
@@ -112,10 +197,10 @@ export default function AlbumPage() {
 
 const style = {
   main: css({
-    height: "100vh",
     padding: "2rem",
     textAlign: "center",
     backgroundColor: "grey",
+    minHeight: "100vh",
   }),
   title: css({
     fontSize: "2rem",
@@ -167,10 +252,36 @@ const style = {
     marginLeft: "auto",
     marginRight: "auto",
   }),
+  photoContainer: css({
+    position: "relative",
+    width: "100%",
+    borderRadius: 8,
+    overflow: "hidden",
+    "&:hover": {
+      transform: "scale(1.02)",
+    },
+  }),
   photo: css({
     width: "100%",
     borderRadius: 8,
     objectFit: "cover",
     aspectRatio: "1 / 1",
+  }),
+  dragHandle: css({
+    position: "absolute",
+    top: "10px",
+    left: "10px",
+    padding: "5px",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: "4px",
+    cursor: "grab",
+    color: "white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
+    "&:active": {
+      cursor: "grabbing",
+    },
   }),
 };

@@ -9,21 +9,27 @@ interface Context {
   params: { id: string };
 }
 
-export async function GET(_req: Request, { params }: Context) {
-  const id = Number(params.id);
+export async function GET(request: Request, { params }: Context) {
+  try {
+    const album = await prisma.album.findUnique({
+      where: { id: Number(params.id) },
+      include: {
+        photos: {
+          select: { id: true, path: true, order: true },
+          orderBy: { order: "asc" }, // Сортируем фотографии по полю order
+        },
+      },
+    });
 
-  const album = await prisma.album.findUnique({
-    where: { id },
-    include: {
-      photos: true,
-    },
-  });
+    if (!album) {
+      return NextResponse.json({ error: "Альбом не найден" }, { status: 404 });
+    }
 
-  if (!album) {
-    return NextResponse.json({ error: "Альбом не найден" }, { status: 404 });
+    return NextResponse.json(album);
+  } catch (error) {
+    console.error("Ошибка при получении альбома:", error);
+    return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 });
   }
-
-  return NextResponse.json(album);
 }
 
 export async function DELETE(req: NextRequest, { params }: Context) {
@@ -34,13 +40,11 @@ export async function DELETE(req: NextRequest, { params }: Context) {
   }
 
   try {
-    // Проверяем существование альбома
     const album = await prisma.album.findUnique({ where: { id } });
     if (!album) {
       return NextResponse.json({ error: "Альбом не найден" }, { status: 404 });
     }
 
-    // Получаем все фотографии альбома
     const photos = await prisma.photo.findMany({ where: { albumId: id } });
 
     // Удаляем файлы фотографий из public/uploads
