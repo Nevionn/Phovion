@@ -13,6 +13,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
+import { FaCloudUploadAlt } from "react-icons/fa";
 
 const SortablePhoto = ({ photo }: { photo: Photo }) => {
   const {
@@ -60,6 +61,7 @@ export default function AlbumPage() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   // Получаем данные альбома и список фото
   useEffect(() => {
@@ -120,7 +122,6 @@ export default function AlbumPage() {
 
         const newPhotos = arrayMove(prevPhotos, oldIndex, newIndex);
 
-        // Отправляем новый порядок на сервер
         const updatedOrder = newPhotos.map((photo, index) => ({
           id: photo.id,
           order: index,
@@ -137,59 +138,109 @@ export default function AlbumPage() {
     }
   };
 
+  // Обработка DND из проводника
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault(); // Разрешаем сброс файлов
+    setIsDraggingOver(true);
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDraggingOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDraggingOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDraggingOver(false);
+
+    const droppedFiles = Array.from(e.dataTransfer.files).filter((file) =>
+      file.type.startsWith("image/")
+    );
+    if (droppedFiles.length > 0) {
+      setFiles(droppedFiles);
+      uploadPhotos();
+    }
+  };
+
   const photoIds = useMemo(() => photos.map((photo) => photo.id), [photos]);
 
   return (
-    <main css={style.main}>
-      {album ? (
-        <>
-          <h1 css={style.title}>Альбом: {album.name}</h1>
-          <p>ID: {album.id}</p>
-          <button css={style.deleteButton} onClick={deleteAlbum}>
-            Удалить альбом
-          </button>
+    <main
+      css={style.main}
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      <div
+        css={[style.contentWrapper, isDraggingOver && style.dropZoneDragging]}
+      >
+        {album ? (
+          <>
+            <div css={style.header}>
+              <h1 css={style.title}>Альбом: {album.name}</h1>
+              <p>ID: {album.id}</p>
+              <button css={style.deleteButton} onClick={deleteAlbum}>
+                Удалить альбом
+              </button>
 
-          <div css={style.uploadSection}>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={(e) =>
-                setFiles(e.target.files ? Array.from(e.target.files) : [])
-              }
-            />
-            <button
-              css={style.uploadButton}
-              onClick={uploadPhotos}
-              disabled={files.length === 0 || uploading}
-            >
-              {uploading
-                ? "Загрузка..."
-                : files.length > 0
-                ? `Загрузить ${files.length} фото`
-                : "Загрузить фото"}
-            </button>
-          </div>
-
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={photoIds} strategy={rectSortingStrategy}>
-              <div css={style.photoGrid}>
-                {photos.length === 0 ? (
-                  <p css={style.loadingText}>Фотографии отсутствуют</p>
-                ) : (
-                  photos.map((photo) => (
-                    <SortablePhoto key={photo.id} photo={photo} />
-                  ))
-                )}
+              <div css={style.uploadSection}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) =>
+                    setFiles(e.target.files ? Array.from(e.target.files) : [])
+                  }
+                />
+                <button
+                  css={style.uploadButton}
+                  onClick={uploadPhotos}
+                  disabled={files.length === 0 || uploading}
+                >
+                  {uploading
+                    ? "Загрузка..."
+                    : files.length > 0
+                    ? `Загрузить ${files.length} фото`
+                    : "Загрузить фото"}
+                </button>
               </div>
-            </SortableContext>
-          </DndContext>
-        </>
-      ) : (
-        <p css={style.loadingText}>Загрузка альбома...</p>
+            </div>
+
+            {photos.length === 0 && !isDraggingOver && (
+              <p css={style.loadingText}>
+                Перетащите изображения сюда или выберите файлы
+              </p>
+            )}
+
+            <DndContext
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={photoIds} strategy={rectSortingStrategy}>
+                <div css={style.photoGrid}>
+                  {photos.map((photo) => (
+                    <SortablePhoto key={photo.id} photo={photo} />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+          </>
+        ) : (
+          <p css={style.loadingText}>Загрузка альбома...</p>
+        )}
+      </div>
+
+      {isDraggingOver && (
+        <div css={style.dragOverlay}>
+          <FaCloudUploadAlt size={80} />
+          <span>Загрузить фотографии</span>
+        </div>
       )}
     </main>
   );
@@ -197,10 +248,26 @@ export default function AlbumPage() {
 
 const style = {
   main: css({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
     padding: "2rem",
     textAlign: "center",
-    backgroundColor: "grey",
+    backgroundColor: "#5A4F4D",
     minHeight: "100vh",
+    position: "relative",
+  }),
+  contentWrapper: css({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "100%",
+    minHeight: "100vh",
+  }),
+  header: css({
+    zIndex: 10,
+    width: "100%",
+    maxWidth: "1200px",
   }),
   title: css({
     fontSize: "2rem",
@@ -208,8 +275,14 @@ const style = {
     color: "white",
   }),
   loadingText: css({
-    color: "#555",
+    color: "white",
     fontSize: 20,
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    zIndex: 3, // Выше photoGrid, но ниже dropZoneDragging
+    pointerEvents: "none", // Чтобы не мешать DND
   }),
   deleteButton: css({
     backgroundColor: "#d32f2f",
@@ -249,8 +322,43 @@ const style = {
     gap: "1rem",
     marginTop: "2rem",
     maxWidth: "1200px",
-    marginLeft: "auto",
-    marginRight: "auto",
+    width: "100%",
+    padding: "1rem",
+    borderRadius: 8,
+    position: "relative",
+    zIndex: 5, // Чтобы сетка была под dropZone, но над фоном
+  }),
+  dropZoneDragging: css({
+    position: "fixed",
+    inset: 0, // Покрывает весь экран
+    border: "2px dashed white",
+    margin: "20px",
+    borderRadius: "8px",
+    "&:before": {
+      content: '""',
+      position: "fixed",
+      inset: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.4)",
+      zIndex: 11,
+    },
+  }),
+  dragOverlay: css({
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    fontSize: "50px",
+    color: "white",
+    fontWeight: "bold",
+    textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+    zIndex: 10,
+    "& > svg": {
+      fontSize: "80px",
+      marginBottom: "10px",
+    },
   }),
   photoContainer: css({
     position: "relative",
