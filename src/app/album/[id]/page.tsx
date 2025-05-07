@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
 "use client";
-import { css } from "@emotion/react";
-import { useEffect, useState, useMemo } from "react";
+import { css, CacheProvider } from "@emotion/react";
+import createCache from "@emotion/cache";
+import { useEffect, useState, useMemo, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Photo } from "./type/typePhoto";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import {
@@ -14,6 +16,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
 import { FaCloudUploadAlt } from "react-icons/fa";
+
+const emotionCache = createCache({ key: "css", prepend: true });
 
 const SortablePhoto = ({ photo }: { photo: Photo }) => {
   const {
@@ -54,7 +58,7 @@ const SortablePhoto = ({ photo }: { photo: Photo }) => {
   );
 };
 
-export default function AlbumPage() {
+const AlbumPageClient = () => {
   const router = useRouter();
   const { id } = useParams();
   const [album, setAlbum] = useState<{ id: number; name: string } | null>(null);
@@ -62,14 +66,30 @@ export default function AlbumPage() {
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Получаем данные альбома и список фото
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch(`/api/albums/${id}`);
-      const { photos: p, ...alb } = await res.json();
-      setAlbum(alb);
-      setPhotos(p || []);
+      try {
+        const res = await fetch(`/api/albums/${id}`, {
+          cache: "no-store",
+        });
+        if (!res.ok) {
+          throw new Error(`Ошибка загрузки: ${res.statusText}`);
+        }
+        const { photos: p, ...alb } = await res.json();
+        console.log("Загруженные данные при старте:", {
+          album: alb,
+          photos: p,
+        });
+        setAlbum(alb);
+        setPhotos(p || []);
+      } catch (error) {
+        console.error("Ошибка загрузки данных:", error);
+      } finally {
+        setIsLoading(false);
+      }
     }
     fetchData();
   }, [id]);
@@ -113,138 +133,234 @@ export default function AlbumPage() {
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (active.id !== over?.id) {
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    const newPhotos = await new Promise<Photo[]>((resolve) => {
       setPhotos((prevPhotos) => {
         const oldIndex = prevPhotos.findIndex(
           (photo) => photo.id === active.id
         );
-        const newIndex = prevPhotos.findIndex((photo) => photo.id === over?.id);
+        const newIndex = prevPhotos.findIndex((photo) => photo.id === over.id);
 
-        const newPhotos = arrayMove(prevPhotos, oldIndex, newIndex);
+        if (oldIndex === -1 || newIndex === -1) {
+          console.error("Некорректные индексы:", { oldIndex, newIndex });
+          resolve(prevPhotos);
+          return prevPhotos;
+        }
 
-        const updatedOrder = newPhotos.map((photo, index) => ({
-          id: photo.id,
-          order: index,
-        }));
-
-        fetch("/api/photos/reorder", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ photos: updatedOrder }),
-        }).catch((error) => console.error("Ошибка сохранения порядка:", error));
-
-        return newPhotos;
+        const updatedPhotos = arrayMove(prevPhotos, oldIndex, newIndex);
+        resolve(updatedPhotos);
+        return updatedPhotos;
       });
+    });
+
+    const updatedOrder = newPhotos.map((photo, index) => ({
+      id: photo.id,
+      order: index,
+    }));
+
+    try {
+      console.log("Отправка нового порядка на сервер:", updatedOrder);
+      const res = await fetch("/api/photos/reorder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ photos: updatedOrder }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Ошибка сохранения порядка: ${res.statusText}`);
+      }
+
+      const responseData = await res.json();
+      console.log("Ответ от сервера (reorder):", responseData);
+
+      const updatedRes = await fetch(`/api/albums/${id}`, {
+        cache: "no-store",
+      });
+      if (updatedRes.ok) {
+        const { photos: updatedPhotos, ...updatedAlbum } =
+          await updatedRes.json();
+        setAlbum(updatedAlbum);
+        setPhotos(updatedPhotos || []);
+        console.log("Обновленный порядок с сервера:", updatedPhotos);
+      } else {
+        throw new Error("Не удалось обновить данные после сортировки");
+      }
+    } catch (error) {
+      console.error("Ошибка сохранения порядка:", error);
+      alert("Не удалось сохранить порядок фотографий");
+      const res = await fetch(`/api/albums/${id}`, { cache: "no-store" });
+      if (res.ok) {
+        const { photos: p, ...alb } = await res.json();
+        setAlbum(alb);
+        setPhotos(p || []);
+      }
     }
   };
 
-  // Обработка DND из проводника
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault(); // Разрешаем сброс файлов
-    setIsDraggingOver(true);
+    e.preventDefault();
+    if (!isLoading) setIsDraggingOver(true);
   };
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    setIsDraggingOver(true);
+    if (!isLoading) setIsDraggingOver(true);
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    setIsDraggingOver(false);
+    if (!isLoading) setIsDraggingOver(false);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    setIsDraggingOver(false);
-
-    const droppedFiles = Array.from(e.dataTransfer.files).filter((file) =>
-      file.type.startsWith("image/")
-    );
-    if (droppedFiles.length > 0) {
-      setFiles(droppedFiles);
-      uploadPhotos();
+    if (!isLoading) {
+      setIsDraggingOver(false);
+      const droppedFiles = Array.from(e.dataTransfer.files).filter((file) =>
+        file.type.startsWith("image/")
+      );
+      if (droppedFiles.length > 0) {
+        setFiles(droppedFiles);
+        uploadPhotos();
+      }
     }
   };
 
   const photoIds = useMemo(() => photos.map((photo) => photo.id), [photos]);
 
   return (
-    <main
-      css={style.main}
-      onDragOver={handleDragOver}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-    >
-      <div
-        css={[style.contentWrapper, isDraggingOver && style.dropZoneDragging]}
+    <CacheProvider value={emotionCache}>
+      <main
+        css={style.main}
+        onDragOver={handleDragOver}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
       >
-        {album ? (
-          <>
-            <div css={style.header}>
-              <h1 css={style.title}>Альбом: {album.name}</h1>
-              <p>ID: {album.id}</p>
-              <button css={style.deleteButton} onClick={deleteAlbum}>
-                Удалить альбом
-              </button>
-
-              <div css={style.uploadSection}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) =>
-                    setFiles(e.target.files ? Array.from(e.target.files) : [])
-                  }
-                />
-                <button
-                  css={style.uploadButton}
-                  onClick={uploadPhotos}
-                  disabled={files.length === 0 || uploading}
-                >
-                  {uploading
-                    ? "Загрузка..."
-                    : files.length > 0
-                    ? `Загрузить ${files.length} фото`
-                    : "Загрузить фото"}
-                </button>
+        <div css={style.contentWrapper}>
+          {isLoading ? (
+            <div css={style.skeletonWrapper}>
+              <div css={style.skeletonHeader}></div>
+              <div css={style.skeletonGrid}>
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div key={index} css={style.skeletonPhoto}></div>
+                ))}
               </div>
             </div>
+          ) : album ? (
+            <>
+              <div css={style.header}>
+                <h1 css={style.title}>Альбом: {album.name}</h1>
+                <p>ID: {album.id}</p>
+                <button css={style.deleteButton} onClick={deleteAlbum}>
+                  Удалить альбом
+                </button>
 
-            {photos.length === 0 && !isDraggingOver && (
-              <p css={style.loadingText}>
-                Перетащите изображения сюда или выберите файлы
-              </p>
-            )}
-
-            <DndContext
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext items={photoIds} strategy={rectSortingStrategy}>
-                <div css={style.photoGrid}>
-                  {photos.map((photo) => (
-                    <SortablePhoto key={photo.id} photo={photo} />
-                  ))}
+                <div css={style.uploadSection}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) =>
+                      setFiles(e.target.files ? Array.from(e.target.files) : [])
+                    }
+                  />
+                  <button
+                    css={style.uploadButton}
+                    onClick={uploadPhotos}
+                    disabled={files.length === 0 || uploading}
+                  >
+                    {uploading
+                      ? "Загрузка..."
+                      : files.length > 0
+                      ? `Загрузить ${files.length} фото`
+                      : "Загрузить фото"}
+                  </button>
                 </div>
-              </SortableContext>
-            </DndContext>
-          </>
-        ) : (
-          <p css={style.loadingText}>Загрузка альбома...</p>
-        )}
-      </div>
+              </div>
 
-      {isDraggingOver && (
-        <div css={style.dragOverlay}>
-          <FaCloudUploadAlt size={80} />
-          <span>Загрузить фотографии</span>
+              {photos.length === 0 ? (
+                <p css={style.loadingText}>
+                  Перетащите изображения сюда или выберите файлы
+                </p>
+              ) : (
+                <DndContext
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={photoIds}
+                    strategy={rectSortingStrategy}
+                  >
+                    <div css={style.photoGrid}>
+                      {photos.map((photo) => (
+                        <SortablePhoto key={photo.id} photo={photo} />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
+              )}
+            </>
+          ) : (
+            <p css={style.loadingText}>Ошибка загрузки альбома</p>
+          )}
+          {isDraggingOver && !isLoading && (
+            <div css={style.dropZoneDragging}>
+              <div css={style.dragOverlay}>
+                <FaCloudUploadAlt size={80} />
+                <span>Загрузить фотографии</span>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-    </main>
+      </main>
+    </CacheProvider>
   );
-}
+};
+
+const AlbumPage = dynamic(() => Promise.resolve(AlbumPageClient), {
+  ssr: false,
+  loading: () => (
+    <main css={style.main}>
+      <div css={style.contentWrapper}>
+        <div css={style.skeletonWrapper}>
+          <div css={style.skeletonHeader}></div>
+          <div css={style.skeletonGrid}>
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} css={style.skeletonPhoto}></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </main>
+  ),
+});
+
+const AlbumPageWithSuspense = () => (
+  <Suspense
+    fallback={
+      <main css={style.main}>
+        <div css={style.contentWrapper}>
+          <div css={style.skeletonWrapper}>
+            <div css={style.skeletonHeader}></div>
+            <div css={style.skeletonGrid}>
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} css={style.skeletonPhoto}></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+    }
+  >
+    <AlbumPage />
+  </Suspense>
+);
+
+export default AlbumPageWithSuspense;
 
 const style = {
   main: css({
@@ -253,7 +369,7 @@ const style = {
     alignItems: "center",
     padding: "2rem",
     textAlign: "center",
-    backgroundColor: "#5A4F4D",
+    backgroundColor: "#474876",
     minHeight: "100vh",
     position: "relative",
   }),
@@ -263,6 +379,8 @@ const style = {
     alignItems: "center",
     width: "100%",
     minHeight: "100vh",
+    position: "relative",
+    zIndex: 1,
   }),
   header: css({
     zIndex: 10,
@@ -281,8 +399,8 @@ const style = {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    zIndex: 3, // Выше photoGrid, но ниже dropZoneDragging
-    pointerEvents: "none", // Чтобы не мешать DND
+    zIndex: 3,
+    pointerEvents: "none",
   }),
   deleteButton: css({
     backgroundColor: "#d32f2f",
@@ -326,24 +444,23 @@ const style = {
     padding: "1rem",
     borderRadius: 8,
     position: "relative",
-    zIndex: 5, // Чтобы сетка была под dropZone, но над фоном
+    zIndex: 5,
   }),
   dropZoneDragging: css({
     position: "fixed",
-    inset: 0, // Покрывает весь экран
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     border: "2px dashed white",
     margin: "20px",
     borderRadius: "8px",
-    "&:before": {
-      content: '""',
-      position: "fixed",
-      inset: 0,
-      backgroundColor: "rgba(0, 0, 0, 0.4)",
-      zIndex: 11,
-    },
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    zIndex: 20, // Выше всех элементов, включая photoGrid
+    pointerEvents: "none", // Чтобы не мешать событиям dnd
   }),
   dragOverlay: css({
-    position: "fixed",
+    position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
@@ -354,7 +471,8 @@ const style = {
     color: "white",
     fontWeight: "bold",
     textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
-    zIndex: 10,
+    zIndex: 21, // Еще выше, чем dropZoneDragging
+    pointerEvents: "none",
     "& > svg": {
       fontSize: "80px",
       marginBottom: "10px",
@@ -392,4 +510,37 @@ const style = {
       cursor: "grabbing",
     },
   }),
+  skeletonWrapper: css({
+    width: "100%",
+    maxWidth: "1200px",
+    padding: "1rem",
+    zIndex: 2, // Скелетный экран ниже оверлея
+  }),
+  skeletonHeader: css({
+    height: "60px",
+    width: "80%",
+    margin: "0 auto 2rem",
+    backgroundColor: "#6A5E5C",
+    borderRadius: "8px",
+    animation: "pulse 1.5s infinite",
+  }),
+  skeletonGrid: css({
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "1rem",
+    maxWidth: "1200px",
+    width: "100%",
+  }),
+  skeletonPhoto: css({
+    width: "100%",
+    aspectRatio: "1 / 1",
+    backgroundColor: "#6A5E5C",
+    borderRadius: "8px",
+    animation: "pulse 1.5s infinite",
+  }),
+  "@keyframes pulse": {
+    "0%": { opacity: 1 },
+    "50%": { opacity: 0.6 },
+    "100%": { opacity: 1 },
+  },
 };
