@@ -259,7 +259,7 @@ const styles = {
     alignItems: "center",
     flexDirection: "column",
     minHeight: "90vh",
-    width: 876, // "46%"
+    maxWidth: 876,
     overflowX: "auto",
     padding: "2rem",
     margin: "0 auto",
@@ -334,15 +334,14 @@ const styles = {
   }),
   albumListStyle: css({
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(265px, 1fr))",
+    gridTemplateColumns: "repeat(3, 1fr)",
     gap: "24px",
     padding: "30px 0",
     width: "100%",
-    maxWidth: "862px",
+    maxWidth: "1200px",
   }),
   albumCardStyle: css({
     position: "relative",
-    width: 265,
     height: 300,
     borderRadius: "10px",
     cursor: "pointer",
