@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
-import { Photo } from "@/app/album/[id]/type/typePhoto";
+import { Photo } from "@/app/album/[id]/types/photoTypes";
 
 const prisma = new PrismaClient();
 

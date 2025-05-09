@@ -5,7 +5,8 @@ import createCache from "@emotion/cache";
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Photo } from "./type/typePhoto";
+import { Photo } from "./types/photoTypes";
+import { Album } from "@/app/types/albumTypes";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -18,6 +19,8 @@ import { SlSizeFullscreen } from "react-icons/sl";
 import { FaCloudUploadAlt } from "react-icons/fa";
 
 const emotionCache = createCache({ key: "css", prepend: true });
+
+type AlbumForViewPhotos = Pick<Album, "id" | "name">;
 
 const SortablePhoto = ({ photo }: { photo: Photo }) => {
   const {
@@ -61,7 +64,7 @@ const SortablePhoto = ({ photo }: { photo: Photo }) => {
 const AlbumPageClient = () => {
   const router = useRouter();
   const { id } = useParams();
-  const [album, setAlbum] = useState<{ id: number; name: string } | null>(null);
+  const [album, setAlbum] = useState<AlbumForViewPhotos | null>(null);
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);

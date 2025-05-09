@@ -2,6 +2,7 @@
 "use client";
 import { css } from "@emotion/react";
 import "./globals.css";
+import { Album } from "./types/albumTypes";
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
@@ -13,13 +14,6 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
-
-type Album = {
-  id: number;
-  name: string;
-  avatar: string | null;
-  photoCount: number | null;
-};
 
 const SortableAlbum = ({
   album,
