@@ -1,0 +1,25 @@
+type CyberButtonProps = {
+  label: string;
+  onClick?: () => void;
+  hue?: number; // Только основной hue — всё остальное остаётся из глобального стиля
+};
+
+export default function CyberButton({
+  label,
+  onClick,
+  hue = 0, // по умолчанию красный
+}: CyberButtonProps) {
+  const style = {
+    "--primary-hue": hue.toString(),
+  } as React.CSSProperties;
+
+  return (
+    <button className="cybr-btn" style={style} onClick={onClick}>
+      {label}
+      <span aria-hidden className="cybr-btn__glitch">
+        {label}
+      </span>
+      <span className="cybr-btn__tag"></span>
+    </button>
+  );
+}

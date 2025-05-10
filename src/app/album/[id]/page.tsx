@@ -1,7 +1,8 @@
 /** @jsxImportSource @emotion/react */
 "use client";
-import { css, CacheProvider } from "@emotion/react";
+import { css, CacheProvider, keyframes } from "@emotion/react";
 import createCache from "@emotion/cache";
+import "../../shared/buttons/cyber-button.css";
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -17,6 +18,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
 import { FaCloudUploadAlt } from "react-icons/fa";
+import CyberButton from "@/app/shared/buttons/CyberButton";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
@@ -256,32 +258,37 @@ const AlbumPageClient = () => {
           ) : album ? (
             <>
               <div css={style.header}>
-                <h1 css={style.title}>Альбом: {album.name}</h1>
-                <p>ID: {album.id}</p>
-                <button css={style.deleteButton} onClick={deleteAlbum}>
-                  Удалить альбом
-                </button>
-
-                <div css={style.uploadSection}>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) =>
-                      setFiles(e.target.files ? Array.from(e.target.files) : [])
-                    }
+                <div css={style.headerContainer}>
+                  <h1 css={style.title}>Альбом: {album.name}</h1>
+                  <CyberButton
+                    label="Удалить альбом"
+                    hue={0}
+                    onClick={deleteAlbum}
                   />
-                  <button
-                    css={style.uploadButton}
-                    onClick={uploadPhotos}
-                    disabled={files.length === 0 || uploading}
-                  >
-                    {uploading
-                      ? "Загрузка..."
-                      : files.length > 0
-                      ? `Загрузить ${files.length} фото`
-                      : "Загрузить фото"}
-                  </button>
+                  <div css={style.uploadSection}>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) =>
+                        setFiles(
+                          e.target.files ? Array.from(e.target.files) : []
+                        )
+                      }
+                      css={style.uploadInput}
+                    />
+                    <button
+                      css={style.uploadButton}
+                      onClick={uploadPhotos}
+                      disabled={files.length === 0 || uploading}
+                    >
+                      {uploading
+                        ? "Загрузка..."
+                        : files.length > 0
+                        ? `Загрузить ${files.length} фото`
+                        : "Загрузить фото"}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -372,7 +379,9 @@ const style = {
     alignItems: "center",
     padding: "2rem",
     textAlign: "center",
-    backgroundColor: "#474876",
+    background:
+      "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+    fontFamily: "'Orbitron', sans-serif",
     minHeight: "100vh",
     position: "relative",
   }),
@@ -390,10 +399,34 @@ const style = {
     width: "100%",
     maxWidth: "1200px",
   }),
+  headerContainer: css({
+    position: "relative",
+    border: "2px solid #00ffea",
+    borderRadius: "12px",
+    padding: "1.5rem",
+    boxShadow:
+      "0 0 20px rgba(0, 255, 234, 0.5), inset 0 0 10px rgba(0, 255, 234, 0.3)",
+    backdropFilter: "blur(5px)",
+    "&:before": {
+      content: '""',
+      position: "absolute",
+      top: "-2px",
+      left: "-2px",
+      right: "-2px",
+      bottom: "-2px",
+      borderRadius: "12px",
+      zIndex: -1,
+      animation: "neonBorder 3s infinite linear",
+    },
+  }),
   title: css({
-    fontSize: "2rem",
+    fontSize: "2.5rem",
     marginBottom: "1rem",
-    color: "white",
+    color: "#00ffea",
+    textShadow:
+      "0 0 10px rgba(0, 255, 234, 0.8), 0 0 20px rgba(0, 255, 234, 0.5)",
+    fontWeight: 700,
+    letterSpacing: "2px",
   }),
   loadingText: css({
     color: "white",
@@ -405,37 +438,71 @@ const style = {
     zIndex: 3,
     pointerEvents: "none",
   }),
-  deleteButton: css({
-    backgroundColor: "#d32f2f",
-    color: "white",
-    padding: "0.5rem 1rem",
-    border: "none",
-    borderRadius: 8,
-    fontSize: "1rem",
-    cursor: "pointer",
-    marginTop: "1rem",
-    transition: "background-color 0.2s",
-    "&:hover": { backgroundColor: "#b71c1c" },
-  }),
+  // deleteButton: css({
+  //   background: "linear-gradient(45deg, #ff004d, #ff4d77)", // Неоновый градиент
+  //   color: "white",
+  //   padding: "0.5rem 1rem",
+  //   border: "none",
+  //   borderRadius: "8px",
+  //   fontSize: "1rem",
+  //   cursor: "pointer",
+  //   clipPath: "xywh(0 5px 100% 75% round 35% 0);",
+  //   marginTop: "1rem",
+  //   transition: "all 0.3s",
+  //   boxShadow: "0 0 10px rgba(255, 0, 77, 0.5)",
+  //   "&:hover": {
+  //     background: "linear-gradient(45deg, #ff4d77, #ff004d)",
+  //     boxShadow: "0 0 15px rgba(255, 0, 77, 0.8)",
+  //   },
+  // }),
   uploadSection: css({
     marginTop: "2rem",
     display: "flex",
     gap: "1rem",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "green",
+    background: "rgba(20, 20, 40, 0.7)",
+    padding: "0.5rem",
+    borderRadius: "8px",
+    border: "1px solid rgb(169, 31, 185)",
+    boxShadow: "0 0 10px rgba(255, 0, 255, 0.3)",
   }),
   uploadButton: css({
-    backgroundColor: "#0070f3",
+    background: "linear-gradient(45deg, #00ffea, #00b8d4)",
     color: "white",
     padding: "0.5rem 1rem",
     border: "none",
-    borderRadius: 8,
+    borderRadius: "8px",
     fontSize: "1rem",
     cursor: "pointer",
-    transition: "background-color 0.2s",
-    "&:hover": { backgroundColor: "#005bb5" },
-    "&:disabled": { backgroundColor: "#ccc", cursor: "not-allowed" },
+    transition: "all 0.3s",
+    boxShadow: "0 0 10px rgba(0, 255, 234, 0.5)",
+    "&:hover": {
+      background: "linear-gradient(45deg, #00b8d4, #00ffea)",
+      boxShadow: "0 0 15px rgba(0, 255, 234, 0.8)",
+    },
+    "&:disabled": {
+      background: "rgba(50, 50, 50, 0.7)",
+      boxShadow: "none",
+      cursor: "not-allowed",
+    },
+  }),
+  uploadInput: css({
+    color: "#00ffea",
+    "&::file-selector-button": {
+      background: "linear-gradient(45deg, #00ffea, #00b8d4)",
+      border: "none",
+      padding: "0.5rem 1rem",
+      borderRadius: "8px",
+      color: "white",
+      cursor: "pointer",
+      transition: "all 0.3s",
+      boxShadow: "0 0 10px rgba(0, 255, 234, 0.5)",
+      "&:hover": {
+        background: "linear-gradient(45deg, #00b8d4, #00ffea)",
+        boxShadow: "0 0 15px rgba(0, 255, 234, 0.8)",
+      },
+    },
   }),
   photoGrid: css({
     display: "grid",

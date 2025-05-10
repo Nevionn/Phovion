@@ -19,11 +19,11 @@ body {
   color: white;
 }
 
-:root {
+/* :root {
   --gradient-purple: linear-gradient(211deg, #846392 0%, #604385 100%);
   --gradient-blue-purple: linear-gradient(
     to bottom right,
     #9ea6d7 0%,
     #3a307d 100%
   );
-}
+} */
