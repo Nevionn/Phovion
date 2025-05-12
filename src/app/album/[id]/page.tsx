@@ -5,6 +5,7 @@ import createCache from "@emotion/cache";
 import "../../shared/buttons/cyber-button.css";
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Photo } from "./types/photoTypes";
 import { Album } from "@/app/types/albumTypes";
@@ -292,11 +293,13 @@ const AlbumPageClient = () => {
                     {/* Левая часть — Заголовок */}
                     <div>
                       <p css={style.title}>
-                        <span>альбомы {">"}</span>
+                        <Link href="/" css={style.link}>
+                          альбомы
+                        </Link>
+                        <span> {">"}</span>
                         <span> {album.name}</span>
                       </p>
                     </div>
-
                     {/* Правая часть — Кнопки */}
                     <div
                       css={{
@@ -602,6 +605,15 @@ const style = {
       color: "#00ffea",
       textShadow:
         "0 0 10px rgba(0, 255, 234, 0.8), 0 0 20px rgba(0, 255, 234, 0.5)",
+    },
+  }),
+  link: css({
+    color: "white",
+    textDecoration: "none",
+    transition: "all 0.3s",
+    "&:hover": {
+      color: "#00ffea",
+      textShadow: "0 0 10px rgba(0, 255, 234, 0.8)",
     },
   }),
   loadingText: css({
