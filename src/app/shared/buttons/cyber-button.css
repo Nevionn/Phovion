@@ -6,7 +6,7 @@
   --shadow-secondary-hue: 60;
   --color: hsl(0, 0%, 100%);
 
-  --font-size: 18px;
+  --font-size: 15px;
   --label-size: 9px;
   --border: 4px;
   --shimmy-distance: 5;
@@ -25,10 +25,11 @@
   position: relative;
   font-weight: 700;
   min-width: 100px;
-  height: 45px;
-  line-height: 45px;
+  height: 35px;
+  line-height: 35px;
   transition: background 0.2s;
   outline: none;
+  z-index: 10;
 
   /* clip-path */
   --clip: polygon(

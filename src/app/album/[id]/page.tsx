@@ -73,7 +73,10 @@ const AlbumPageClient = () => {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Получаем данные альбома и список фото
+  const [showEdit, setShowEdit] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [showDanger, setShowDanger] = useState(false);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -88,7 +91,9 @@ const AlbumPageClient = () => {
           album: alb,
           photos: p,
         });
+
         setAlbum(alb);
+        setNewName(alb.name || "");
         setPhotos(p || []);
       } catch (error) {
         console.error("Ошибка загрузки данных:", error);
@@ -132,6 +137,30 @@ const AlbumPageClient = () => {
       alert("Ошибка загрузки фотографий");
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function renameAlbum() {
+    if (!newName || !album?.id) return;
+
+    try {
+      const res = await fetch(`/api/albums/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newName }),
+      });
+
+      if (res.ok) {
+        const updatedAlbum = await res.json();
+        setAlbum(updatedAlbum);
+        setShowEdit(false);
+        // alert("Альбом успешно переименован");
+      } else {
+        throw new Error("Ошибка переименования альбома");
+      }
+    } catch (error) {
+      console.error("Ошибка переименования:", error);
+      alert("Не удалось переименовать альбом");
     }
   }
 
@@ -259,12 +288,148 @@ const AlbumPageClient = () => {
             <>
               <div css={style.header}>
                 <div css={style.headerContainer}>
-                  <h1 css={style.title}>Альбом: {album.name}</h1>
-                  <CyberButton
-                    label="Удалить альбом"
-                    hue={0}
-                    onClick={deleteAlbum}
-                  />
+                  <div css={style.navigationItem}>
+                    {/* Левая часть — Заголовок */}
+                    <div>
+                      <p css={style.title}>
+                        <span>альбомы {">"}</span>
+                        <span> {album.name}</span>
+                      </p>
+                    </div>
+
+                    {/* Правая часть — Кнопки */}
+                    <div
+                      css={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "3.5rem",
+                        position: "relative",
+                      }}
+                    >
+                      {/* Блок Редактировать */}
+                      <div css={{ position: "relative" }}>
+                        <CyberButton
+                          label="Редактировать"
+                          hue={200}
+                          onClick={() => {
+                            if (showEdit && album?.name) {
+                              setNewName(album.name);
+                            }
+                            setShowEdit(!showEdit);
+                          }}
+                        />
+                        {showEdit && (
+                          <div
+                            css={{
+                              position: "absolute",
+                              top: "100%",
+                              left: -20,
+                              right: -20,
+                              backgroundColor: "#17688B",
+                              border: "dashed rgb(55, 182, 232)",
+                              marginTop: 10,
+                              padding: 10,
+                              borderRadius: 8,
+                              zIndex: 10,
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span>Переименовать альбом</span>
+                            <input
+                              type="text"
+                              placeholder={"новое название"}
+                              value={newName}
+                              onChange={(e) => setNewName(e.target.value)}
+                              css={{
+                                marginTop: 10,
+                                width: "100%",
+                                backgroundColor: "#205788",
+                                color: "white",
+                                border: newName
+                                  ? "2px solid rgb(19, 171, 113)"
+                                  : "2px solid rgb(228, 13, 13)",
+                                borderRadius: 10,
+                              }}
+                            />
+                            <button
+                              disabled={
+                                !newName ||
+                                newName.trim() === album?.name.trim()
+                              }
+                              css={{
+                                marginTop: 10,
+                                borderRadius: 10,
+                                color: "white",
+                                fontWeight: "bold",
+                                background:
+                                  "linear-gradient(45deg,rgb(0, 255, 153), #00b8d4)",
+                                "&:hover": {
+                                  background:
+                                    "linear-gradient(45deg, #00b8d4, #00ffea)",
+                                  boxShadow: "0 0 15px rgba(0, 255, 234, 0.8)",
+                                },
+                                "&:disabled": {
+                                  background: "rgba(50, 50, 50, 0.7)",
+                                  boxShadow: "none",
+                                  cursor: "not-allowed",
+                                },
+                              }}
+                              onClick={renameAlbum}
+                            >
+                              Применить
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Блок Опасная зона */}
+                      <div css={{ position: "relative" }}>
+                        <CyberButton
+                          label="Опасная зона"
+                          hue={0}
+                          onClick={() => setShowDanger(!showDanger)}
+                        />
+                        {showDanger && (
+                          <div
+                            css={{
+                              position: "absolute",
+                              top: "100%",
+                              left: 0,
+                              marginTop: 10,
+                              padding: 8,
+                              backgroundColor: "rgba(212, 36, 65, 0.5)",
+                              border: "dashed #E8374D",
+                              borderRadius: 8,
+                              zIndex: 10,
+                            }}
+                          >
+                            <button
+                              css={{
+                                color: "white",
+                                backgroundColor: "#2385B7",
+                                "&:hover": {
+                                  backgroundColor: "#E14B64",
+                                },
+                              }}
+                              onClick={deleteAlbum}
+                            >
+                              Удалить альбом
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Кнопка Скачать */}
+                      <CyberButton
+                        label="Скачать альбом"
+                        hue={270}
+                        onClick={() => alert("Скачать альбом")}
+                      />
+                    </div>
+                  </div>
+
                   <div css={style.uploadSection}>
                     <input
                       type="file"
@@ -419,14 +584,25 @@ const style = {
       animation: "neonBorder 3s infinite linear",
     },
   }),
+  navigationItem: css({
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  }),
   title: css({
-    fontSize: "2.5rem",
-    marginBottom: "1rem",
-    color: "#00ffea",
-    textShadow:
-      "0 0 10px rgba(0, 255, 234, 0.8), 0 0 20px rgba(0, 255, 234, 0.5)",
+    fontSize: "28px",
     fontWeight: 700,
     letterSpacing: "2px",
+    margin: 0,
+    "& > span:first-of-type": {
+      color: "white",
+    },
+    "& > span:last-of-type": {
+      color: "#00ffea",
+      textShadow:
+        "0 0 10px rgba(0, 255, 234, 0.8), 0 0 20px rgba(0, 255, 234, 0.5)",
+    },
   }),
   loadingText: css({
     color: "white",
@@ -438,23 +614,6 @@ const style = {
     zIndex: 3,
     pointerEvents: "none",
   }),
-  // deleteButton: css({
-  //   background: "linear-gradient(45deg, #ff004d, #ff4d77)", // Неоновый градиент
-  //   color: "white",
-  //   padding: "0.5rem 1rem",
-  //   border: "none",
-  //   borderRadius: "8px",
-  //   fontSize: "1rem",
-  //   cursor: "pointer",
-  //   clipPath: "xywh(0 5px 100% 75% round 35% 0);",
-  //   marginTop: "1rem",
-  //   transition: "all 0.3s",
-  //   boxShadow: "0 0 10px rgba(255, 0, 77, 0.5)",
-  //   "&:hover": {
-  //     background: "linear-gradient(45deg, #ff4d77, #ff004d)",
-  //     boxShadow: "0 0 15px rgba(255, 0, 77, 0.8)",
-  //   },
-  // }),
   uploadSection: css({
     marginTop: "2rem",
     display: "flex",
@@ -526,8 +685,8 @@ const style = {
     margin: "20px",
     borderRadius: "8px",
     backgroundColor: "rgba(0, 0, 0, 0.4)",
-    zIndex: 20, // Выше всех элементов, включая photoGrid
-    pointerEvents: "none", // Чтобы не мешать событиям dnd
+    zIndex: 20,
+    pointerEvents: "none",
   }),
   dragOverlay: css({
     position: "absolute",
@@ -541,7 +700,7 @@ const style = {
     color: "white",
     fontWeight: "bold",
     textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
-    zIndex: 21, // Еще выше, чем dropZoneDragging
+    zIndex: 21,
     pointerEvents: "none",
     "& > svg": {
       fontSize: "80px",
@@ -584,7 +743,7 @@ const style = {
     width: "100%",
     maxWidth: "1200px",
     padding: "1rem",
-    zIndex: 2, // Скелетный экран ниже оверлея
+    zIndex: 2,
   }),
   skeletonHeader: css({
     height: "60px",

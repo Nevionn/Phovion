@@ -69,3 +69,43 @@ export async function DELETE(req: NextRequest, { params }: Context) {
     );
   }
 }
+
+// Переименование альбома по ID
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+  const { name } = await request.json();
+
+  if (!id || !name) {
+    return NextResponse.json(
+      { error: "ID и новое имя обязательны" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const albumId = parseInt(id, 10);
+    if (isNaN(albumId)) {
+      return NextResponse.json(
+        { error: "Неверный ID альбома" },
+        { status: 400 }
+      );
+    }
+
+    const updatedAlbum = await prisma.album.update({
+      where: { id: albumId },
+      data: { name },
+      include: { photos: true },
+    });
+
+    return NextResponse.json(updatedAlbum, { status: 200 });
+  } catch (error) {
+    console.error("Ошибка переименования альбома:", error);
+    if ((error as any).code === "P2025") {
+      return NextResponse.json({ error: "Альбом не найден" }, { status: 404 });
+    }
+    return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 });
+  }
+}
