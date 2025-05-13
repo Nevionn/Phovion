@@ -23,7 +23,7 @@ import CyberButton from "@/app/shared/buttons/CyberButton";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
-type AlbumForViewPhotos = Pick<Album, "id" | "name">;
+type AlbumForViewPhotos = Pick<Album, "id" | "name" | "photoCount">;
 
 // Утилита для преобразования Data URL в File
 function dataURLtoFile(dataurl: string, filename: string): File {
@@ -116,19 +116,30 @@ const AlbumPageClient = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(`/api/albums/${id}`, {
+        setIsLoading(true);
+        // Запрос данных альбома
+        const albumRes = await fetch(`/api/albums/${id}`, {
           cache: "no-store",
         });
-        if (!res.ok) {
-          throw new Error(`Ошибка загрузки: ${res.statusText}`);
+        if (!albumRes.ok) {
+          throw new Error(`Ошибка загрузки альбома: ${albumRes.statusText}`);
         }
-        const { photos: p, ...alb } = await res.json();
-        console.log("Загруженные данные при старте:", {
-          album: alb,
-          photos: p,
-        });
+        const { photos: p, ...alb } = await albumRes.json();
+        console.log("Загруженные данные альбома:", { album: alb, photos: p });
 
-        setAlbum(alb);
+        // Запрос количества фотографий для альбома
+        const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
+          cache: "no-store",
+        });
+        if (!countRes.ok) {
+          throw new Error(
+            `Ошибка загрузки количества фотографий: ${countRes.statusText}`
+          );
+        }
+        const { photoCount } = await countRes.json();
+        console.log("Количество фотографий:", photoCount);
+
+        setAlbum({ ...alb, photoCount });
         setNewName(alb.name || "");
         setPhotos(p || []);
       } catch (error) {
@@ -176,13 +187,13 @@ const AlbumPageClient = () => {
         signal: controller.signal,
       });
 
-      if (res.ok) {
-        const newPhotos: Photo[] = await res.json();
-        console.log("Успешно загружено:", newPhotos);
-        setFiles([]);
-        setPhotos((prev) => [...prev, ...newPhotos]);
-      } else {
-        throw new Error(`Ошибка загрузки фотографий: ${res.statusText}`);
+      // Обновляем photoCount после загрузки
+      const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
+        cache: "no-store",
+      });
+      if (countRes.ok) {
+        const { photoCount } = await countRes.json();
+        setAlbum((prev) => (prev ? { ...prev, photoCount } : null));
       }
     } catch (error: unknown) {
       const errorMessage =
@@ -412,7 +423,12 @@ const AlbumPageClient = () => {
                           альбомы
                         </Link>
                         <span>&nbsp;&gt;&nbsp;</span>
-                        <span css={style.albumNameNavItem}> {album.name}</span>
+                        <span css={style.albumNameNavItem}>
+                          {album.name}
+                          <span css={style.photoCount}>
+                            &nbsp;{album.photoCount}
+                          </span>
+                        </span>
                       </p>
                     </div>
                     {/* Правая часть — Кнопки */}
@@ -718,8 +734,6 @@ const style = {
     },
     "& > span:last-of-type": {
       color: "#00ffea",
-      textShadow:
-        "0 0 10px rgba(0, 255, 234, 0.8), 0 0 20px rgba(0, 255, 234, 0.5)",
     },
   }),
   albumNameNavItem: css({
@@ -729,6 +743,11 @@ const style = {
     overflow: "hidden",
     textOverflow: "ellipsis",
     verticalAlign: "bottom",
+  }),
+  photoCount: css({
+    color: "#99D6D1",
+    fontWeight: "lighter",
+    fontSize: 22,
   }),
   link: css({
     color: "white",
