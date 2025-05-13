@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 import { Photo } from "@/app/album/[id]/types/photoTypes";
@@ -13,6 +13,12 @@ export async function POST(request: Request) {
     const albumId = formData.get("albumId") as string;
     const files = formData.getAll("photos") as File[];
 
+    console.log("Получен albumId:", albumId);
+    console.log(
+      "Получены файлы:",
+      files.map((f) => ({ name: f.name, size: f.size, type: f.type }))
+    );
+
     if (!albumId) {
       return NextResponse.json(
         { error: "albumId обязателен" },
@@ -20,18 +26,39 @@ export async function POST(request: Request) {
       );
     }
 
-    if (files.length === 0) {
-      return NextResponse.json({ error: "Файлы не выбраны" }, { status: 400 });
+    if (
+      !files ||
+      files.length === 0 ||
+      files.every((file) => file.size === 0)
+    ) {
+      return NextResponse.json(
+        { error: "Файлы не выбраны или пусты" },
+        { status: 400 }
+      );
     }
 
     const uploadDir = path.join(process.cwd(), "public", "uploads");
+    // Создаём директорию, если она не существует
+    await mkdir(uploadDir, { recursive: true });
+
     const createdPhotos: Photo[] = [];
 
     for (const file of files) {
-      const fileExtension = path.extname(file.name);
-      const fileName = `${randomUUID()}${fileExtension}`;
-      const filePath = path.join(uploadDir, fileName);
-      const fileUrl = `/uploads/${fileName}`;
+      if (file.size === 0) {
+        console.warn("Пропущен пустой файл:", file.name);
+        continue;
+      }
+
+      // Очищаем имя файла от параметров и недопустимых символов
+      const originalName = file.name.split("?")[0]; // Убираем параметры URL (например, ?13325381)
+      const fileExtension = path.extname(originalName) || ".jpg"; // Если нет расширения, используем .jpg
+      const cleanFileName = `${randomUUID()}${fileExtension}`; // Генерируем чистое имя файла
+      const filePath = path.join(uploadDir, cleanFileName);
+      const fileUrl = `/uploads/${cleanFileName}`;
+
+      console.log(
+        `Сохраняем файл: ${cleanFileName}, оригинальное имя: ${originalName}, размер: ${file.size} байт`
+      );
 
       // Сохраняем файл
       const buffer = Buffer.from(await file.arrayBuffer());
@@ -59,9 +86,18 @@ export async function POST(request: Request) {
       });
     }
 
+    if (createdPhotos.length === 0) {
+      return NextResponse.json(
+        { error: "Не удалось сохранить ни один файл" },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(createdPhotos);
   } catch (error) {
     console.error("Ошибка при загрузке фотографий:", error);
     return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

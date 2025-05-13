@@ -5,8 +5,8 @@ import createCache from "@emotion/cache";
 import "../../shared/buttons/cyber-button.css";
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { Photo } from "./types/photoTypes";
 import { Album } from "@/app/types/albumTypes";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
@@ -24,6 +24,41 @@ import CyberButton from "@/app/shared/buttons/CyberButton";
 const emotionCache = createCache({ key: "css", prepend: true });
 
 type AlbumForViewPhotos = Pick<Album, "id" | "name">;
+
+// Утилита для преобразования Data URL в File
+function dataURLtoFile(dataurl: string, filename: string): File {
+  const arr = dataurl.split(",");
+  const mime = arr[0].match(/:(.*?);/)?.[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
+}
+
+// Утилита для загрузки файла через прокси
+async function proxyToFile(url: string, filename: string): Promise<File> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+  try {
+    console.log("Запрос прокси для URL:", url);
+    const response = await fetch(`/api/proxy?url=${encodeURIComponent(url)}`, {
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      throw new Error(`Ошибка прокси: ${response.statusText}`);
+    }
+    const blob = await response.blob();
+    if (blob.size === 0) {
+      throw new Error("Получен пустой Blob");
+    }
+    return new File([blob], filename, { type: blob.type });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 const SortablePhoto = ({ photo }: { photo: Photo }) => {
   const {
@@ -118,24 +153,42 @@ const AlbumPageClient = () => {
 
     const form = new FormData();
     form.append("albumId", String(id));
-    files.forEach((file) => form.append("photos", file));
+    files.forEach((file, index) => {
+      if (file instanceof File && file.size > 0) {
+        console.log(
+          `Добавляем файл ${index + 1}:`,
+          file.name,
+          file.type,
+          file.size
+        );
+        form.append("photos", file);
+      } else {
+        console.warn(`Файл ${index + 1} невалиден:`, file);
+      }
+    });
 
     try {
+      console.log("Отправляем запрос на /api/photos/upload...");
+      const controller = new AbortController();
       const res = await fetch("/api/photos/upload", {
         method: "POST",
         body: form,
+        signal: controller.signal,
       });
 
       if (res.ok) {
         const newPhotos: Photo[] = await res.json();
+        console.log("Успешно загружено:", newPhotos);
         setFiles([]);
         setPhotos((prev) => [...prev, ...newPhotos]);
       } else {
-        alert("Ошибка загрузки фотографий");
+        throw new Error(`Ошибка загрузки фотографий: ${res.statusText}`);
       }
-    } catch (error) {
-      console.error("Ошибка загрузки:", error);
-      alert("Ошибка загрузки фотографий");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      console.error("Ошибка загрузки:", errorMessage);
+      alert(`Ошибка загрузки фотографий: ${errorMessage}`);
     } finally {
       setUploading(false);
     }
@@ -155,13 +208,15 @@ const AlbumPageClient = () => {
         const updatedAlbum = await res.json();
         setAlbum(updatedAlbum);
         setShowEdit(false);
-        // alert("Альбом успешно переименован");
+        alert("Альбом успешно переименован!");
       } else {
         throw new Error("Ошибка переименования альбома");
       }
-    } catch (error) {
-      console.error("Ошибка переименования:", error);
-      alert("Не удалось переименовать альбом");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      console.error("Ошибка переименования:", errorMessage);
+      alert(`Не удалось переименовать альбом: ${errorMessage}`);
     }
   }
 
@@ -223,9 +278,11 @@ const AlbumPageClient = () => {
       } else {
         throw new Error("Не удалось обновить данные после сортировки");
       }
-    } catch (error) {
-      console.error("Ошибка сохранения порядка:", error);
-      alert("Не удалось сохранить порядок фотографий");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      console.error("Ошибка сохранения порядка:", errorMessage);
+      alert(`Не удалось сохранить порядок фотографий: ${errorMessage}`);
       const res = await fetch(`/api/albums/${id}`, { cache: "no-store" });
       if (res.ok) {
         const { photos: p, ...alb } = await res.json();
@@ -250,16 +307,75 @@ const AlbumPageClient = () => {
     if (!isLoading) setIsDraggingOver(false);
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (!isLoading) {
       setIsDraggingOver(false);
-      const droppedFiles = Array.from(e.dataTransfer.files).filter((file) =>
+
+      const droppedFiles: Set<File> = new Set(); // Явно указываем тип Set<File>
+
+      // Логируем все типы данных в DataTransfer
+      console.log("DataTransfer types:", e.dataTransfer.types);
+      for (const type of e.dataTransfer.types) {
+        console.log(`Data for ${type}:`, e.dataTransfer.getData(type));
+      }
+
+      // 1. Проверяем локальные файлы (перетаскивание из проводника)
+      const localFiles = Array.from(e.dataTransfer.files).filter((file) =>
         file.type.startsWith("image/")
       );
-      if (droppedFiles.length > 0) {
-        setFiles(droppedFiles);
-        uploadPhotos();
+      if (localFiles.length > 0) {
+        console.log("Найдены локальные файлы:", localFiles);
+        localFiles.forEach((file) => droppedFiles.add(file));
+      }
+
+      // 2. Проверяем URL (перетаскивание из вкладки/браузера)
+      const uriList = e.dataTransfer.getData("text/uri-list");
+      const plainText = e.dataTransfer.getData("text/plain");
+      const url = uriList || plainText; // Предпочитаем uri-list, но берём plainText, если uri-list пустой
+      if (url && url.startsWith("http") && !url.startsWith("data:image/")) {
+        console.log("Найден URL:", url);
+        try {
+          const filename = url.split("/").pop() || "image.jpg";
+          const file = await proxyToFile(url, filename);
+          droppedFiles.add(file);
+          console.log("Успешно загружен файл через прокси:", file);
+        } catch (error: unknown) {
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          console.error(
+            "Ошибка загрузки изображения через прокси:",
+            errorMessage
+          );
+          alert(`Не удалось загрузить изображение по URL: ${errorMessage}`);
+        }
+      }
+
+      // 3. Проверяем Data URL (перетаскивание закодированного изображения)
+      if (plainText && plainText.startsWith("data:image/")) {
+        console.log("Найден Data URL:", plainText);
+        try {
+          const file = dataURLtoFile(plainText, "image-from-data-url.jpg");
+          droppedFiles.add(file);
+          console.log("Успешно преобразован Data URL в файл:", file);
+        } catch (error: unknown) {
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          console.error("Ошибка преобразования Data URL:", errorMessage);
+          alert(`Не удалось обработать Data URL изображения: ${errorMessage}`);
+        }
+      }
+
+      // Преобразуем Set в массив
+      const finalFiles: File[] = Array.from(droppedFiles);
+      console.log("Итоговый список файлов:", finalFiles);
+
+      // Если есть файлы, добавляем их в состояние и вызываем загрузку
+      if (finalFiles.length > 0) {
+        setFiles(finalFiles);
+        setTimeout(uploadPhotos, 0); // Даём React обновить состояние
+      } else {
+        alert("Перетащите изображение или выберите файлы!");
       }
     }
   };
