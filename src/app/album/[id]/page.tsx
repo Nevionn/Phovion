@@ -208,7 +208,6 @@ const AlbumPageClient = () => {
         const updatedAlbum = await res.json();
         setAlbum(updatedAlbum);
         setShowEdit(false);
-        alert("Альбом успешно переименован!");
       } else {
         throw new Error("Ошибка переименования альбома");
       }
@@ -312,7 +311,7 @@ const AlbumPageClient = () => {
     if (!isLoading) {
       setIsDraggingOver(false);
 
-      const droppedFiles: Set<File> = new Set(); // Явно указываем тип Set<File>
+      const droppedFiles: Set<File> = new Set();
 
       // Логируем все типы данных в DataTransfer
       console.log("DataTransfer types:", e.dataTransfer.types);
@@ -412,8 +411,8 @@ const AlbumPageClient = () => {
                         <Link href="/" css={style.link}>
                           альбомы
                         </Link>
-                        <span> {">"}</span>
-                        <span> {album.name}</span>
+                        <span>&nbsp;&gt;&nbsp;</span>
+                        <span css={style.albumNameNavItem}> {album.name}</span>
                       </p>
                     </div>
                     {/* Правая часть — Кнопки */}
@@ -722,6 +721,14 @@ const style = {
       textShadow:
         "0 0 10px rgba(0, 255, 234, 0.8), 0 0 20px rgba(0, 255, 234, 0.5)",
     },
+  }),
+  albumNameNavItem: css({
+    display: "inline-block",
+    maxWidth: "260px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    verticalAlign: "bottom",
   }),
   link: css({
     color: "white",
