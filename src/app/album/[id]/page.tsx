@@ -3,7 +3,7 @@
 import { css, CacheProvider, keyframes } from "@emotion/react";
 import createCache from "@emotion/cache";
 import "../../shared/buttons/cyber-button.css";
-import { useEffect, useState, useMemo, Suspense } from "react";
+import { useEffect, useState, useMemo, useRef, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -113,6 +113,9 @@ const AlbumPageClient = () => {
   const [newName, setNewName] = useState("");
   const [showDanger, setShowDanger] = useState(false);
 
+  // Ссылка на инпут для сброса значения
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -187,13 +190,32 @@ const AlbumPageClient = () => {
         signal: controller.signal,
       });
 
-      // Обновляем photoCount после загрузки
-      const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
-        cache: "no-store",
-      });
-      if (countRes.ok) {
-        const { photoCount } = await countRes.json();
-        setAlbum((prev) => (prev ? { ...prev, photoCount } : null));
+      if (res.ok) {
+        const newPhotos: Photo[] = await res.json();
+        console.log("Успешно загружено:", newPhotos);
+        setFiles([]); // Очищаем буфер
+        setPhotos((prev) => [...prev, ...newPhotos]); // Обновляем список фотографий
+
+        // Сбрасываем значение инпута
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ""; // Сбрасываем значение
+          console.log("ИНПУТ СБРОШЕН");
+        }
+
+        // Обновляем photoCount после загрузки
+        const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
+          cache: "no-store",
+        });
+        if (countRes.ok) {
+          const { photoCount } = await countRes.json();
+          setAlbum((prev) => (prev ? { ...prev, photoCount } : null));
+        } else {
+          throw new Error(
+            `Ошибка обновления количества фотографий: ${countRes.statusText}`
+          );
+        }
+      } else {
+        throw new Error(`Ошибка загрузки фотографий: ${res.statusText}`);
       }
     } catch (error: unknown) {
       const errorMessage =
@@ -217,7 +239,7 @@ const AlbumPageClient = () => {
 
       if (res.ok) {
         const updatedAlbum = await res.json();
-        setAlbum(updatedAlbum);
+        setAlbum({ ...updatedAlbum, photoCount: album.photoCount }); // Сохраняем photoCount
         setShowEdit(false);
       } else {
         throw new Error("Ошибка переименования альбома");
@@ -282,7 +304,14 @@ const AlbumPageClient = () => {
       if (updatedRes.ok) {
         const { photos: updatedPhotos, ...updatedAlbum } =
           await updatedRes.json();
-        setAlbum(updatedAlbum);
+        // Обновляем photoCount
+        const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
+          cache: "no-store",
+        });
+        if (countRes.ok) {
+          const { photoCount } = await countRes.json();
+          setAlbum({ ...updatedAlbum, photoCount });
+        }
         setPhotos(updatedPhotos || []);
         console.log("Обновленный порядок с сервера:", updatedPhotos);
       } else {
@@ -296,7 +325,14 @@ const AlbumPageClient = () => {
       const res = await fetch(`/api/albums/${id}`, { cache: "no-store" });
       if (res.ok) {
         const { photos: p, ...alb } = await res.json();
-        setAlbum(alb);
+        // Обновляем photoCount
+        const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
+          cache: "no-store",
+        });
+        if (countRes.ok) {
+          const { photoCount } = await countRes.json();
+          setAlbum({ ...alb, photoCount });
+        }
         setPhotos(p || []);
       }
     }
@@ -569,6 +605,7 @@ const AlbumPageClient = () => {
                       type="file"
                       accept="image/*"
                       multiple
+                      ref={fileInputRef}
                       onChange={(e) =>
                         setFiles(
                           e.target.files ? Array.from(e.target.files) : []
