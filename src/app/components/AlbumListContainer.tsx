@@ -4,6 +4,7 @@ import { Album } from "../types/albumTypes";
 import { useState, useEffect } from "react";
 import AlbumControls from "./AlbumControls";
 import AlbumGrid from "./AlbumGrid";
+import BackToTopButton from "../shared/buttons/BackToTopButton";
 
 const AlbumListContainer = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -107,6 +108,7 @@ const AlbumListContainer = () => {
         deleteAllAlbums={deleteAllAlbums}
       />
       <AlbumGrid albums={albums} setAlbums={setAlbums} />
+      <BackToTopButton />
     </div>
   );
 };
