@@ -42,7 +42,8 @@ SORT-PHOTOS/
 │   │   ├── shared/ - Переиспользуемые компоненты
 │   │   │   └── buttons/
 │   │   │       ├── CyberButton.tsx
-│   │   │       └── cyber-button.css
+│   │   │       ├── cyber-button.css
+│   │   │       └── BackToTopButton.tsx
 │   │   │
 │   │   └── components/ - Компоненты главной странице (списка альбомов)
 │   │       ├── AlbumControls.tsx
