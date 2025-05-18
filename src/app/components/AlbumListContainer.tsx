@@ -8,7 +8,6 @@ import BackToTopButton from "../shared/buttons/BackToTopButton";
 
 const AlbumListContainer = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
-  const [newAlbumName, setNewAlbumName] = useState("");
   const [loading, setLoading] = useState(false);
   const [albumCount, setAlbumCount] = useState(0);
   const [photoCount, setPhotoCount] = useState(0);
@@ -50,17 +49,21 @@ const AlbumListContainer = () => {
     }
   }
 
-  async function createAlbum() {
-    if (!newAlbumName.trim()) return;
+  async function createAlbum({
+    name,
+    description,
+  }: {
+    name: string;
+    description: string;
+  }) {
     setLoading(true);
     try {
       const res = await fetch("/api/albums/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newAlbumName }),
+        body: JSON.stringify({ name, description }),
       });
       if (res.ok) {
-        setNewAlbumName("");
         await Promise.all([fetchAlbums(), fetchCounts()]);
       }
     } catch (error) {
@@ -99,8 +102,6 @@ const AlbumListContainer = () => {
   return (
     <div css={styles.containerStyle}>
       <AlbumControls
-        newAlbumName={newAlbumName}
-        setNewAlbumName={setNewAlbumName}
         loading={loading}
         albumCount={albumCount}
         photoCount={photoCount}
@@ -132,5 +133,6 @@ const styles = {
     boxShadow: "0 0 30px rgba(0, 0, 0, 0.6)",
     border: "1px solid rgba(21, 133, 208, 0.94)",
     color: "white",
+    position: "relative",
   }),
 };

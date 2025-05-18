@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
-    const { name } = await request.json();
+    const { name, description } = await request.json();
     if (!name || typeof name !== "string") {
       return NextResponse.json(
         { error: "Имя альбома обязательно" },
@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
       return prisma.album.create({
         data: {
           name,
+          description: description || null,
           order: 0,
         },
       });

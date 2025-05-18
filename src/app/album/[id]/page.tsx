@@ -23,7 +23,10 @@ import CyberButton from "@/app/shared/buttons/CyberButton";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
-type AlbumForViewPhotos = Pick<Album, "id" | "name" | "photoCount">;
+type AlbumForViewPhotos = Pick<
+  Album,
+  "id" | "name" | "photoCount" | "description"
+>;
 
 // Утилита для преобразования Data URL в File
 function dataURLtoFile(dataurl: string, filename: string): File {
@@ -600,6 +603,13 @@ const AlbumPageClient = () => {
                     </div>
                   </div>
 
+                  {/* Описание альбома */}
+                  <div css={style.descriptionContainer}>
+                    <span css={style.descriptionText}>
+                      {album.description || ""}
+                    </span>
+                  </div>
+
                   <div css={style.uploadSection}>
                     <input
                       type="file"
@@ -754,6 +764,23 @@ const style = {
       zIndex: -1,
       animation: "neonBorder 3s infinite linear",
     },
+  }),
+  descriptionContainer: css({
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    marginTop: "1rem",
+    width: "40%",
+    textAlign: "left",
+    overflow: "hidden",
+    overflowWrap: "anywhere", // Современный аналог break-word
+    wordBreak: "break-all", // Переносит текст в любом месте
+  }),
+  descriptionText: css({
+    color: "white",
+    fontSize: "1.2rem",
+    lineHeight: "1.5",
+    opacity: 0.9,
   }),
   navigationItem: css({
     display: "flex",

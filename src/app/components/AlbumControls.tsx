@@ -1,25 +1,35 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
+import { useState } from "react";
 
 interface AlbumControlsProps {
-  newAlbumName: string;
-  setNewAlbumName: (name: string) => void;
   loading: boolean;
   albumCount: number;
   photoCount: number;
-  createAlbum: () => Promise<void>;
+  createAlbum: (data: { name: string; description: string }) => Promise<void>;
   deleteAllAlbums: () => Promise<void>;
 }
 
 const AlbumControls = ({
-  newAlbumName,
-  setNewAlbumName,
   loading,
   albumCount,
   photoCount,
   createAlbum,
   deleteAllAlbums,
 }: AlbumControlsProps) => {
+  const [newAlbumName, setNewAlbumName] = useState("");
+  const [newAlbumDescription, setNewAlbumDescription] = useState("");
+
+  const handleCreateAlbum = async () => {
+    if (!newAlbumName.trim()) return;
+    await createAlbum({ name: newAlbumName, description: newAlbumDescription });
+    resetLocaleState();
+  };
+
+  const resetLocaleState = () => {
+    setNewAlbumName(""), setNewAlbumDescription("");
+  };
+
   return (
     <>
       <div css={styles.headerStyle}>
@@ -37,17 +47,26 @@ const AlbumControls = ({
           value={newAlbumName}
           onChange={(e) => setNewAlbumName(e.target.value)}
         />
+        <input
+          css={styles.inputStyle}
+          type="text"
+          placeholder="Описание альбома"
+          value={newAlbumDescription}
+          onChange={(e) => setNewAlbumDescription(e.target.value)}
+        />
         <button
           css={styles.buttonStyle}
-          onClick={createAlbum}
-          disabled={loading}
+          onClick={handleCreateAlbum}
+          disabled={loading || !newAlbumName.trim()}
         >
           {loading ? "Создание..." : "Создать"}
         </button>
         <button
           css={styles.deleteButtonStyle}
-          onClick={deleteAllAlbums}
-          disabled={loading}
+          onClick={() => {
+            deleteAllAlbums(), resetLocaleState();
+          }}
+          disabled={loading || albumCount === 0}
         >
           {loading ? "Удаление..." : "Удалить все"}
         </button>
