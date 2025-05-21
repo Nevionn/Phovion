@@ -25,6 +25,7 @@ export async function GET(request: Request, { params }: Context) {
       return NextResponse.json({ error: "Альбом не найден" }, { status: 404 });
     }
 
+    // Возвращаем альбом с полем description
     return NextResponse.json(album);
   } catch (error) {
     console.error("Ошибка при получении альбома:", error);
@@ -70,13 +71,13 @@ export async function DELETE(req: NextRequest, { params }: Context) {
   }
 }
 
-// Переименование альбома по ID
+// Переименование альбома по ID и обновление описания
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const { name } = await request.json();
+  const { name, description } = await request.json();
 
   if (!id || !name) {
     return NextResponse.json(
@@ -96,7 +97,10 @@ export async function PUT(
 
     const updatedAlbum = await prisma.album.update({
       where: { id: albumId },
-      data: { name },
+      data: {
+        name,
+        description,
+      },
       include: { photos: true },
     });
 

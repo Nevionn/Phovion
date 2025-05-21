@@ -1,25 +1,25 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
+import { useState } from "react";
+import CreateAlbumModal from "./modals/CreateAlbumModal";
 
 interface AlbumControlsProps {
-  newAlbumName: string;
-  setNewAlbumName: (name: string) => void;
   loading: boolean;
   albumCount: number;
   photoCount: number;
-  createAlbum: () => Promise<void>;
+  createAlbum: (data: { name: string; description: string }) => Promise<void>;
   deleteAllAlbums: () => Promise<void>;
 }
 
-const AlbumControls = ({
-  newAlbumName,
-  setNewAlbumName,
+const AlbumsControls = ({
   loading,
   albumCount,
   photoCount,
   createAlbum,
   deleteAllAlbums,
 }: AlbumControlsProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
       <div css={styles.headerStyle}>
@@ -27,43 +27,43 @@ const AlbumControls = ({
           Альбомы
           <br /> альбомов: {albumCount} фотографий: {photoCount}
         </h1>
-      </div>
-
-      <div css={styles.createAlbumStyle}>
-        <input
-          css={styles.inputStyle}
-          type="text"
-          placeholder="Название альбома"
-          value={newAlbumName}
-          onChange={(e) => setNewAlbumName(e.target.value)}
-        />
         <button
-          css={styles.buttonStyle}
-          onClick={createAlbum}
+          css={styles.openModalButton}
+          onClick={() => setIsModalOpen(true)}
           disabled={loading}
         >
-          {loading ? "Создание..." : "Создать"}
+          Создать альбом
         </button>
+      </div>
+      <div css={styles.createAlbumStyle}>
         <button
           css={styles.deleteButtonStyle}
-          onClick={deleteAllAlbums}
-          disabled={loading}
+          onClick={() => deleteAllAlbums()}
+          disabled={loading || albumCount === 0}
         >
           {loading ? "Удаление..." : "Удалить все"}
         </button>
       </div>
+      <CreateAlbumModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        createAlbum={createAlbum}
+        loading={loading}
+      />
     </>
   );
 };
 
-export default AlbumControls;
+export default AlbumsControls;
 
 const styles = {
   headerStyle: css({
     display: "flex",
+    justifyContent: "space-between",
     alignItems: "center",
     gap: "1rem",
     marginBottom: "1.5rem",
+    backgroundColor: "grey",
   }),
   titleStyle: css({
     fontSize: "2rem",
@@ -74,13 +74,7 @@ const styles = {
     gap: "1rem",
     marginBottom: "2rem",
   }),
-  inputStyle: css({
-    padding: "0.5rem",
-    border: "2px solid purple",
-    borderRadius: "8px",
-    fontSize: "1rem",
-  }),
-  buttonStyle: css({
+  openModalButton: css({
     padding: "0.5rem 1rem",
     backgroundImage: "linear-gradient(211deg, #846392 0%, #604385 100%)",
     color: "white",

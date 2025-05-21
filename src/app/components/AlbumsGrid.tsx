@@ -78,12 +78,12 @@ const SortableAlbum = ({ album, onClick }: SortableAlbumProps) => {
   );
 };
 
-interface AlbumGridProps {
+interface AlbumsGridProps {
   albums: Album[];
   setAlbums: React.Dispatch<React.SetStateAction<Album[]>>;
 }
 
-const AlbumGrid = ({ albums, setAlbums }: AlbumGridProps) => {
+const AlbumsGrid = ({ albums, setAlbums }: AlbumsGridProps) => {
   const router = useRouter();
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -138,7 +138,7 @@ const AlbumGrid = ({ albums, setAlbums }: AlbumGridProps) => {
   );
 };
 
-export default AlbumGrid;
+export default AlbumsGrid;
 
 const styles = {
   albumListStyle: css({

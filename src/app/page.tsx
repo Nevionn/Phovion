@@ -1,12 +1,12 @@
 /** @jsxImportSource @emotion/react */
 "use client";
 import "./globals.css";
-import AlbumListContainer from "./components/AlbumListContainer";
+import AlbumsListContainer from "./components/AlbumsListContainer";
 
 export default function Home() {
   return (
     <main>
-      <AlbumListContainer />
+      <AlbumsListContainer />
     </main>
   );
 }
