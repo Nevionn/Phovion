@@ -2,11 +2,11 @@
 import { css } from "@emotion/react";
 import { Album } from "../types/albumTypes";
 import { useState, useEffect } from "react";
-import AlbumControls from "./AlbumControls";
-import AlbumGrid from "./AlbumGrid";
+import AlbumsControls from "./AlbumsInformation";
+import AlbumsGrid from "./AlbumsGrid";
 import BackToTopButton from "../shared/buttons/BackToTopButton";
 
-const AlbumListContainer = () => {
+const AlbumsListContainer = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(false);
   const [albumCount, setAlbumCount] = useState(0);
@@ -101,20 +101,20 @@ const AlbumListContainer = () => {
 
   return (
     <div css={styles.containerStyle}>
-      <AlbumControls
+      <AlbumsControls
         loading={loading}
         albumCount={albumCount}
         photoCount={photoCount}
         createAlbum={createAlbum}
         deleteAllAlbums={deleteAllAlbums}
       />
-      <AlbumGrid albums={albums} setAlbums={setAlbums} />
+      <AlbumsGrid albums={albums} setAlbums={setAlbums} />
       <BackToTopButton />
     </div>
   );
 };
 
-export default AlbumListContainer;
+export default AlbumsListContainer;
 
 const styles = {
   containerStyle: css({

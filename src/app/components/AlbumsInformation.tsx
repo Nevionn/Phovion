@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { useState } from "react";
+import CreateAlbumModal from "./modals/CreateAlbumModal";
 
 interface AlbumControlsProps {
   loading: boolean;
@@ -10,25 +11,14 @@ interface AlbumControlsProps {
   deleteAllAlbums: () => Promise<void>;
 }
 
-const AlbumControls = ({
+const AlbumsControls = ({
   loading,
   albumCount,
   photoCount,
   createAlbum,
   deleteAllAlbums,
 }: AlbumControlsProps) => {
-  const [newAlbumName, setNewAlbumName] = useState("");
-  const [newAlbumDescription, setNewAlbumDescription] = useState("");
-
-  const handleCreateAlbum = async () => {
-    if (!newAlbumName.trim()) return;
-    await createAlbum({ name: newAlbumName, description: newAlbumDescription });
-    resetLocaleState();
-  };
-
-  const resetLocaleState = () => {
-    setNewAlbumName(""), setNewAlbumDescription("");
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
@@ -37,52 +27,43 @@ const AlbumControls = ({
           Альбомы
           <br /> альбомов: {albumCount} фотографий: {photoCount}
         </h1>
-      </div>
-
-      <div css={styles.createAlbumStyle}>
-        <input
-          css={styles.inputStyle}
-          type="text"
-          placeholder="Название альбома"
-          value={newAlbumName}
-          onChange={(e) => setNewAlbumName(e.target.value)}
-        />
-        <input
-          css={styles.inputStyle}
-          type="text"
-          placeholder="Описание альбома"
-          value={newAlbumDescription}
-          onChange={(e) => setNewAlbumDescription(e.target.value)}
-        />
         <button
-          css={styles.buttonStyle}
-          onClick={handleCreateAlbum}
-          disabled={loading || !newAlbumName.trim()}
+          css={styles.openModalButton}
+          onClick={() => setIsModalOpen(true)}
+          disabled={loading}
         >
-          {loading ? "Создание..." : "Создать"}
+          Создать альбом
         </button>
+      </div>
+      <div css={styles.createAlbumStyle}>
         <button
           css={styles.deleteButtonStyle}
-          onClick={() => {
-            deleteAllAlbums(), resetLocaleState();
-          }}
+          onClick={() => deleteAllAlbums()}
           disabled={loading || albumCount === 0}
         >
           {loading ? "Удаление..." : "Удалить все"}
         </button>
       </div>
+      <CreateAlbumModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        createAlbum={createAlbum}
+        loading={loading}
+      />
     </>
   );
 };
 
-export default AlbumControls;
+export default AlbumsControls;
 
 const styles = {
   headerStyle: css({
     display: "flex",
+    justifyContent: "space-between",
     alignItems: "center",
     gap: "1rem",
     marginBottom: "1.5rem",
+    backgroundColor: "grey",
   }),
   titleStyle: css({
     fontSize: "2rem",
@@ -93,13 +74,7 @@ const styles = {
     gap: "1rem",
     marginBottom: "2rem",
   }),
-  inputStyle: css({
-    padding: "0.5rem",
-    border: "2px solid purple",
-    borderRadius: "8px",
-    fontSize: "1rem",
-  }),
-  buttonStyle: css({
+  openModalButton: css({
     padding: "0.5rem 1rem",
     backgroundImage: "linear-gradient(211deg, #846392 0%, #604385 100%)",
     color: "white",
