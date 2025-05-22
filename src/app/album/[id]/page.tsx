@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Photo } from "./types/photoTypes";
 import { Album } from "@/app/types/albumTypes";
+import CreateAlbumModal from "@/app/components/modals/CreateAlbumModal";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import {
   SortableContext,

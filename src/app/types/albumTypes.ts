@@ -5,3 +5,5 @@ export type Album = {
   avatar: string | null;
   photoCount: number | null;
 };
+
+export type AlbumNaming = Pick<Album, "name" | "description">;

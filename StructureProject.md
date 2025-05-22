@@ -46,9 +46,9 @@ SORT-PHOTOS/
 │   │   │       └── BackToTopButton.tsx
 │   │   │
 │   │   └── components/ - Компоненты главной странице (списка альбомов)
-│   │       ├── AlbumControls.tsx
-│   │       ├── AlbumGrid.tsx
-│   │       └── AlbumListContainer.tsx
+│   │       ├── AlbumsControls.tsx
+│   │       ├── AlbumsGrid.tsx
+│   │       └── AlbumsListContainer.tsx
 ├── types
 │   └── albumTypes.ts
 ├── favicon.ico

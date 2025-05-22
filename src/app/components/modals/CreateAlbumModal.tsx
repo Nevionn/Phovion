@@ -1,17 +1,20 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { useState } from "react";
+import { AlbumNaming } from "@/app/types/albumTypes";
 
 interface CreateAlbumModalProps {
   isOpen: boolean;
+  modalName: string;
   onClose: () => void;
-  createAlbum: (data: { name: string; description: string }) => Promise<void>;
+  createAlbum: (data: AlbumNaming) => Promise<void>;
   loading: boolean;
 }
 
 const CreateAlbumModal = ({
   isOpen,
   onClose,
+  modalName,
   createAlbum,
   loading,
 }: CreateAlbumModalProps) => {
@@ -34,7 +37,7 @@ const CreateAlbumModal = ({
   return (
     <div css={styles.modalOverlay}>
       <div css={styles.modalContent}>
-        <h2 css={styles.modalTitle}>Создать новый альбом</h2>
+        <h2 css={styles.modalTitle}>{modalName}</h2>
         <input
           css={styles.inputStyle}
           type="text"
@@ -100,10 +103,10 @@ const styles = {
     margin: 0,
   }),
   inputStyle: css({
-    padding: "0.5rem",
     border: "2px solid rgb(12, 117, 236)",
     borderRadius: "8px",
     fontSize: "1rem",
+    height: "34px",
     width: "100%",
     backgroundColor: "rgba(52, 93, 139, 0.4)", // #2a2a2a"
     color: "white",
@@ -114,7 +117,6 @@ const styles = {
     },
   }),
   textareaStyle: css({
-    padding: "0.75rem",
     border: "2px solid rgb(12, 117, 236)",
     borderRadius: "8px",
     fontSize: "1rem",
