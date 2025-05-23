@@ -12,6 +12,9 @@ SORT-PHOTOS/
 ├── src/
 │   ├── app/
 │   │   ├── album\[id]/
+│   │   │   ├── components/ - Компоненты страницы выбранного альбома
+│   │   │   │   └── modals/
+│   │   │   │       └── RenameAlbumModal.tsx
 │   │   │   ├── type/
 │   │   │   │   └── photoTypes.ts
 │   │   │   └── page.tsx - Страница выбранного альбома (галерея фотографий)
@@ -39,16 +42,18 @@ SORT-PHOTOS/
 │   │   │   └── proxy/
 │   │   │       └── route.ts - Эндпоинт для получения файла от внешнего ресурса, для дальнейшей обработки (межвкладочный трансфер), метод GET
 │   │   │
-│   │   ├── shared/ - Переиспользуемые компоненты
+│   │   ├── shared/ - Переиспользуемые глобальные компоненты
 │   │   │   └── buttons/
 │   │   │       ├── CyberButton.tsx
 │   │   │       ├── cyber-button.css
 │   │   │       └── BackToTopButton.tsx
 │   │   │
-│   │   └── components/ - Компоненты главной странице (списка альбомов)
+│   │   └── components/ - Компоненты главной страницы (списка альбомов)
 │   │       ├── AlbumsControls.tsx
 │   │       ├── AlbumsGrid.tsx
-│   │       └── AlbumsListContainer.tsx
+│   │       ├── AlbumsListContainer.tsx
+│   │       └── modals/
+│   │           └── CreateAlbumModal.tsx
 ├── types
 │   └── albumTypes.ts
 ├── favicon.ico

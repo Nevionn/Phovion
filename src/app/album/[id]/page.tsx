@@ -21,7 +21,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import CyberButton from "@/app/shared/buttons/CyberButton";
-import RenameAlbumModal from "@/app/components/modals/RenameAlbumModal";
+import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
