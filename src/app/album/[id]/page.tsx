@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 "use client";
-import { css, CacheProvider, keyframes } from "@emotion/react";
+import { css, CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import "../../shared/buttons/cyber-button.css";
 import { useEffect, useState, useMemo, useRef, Suspense } from "react";
@@ -9,7 +9,6 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Photo } from "./types/photoTypes";
 import { Album, AlbumNaming } from "@/app/types/albumTypes";
-import CreateAlbumModal from "@/app/components/modals/CreateAlbumModal";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -166,8 +165,13 @@ const AlbumPageClient = () => {
   }
 
   async function uploadPhotos() {
-    if (files.length === 0) return;
+    if (files.length === 0) {
+      console.log("Нет файлов для загрузки.");
+      return;
+    }
     setUploading(true);
+
+    console.log("Начинаем загрузку файлов:", files);
 
     const form = new FormData();
     form.append("albumId", String(id));
@@ -197,12 +201,12 @@ const AlbumPageClient = () => {
       if (res.ok) {
         const newPhotos: Photo[] = await res.json();
         console.log("Успешно загружено:", newPhotos);
-        setFiles([]); // Очищаем буфер
+        setFiles([]); // Очищаем буфер после успешной загрузки
         setPhotos((prev) => [...prev, ...newPhotos]); // Обновляем список фотографий
 
         // Сбрасываем значение инпута
         if (fileInputRef.current) {
-          fileInputRef.current.value = ""; // Сбрасываем значение
+          fileInputRef.current.value = "";
           console.log("ИНПУТ СБРОШЕН");
         }
 
@@ -360,6 +364,8 @@ const AlbumPageClient = () => {
     if (!isLoading) setIsDraggingOver(false);
   };
 
+  const [triggerUpload, setTriggerUpload] = useState(false);
+
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (!isLoading) {
@@ -385,7 +391,7 @@ const AlbumPageClient = () => {
       // 2. Проверяем URL (перетаскивание из вкладки/браузера)
       const uriList = e.dataTransfer.getData("text/uri-list");
       const plainText = e.dataTransfer.getData("text/plain");
-      const url = uriList || plainText; // Предпочитаем uri-list, но берём plainText, если uri-list пустой
+      const url = uriList || plainText;
       if (url && url.startsWith("http") && !url.startsWith("data:image/")) {
         console.log("Найден URL:", url);
         try {
@@ -421,17 +427,27 @@ const AlbumPageClient = () => {
 
       // Преобразуем Set в массив
       const finalFiles: File[] = Array.from(droppedFiles);
-      console.log("Итоговый список файлов:", finalFiles);
+      console.log("Итоговый список файлов для загрузки:", finalFiles);
 
-      // Если есть файлы, добавляем их в состояние и вызываем загрузку
+      // Очищаем и устанавливаем новые файлы
+      setFiles(finalFiles);
+      console.log("Текущее состояние files перед триггером:", files);
       if (finalFiles.length > 0) {
-        setFiles(finalFiles);
-        setTimeout(uploadPhotos, 0); // Даём React обновить состояние
+        setTriggerUpload(true); // Активируем триггер для загрузки
       } else {
         alert("Перетащите изображение или выберите файлы!");
       }
     }
   };
+
+  // useEffect для вызова uploadPhotos после обновления состояния
+  useEffect(() => {
+    if (triggerUpload && files.length > 0) {
+      console.log("Запускаем uploadPhotos с файлами:", files);
+      uploadPhotos();
+      setTriggerUpload(false); // Сбрасываем триггер после загрузки
+    }
+  }, [triggerUpload, files]);
 
   const photoIds = useMemo(() => photos.map((photo) => photo.id), [photos]);
 
