@@ -8,7 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Photo } from "./types/photoTypes";
-import { Album } from "@/app/types/albumTypes";
+import { Album, AlbumNaming } from "@/app/types/albumTypes";
 import CreateAlbumModal from "@/app/components/modals/CreateAlbumModal";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import {
@@ -21,6 +21,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import CyberButton from "@/app/shared/buttons/CyberButton";
+import RenameAlbumModal from "@/app/components/modals/RenameAlbumModal";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
@@ -114,7 +115,6 @@ const AlbumPageClient = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [showEdit, setShowEdit] = useState(false);
-  const [newName, setNewName] = useState("");
   const [showDanger, setShowDanger] = useState(false);
 
   // Ссылка на инпут для сброса значения
@@ -147,7 +147,6 @@ const AlbumPageClient = () => {
         console.log("Количество фотографий:", photoCount);
 
         setAlbum({ ...alb, photoCount });
-        setNewName(alb.name || "");
         setPhotos(p || []);
       } catch (error) {
         console.error("Ошибка загрузки данных:", error);
@@ -231,19 +230,22 @@ const AlbumPageClient = () => {
     }
   }
 
-  async function renameAlbum() {
-    if (!newName || !album?.id) return;
+  async function renameAlbum(data: AlbumNaming) {
+    if (!data.name || !album?.id) return;
 
     try {
-      const res = await fetch(`/api/albums/${id}`, {
+      const res = await fetch(`/api/albums/${album.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newName }),
+        body: JSON.stringify({
+          name: data.name,
+          description: data.description,
+        }),
       });
 
       if (res.ok) {
         const updatedAlbum = await res.json();
-        setAlbum({ ...updatedAlbum, photoCount: album.photoCount }); // Сохраняем photoCount
+        setAlbum({ ...updatedAlbum, photoCount: album.photoCount });
         setShowEdit(false);
       } else {
         throw new Error("Ошибка переименования альбома");
@@ -486,78 +488,10 @@ const AlbumPageClient = () => {
                           label="Редактировать"
                           hue={200}
                           onClick={() => {
-                            if (showEdit && album?.name) {
-                              setNewName(album.name);
-                            }
                             setShowEdit(!showEdit);
                           }}
                         />
-                        {showEdit && (
-                          <div
-                            css={{
-                              position: "absolute",
-                              top: "100%",
-                              left: -20,
-                              right: -20,
-                              backgroundColor: "#17688B",
-                              border: "dashed rgb(55, 182, 232)",
-                              marginTop: 10,
-                              padding: 10,
-                              borderRadius: 8,
-                              zIndex: 10,
-                              display: "flex",
-                              flexDirection: "column",
-                              alignItems: "center",
-                            }}
-                          >
-                            <span>Переименовать альбом</span>
-                            <input
-                              type="text"
-                              placeholder={"новое название"}
-                              value={newName}
-                              onChange={(e) => setNewName(e.target.value)}
-                              css={{
-                                marginTop: 10,
-                                width: "100%",
-                                backgroundColor: "#205788",
-                                color: "white",
-                                border: newName
-                                  ? "2px solid rgb(19, 171, 113)"
-                                  : "2px solid rgb(228, 13, 13)",
-                                borderRadius: 10,
-                              }}
-                            />
-                            <button
-                              disabled={
-                                !newName ||
-                                newName.trim() === album?.name.trim()
-                              }
-                              css={{
-                                marginTop: 10,
-                                borderRadius: 10,
-                                color: "white",
-                                fontWeight: "bold",
-                                background:
-                                  "linear-gradient(45deg,rgb(0, 255, 153), #00b8d4)",
-                                "&:hover": {
-                                  background:
-                                    "linear-gradient(45deg, #00b8d4, #00ffea)",
-                                  boxShadow: "0 0 15px rgba(0, 255, 234, 0.8)",
-                                },
-                                "&:disabled": {
-                                  background: "rgba(50, 50, 50, 0.7)",
-                                  boxShadow: "none",
-                                  cursor: "not-allowed",
-                                },
-                              }}
-                              onClick={renameAlbum}
-                            >
-                              Применить
-                            </button>
-                          </div>
-                        )}
                       </div>
-
                       {/* Блок Опасная зона */}
                       <div css={{ position: "relative" }}>
                         <CyberButton
@@ -673,6 +607,14 @@ const AlbumPageClient = () => {
             </div>
           )}
         </div>
+        <RenameAlbumModal
+          isOpen={showEdit}
+          currentName={album?.name || ""}
+          currentDescription={album?.description || null}
+          renameAlbum={renameAlbum}
+          onClose={() => setShowEdit(false)}
+          loading={false}
+        />
       </main>
     </CacheProvider>
   );

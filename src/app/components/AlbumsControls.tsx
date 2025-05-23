@@ -47,7 +47,6 @@ const AlbumsControls = ({
       </div>
       <CreateAlbumModal
         isOpen={isModalOpen}
-        modalName={"Создать новый альбом"}
         onClose={() => setIsModalOpen(false)}
         createAlbum={createAlbum}
         loading={loading}
