@@ -34,7 +34,7 @@ const styles = {
   backToTopStyle: css({
     position: "fixed",
     bottom: "100px",
-    right: "420px",
+    right: "10px",
     width: "50px",
     height: "50px",
     backgroundImage: "linear-gradient(211deg, #135bc7 0%, #604385 100%)",
@@ -45,6 +45,7 @@ const styles = {
     fontSize: "1.5rem",
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
     transition: "opacity 0.3s, transform 0.3s",
+    zIndex: 1000,
     "&:hover": {
       transform: "scale(1.1)",
       filter: "brightness(1.15)",

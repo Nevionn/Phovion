@@ -22,6 +22,7 @@ import { SlSizeFullscreen } from "react-icons/sl";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import CyberButton from "@/app/shared/buttons/CyberButton";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
+import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
@@ -615,6 +616,7 @@ const AlbumPageClient = () => {
           onClose={() => setShowEdit(false)}
           loading={false}
         />
+        <BackToTopButton />
       </main>
     </CacheProvider>
   );
