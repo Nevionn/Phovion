@@ -8,7 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Photo } from "./types/photoTypes";
-import { Album, AlbumNaming } from "@/app/types/albumTypes";
+import { Album, AlbumNaming, AlbumForViewPhotos } from "@/app/types/albumTypes";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -22,13 +22,11 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import CyberButton from "@/app/shared/buttons/CyberButton";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
 import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
+import Header from "./components/Header";
+import Description from "./components/Description";
+import UploadSection from "./components/UploadSection";
 
 const emotionCache = createCache({ key: "css", prepend: true });
-
-type AlbumForViewPhotos = Pick<
-  Album,
-  "id" | "name" | "photoCount" | "description"
->;
 
 // Утилита для преобразования Data URL в File
 function dataURLtoFile(dataurl: string, filename: string): File {
@@ -445,7 +443,7 @@ const AlbumPageClient = () => {
     if (triggerUpload && files.length > 0) {
       console.log("Запускаем uploadPhotos с файлами:", files);
       uploadPhotos();
-      setTriggerUpload(false); // Сбрасываем триггер после загрузки
+      setTriggerUpload(false);
     }
   }, [triggerUpload, files]);
 
@@ -474,122 +472,23 @@ const AlbumPageClient = () => {
             <>
               <div css={style.header}>
                 <div css={style.headerContainer}>
-                  <div css={style.navigationItem}>
-                    {/* Левая часть — Заголовок */}
-                    <div>
-                      <p css={style.title}>
-                        <Link href="/" css={style.link}>
-                          альбомы
-                        </Link>
-                        <span>&nbsp;&gt;&nbsp;</span>
-                        <span css={style.albumNameNavItem}>
-                          {album.name}
-                          <span css={style.photoCount}>
-                            &nbsp;{album.photoCount}
-                          </span>
-                        </span>
-                      </p>
-                    </div>
-                    {/* Правая часть — Кнопки */}
-                    <div
-                      css={{
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: "3.5rem",
-                        position: "relative",
-                      }}
-                    >
-                      {/* Блок Редактировать */}
-                      <div css={{ position: "relative" }}>
-                        <CyberButton
-                          label="Редактировать"
-                          hue={200}
-                          onClick={() => {
-                            setShowEdit(!showEdit);
-                          }}
-                        />
-                      </div>
-                      {/* Блок Опасная зона */}
-                      <div css={{ position: "relative" }}>
-                        <CyberButton
-                          label="Опасная зона"
-                          hue={0}
-                          onClick={() => setShowDanger(!showDanger)}
-                        />
-                        {showDanger && (
-                          <div
-                            css={{
-                              position: "absolute",
-                              top: "100%",
-                              left: 0,
-                              marginTop: 10,
-                              padding: 8,
-                              backgroundColor: "rgba(212, 36, 65, 0.5)",
-                              border: "dashed #E8374D",
-                              borderRadius: 8,
-                              zIndex: 10,
-                            }}
-                          >
-                            <button
-                              css={{
-                                color: "white",
-                                backgroundColor: "#2385B7",
-                                "&:hover": {
-                                  backgroundColor: "#E14B64",
-                                },
-                              }}
-                              onClick={deleteAlbum}
-                            >
-                              Удалить альбом
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Кнопка Скачать */}
-                      <CyberButton
-                        label="Скачать альбом"
-                        hue={270}
-                        onClick={() => alert("Скачать альбом")}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Описание альбома */}
-                  <div css={style.descriptionContainer}>
-                    <span css={style.descriptionText}>
-                      {album.description || ""}
-                    </span>
-                  </div>
-
-                  <div css={style.uploadSection}>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      ref={fileInputRef}
-                      onChange={(e) =>
-                        setFiles(
-                          e.target.files ? Array.from(e.target.files) : []
-                        )
-                      }
-                      css={style.uploadInput}
-                    />
-                    <button
-                      css={style.uploadButton}
-                      onClick={uploadPhotos}
-                      disabled={files.length === 0 || uploading}
-                    >
-                      {uploading
-                        ? "Загрузка..."
-                        : files.length > 0
-                        ? `Загрузить ${files.length} фото`
-                        : "Загрузить фото"}
-                    </button>
-                  </div>
+                  <Header
+                    album={album}
+                    onEditClick={() => setShowEdit(!showEdit)}
+                    onDangerClick={() => setShowDanger(!showDanger)}
+                    onDownloadClick={() => alert("Скачать альбом")}
+                    deleteAlbum={deleteAlbum}
+                    showDanger={showDanger}
+                  />
+                  <Description description={album.description} />
+                  <UploadSection
+                    files={files}
+                    uploading={uploading}
+                    uploadPhotos={uploadPhotos}
+                    setFiles={setFiles}
+                  />
                 </div>
               </div>
-
               {photos.length === 0 ? (
                 <p css={style.loadingText}>
                   Перетащите изображения сюда или выберите файлы
