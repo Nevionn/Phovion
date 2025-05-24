@@ -2,12 +2,13 @@
 import { css } from "@emotion/react";
 import { useState } from "react";
 import CreateAlbumModal from "./modals/CreateAlbumModal";
+import { AlbumNaming } from "../types/albumTypes";
 
 interface AlbumControlsProps {
   loading: boolean;
   albumCount: number;
   photoCount: number;
-  createAlbum: (data: { name: string; description: string }) => Promise<void>;
+  createAlbum: (data: AlbumNaming) => Promise<void>;
   deleteAllAlbums: () => Promise<void>;
 }
 

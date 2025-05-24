@@ -1,33 +1,63 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AlbumNaming } from "@/app/types/albumTypes";
 
-interface CreateAlbumModalProps {
+interface RenameAlbumModalProps {
   isOpen: boolean;
   onClose: () => void;
-  createAlbum: (data: AlbumNaming) => Promise<void>;
+  currentName: string;
+  currentDescription: string | null;
+  renameAlbum: (data: AlbumNaming) => Promise<void>;
   loading?: boolean;
 }
 
-const CreateAlbumModal = ({
+const RenameAlbumModal = ({
   isOpen,
   onClose,
-  createAlbum,
+  currentName,
+  currentDescription,
+  renameAlbum,
   loading,
-}: CreateAlbumModalProps) => {
+}: RenameAlbumModalProps) => {
   const [newAlbumName, setNewAlbumName] = useState("");
   const [newAlbumDescription, setNewAlbumDescription] = useState("");
 
-  const handleCreateAlbum = async () => {
+  useEffect(() => {
+    if (isOpen) {
+      setNewAlbumName(currentName);
+      setNewAlbumDescription(currentDescription || "");
+    }
+  }, [isOpen, currentName, currentDescription]);
+
+  const hasChanges =
+    newAlbumName.trim() !== currentName ||
+    (newAlbumDescription.trim() === "" && currentDescription !== null) ||
+    newAlbumDescription.trim() !== (currentDescription || "");
+
+  const handleRenameAlbum = async () => {
     if (!newAlbumName.trim()) return;
-    await createAlbum({ name: newAlbumName, description: newAlbumDescription });
-    resetLocaleState();
-    onClose();
+
+    const data: AlbumNaming = {
+      name: newAlbumName,
+      description:
+        newAlbumDescription.trim() === "" ? null : newAlbumDescription || null,
+    };
+
+    console.log("Новое название и описание:", data);
+
+    try {
+      await renameAlbum(data);
+      resetLocaleState();
+      onClose();
+    } catch (error) {
+      console.error("Ошибка переименования:", error);
+    }
   };
 
   const resetLocaleState = () => {
-    setNewAlbumName(""), setNewAlbumDescription("");
+    setNewAlbumName("");
+    setNewAlbumDescription("");
   };
 
   if (!isOpen) return null;
@@ -35,7 +65,7 @@ const CreateAlbumModal = ({
   return (
     <div css={styles.modalOverlay}>
       <div css={styles.modalContent}>
-        <h2 css={styles.modalTitle}>Создать новый альбом</h2>
+        <h2 css={styles.modalTitle}>Переименовать альбом</h2>
         <input
           css={styles.inputStyle}
           type="text"
@@ -52,15 +82,16 @@ const CreateAlbumModal = ({
         <div css={styles.buttonContainer}>
           <button
             css={styles.buttonStyle}
-            onClick={handleCreateAlbum}
-            disabled={loading || !newAlbumName.trim()}
+            onClick={handleRenameAlbum}
+            disabled={loading || !newAlbumName.trim() || !hasChanges}
           >
-            {loading ? "Создание..." : "Создать"}
+            {loading ? "Изменение..." : "Изменить"}
           </button>
           <button
             css={styles.closeButton}
             onClick={() => {
-              onClose(), resetLocaleState();
+              resetLocaleState();
+              onClose();
             }}
           >
             Закрыть
@@ -70,6 +101,8 @@ const CreateAlbumModal = ({
     </div>
   );
 };
+
+export default RenameAlbumModal;
 
 const styles = {
   modalOverlay: css({
@@ -85,7 +118,7 @@ const styles = {
     zIndex: 1000,
   }),
   modalContent: css({
-    backgroundColor: "rgb(20, 43, 92)", // 1a1a1a
+    backgroundColor: "rgb(20, 43, 92)",
     padding: "2rem",
     borderRadius: "8px",
     width: "90%",
@@ -98,6 +131,7 @@ const styles = {
   modalTitle: css({
     color: "white",
     fontSize: "1.5rem",
+    textAlign: "left",
     margin: 0,
   }),
   inputStyle: css({
@@ -106,7 +140,7 @@ const styles = {
     fontSize: "1rem",
     height: "34px",
     width: "100%",
-    backgroundColor: "rgba(52, 93, 139, 0.4)", // #2a2a2a"
+    backgroundColor: "rgba(52, 93, 139, 0.4)",
     color: "white",
     outline: "none",
     "&:focus": {
@@ -168,5 +202,3 @@ const styles = {
     },
   }),
 };
-
-export default CreateAlbumModal;

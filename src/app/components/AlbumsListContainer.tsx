@@ -2,7 +2,8 @@
 import { css } from "@emotion/react";
 import { Album } from "../types/albumTypes";
 import { useState, useEffect } from "react";
-import AlbumsControls from "./AlbumsInformation";
+import { AlbumNaming } from "../types/albumTypes";
+import AlbumsControls from "./AlbumsControls";
 import AlbumsGrid from "./AlbumsGrid";
 import BackToTopButton from "../shared/buttons/BackToTopButton";
 
@@ -49,13 +50,7 @@ const AlbumsListContainer = () => {
     }
   }
 
-  async function createAlbum({
-    name,
-    description,
-  }: {
-    name: string;
-    description: string;
-  }) {
+  async function createAlbum({ name, description }: AlbumNaming) {
     setLoading(true);
     try {
       const res = await fetch("/api/albums/create", {
