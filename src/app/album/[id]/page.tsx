@@ -6,9 +6,8 @@ import "../../shared/buttons/cyber-button.css";
 import { useEffect, useState, useMemo, useRef, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { Photo } from "./types/photoTypes";
-import { Album, AlbumNaming, AlbumForViewPhotos } from "@/app/types/albumTypes";
+import { AlbumNaming, AlbumForViewPhotos } from "@/app/types/albumTypes";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -19,7 +18,6 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import CyberButton from "@/app/shared/buttons/CyberButton";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
 import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
 import Header from "./components/Header";
@@ -625,63 +623,6 @@ const style = {
       animation: "neonBorder 3s infinite linear",
     },
   }),
-  descriptionContainer: css({
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    marginTop: "1rem",
-    width: "40%",
-    textAlign: "left",
-    overflow: "hidden",
-    overflowWrap: "anywhere", // Современный аналог break-word
-    wordBreak: "break-all", // Переносит текст в любом месте
-  }),
-  descriptionText: css({
-    color: "white",
-    fontSize: "1.2rem",
-    lineHeight: "1.5",
-    opacity: 0.9,
-  }),
-  navigationItem: css({
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  }),
-  title: css({
-    fontSize: "28px",
-    fontWeight: 700,
-    letterSpacing: "2px",
-    margin: 0,
-    "& > span:first-of-type": {
-      color: "white",
-    },
-    "& > span:last-of-type": {
-      color: "#00ffea",
-    },
-  }),
-  albumNameNavItem: css({
-    display: "inline-block",
-    maxWidth: "260px",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    verticalAlign: "bottom",
-  }),
-  photoCount: css({
-    color: "#99D6D1",
-    fontWeight: "lighter",
-    fontSize: 22,
-  }),
-  link: css({
-    color: "white",
-    textDecoration: "none",
-    transition: "all 0.3s",
-    "&:hover": {
-      color: "#00ffea",
-      textShadow: "0 0 10px rgba(0, 255, 234, 0.8)",
-    },
-  }),
   loadingText: css({
     color: "white",
     fontSize: 20,
@@ -691,55 +632,6 @@ const style = {
     transform: "translate(-50%, -50%)",
     zIndex: 3,
     pointerEvents: "none",
-  }),
-  uploadSection: css({
-    marginTop: "2rem",
-    display: "flex",
-    gap: "1rem",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "rgba(20, 20, 40, 0.7)",
-    padding: "0.5rem",
-    borderRadius: "8px",
-    border: "1px solid rgb(169, 31, 185)",
-    boxShadow: "0 0 10px rgba(255, 0, 255, 0.3)",
-  }),
-  uploadButton: css({
-    background: "linear-gradient(45deg, #00ffea, #00b8d4)",
-    color: "white",
-    padding: "0.5rem 1rem",
-    border: "none",
-    borderRadius: "8px",
-    fontSize: "1rem",
-    cursor: "pointer",
-    transition: "all 0.3s",
-    boxShadow: "0 0 10px rgba(0, 255, 234, 0.5)",
-    "&:hover": {
-      background: "linear-gradient(45deg, #00b8d4, #00ffea)",
-      boxShadow: "0 0 15px rgba(0, 255, 234, 0.8)",
-    },
-    "&:disabled": {
-      background: "rgba(50, 50, 50, 0.7)",
-      boxShadow: "none",
-      cursor: "not-allowed",
-    },
-  }),
-  uploadInput: css({
-    color: "#00ffea",
-    "&::file-selector-button": {
-      background: "linear-gradient(45deg, #00ffea, #00b8d4)",
-      border: "none",
-      padding: "0.5rem 1rem",
-      borderRadius: "8px",
-      color: "white",
-      cursor: "pointer",
-      transition: "all 0.3s",
-      boxShadow: "0 0 10px rgba(0, 255, 234, 0.5)",
-      "&:hover": {
-        background: "linear-gradient(45deg, #00b8d4, #00ffea)",
-        boxShadow: "0 0 15px rgba(0, 255, 234, 0.8)",
-      },
-    },
   }),
   photoGrid: css({
     display: "grid",

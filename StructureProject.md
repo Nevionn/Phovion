@@ -13,6 +13,9 @@ SORT-PHOTOS/
 │   ├── app/
 │   │   ├── album\[id]/
 │   │   │   ├── components/ - Компоненты страницы выбранного альбома
+│   │   │   │   ├── Description.tsx
+│   │   │   │   ├── Header.tsx
+│   │   │   │   ├── UploadSection.tsx
 │   │   │   │   └── modals/
 │   │   │   │       └── RenameAlbumModal.tsx
 │   │   │   ├── type/
