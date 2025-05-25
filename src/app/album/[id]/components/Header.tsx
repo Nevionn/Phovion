@@ -69,17 +69,30 @@ const style = {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    flexWrap: "wrap",
+    gap: "1rem",
+
+    "@media (max-width: 768px)": {
+      flexDirection: "column",
+      alignItems: "flex-start",
+    },
   }),
   title: css({
     fontSize: "28px",
     fontWeight: 700,
     letterSpacing: "2px",
     margin: 0,
+    wordBreak: "break-word",
+
     "& > span:first-of-type": {
       color: "white",
     },
     "& > span:last-of-type": {
       color: "#00ffea",
+    },
+
+    "@media (max-width: 768px)": {
+      fontSize: "22px",
     },
   }),
   albumNameNavItem: css({
@@ -89,11 +102,20 @@ const style = {
     overflow: "hidden",
     textOverflow: "ellipsis",
     verticalAlign: "bottom",
+
+    "@media (max-width: 768px)": {
+      maxWidth: "100%",
+      whiteSpace: "normal",
+    },
   }),
   photoCount: css({
     color: "#99D6D1",
     fontWeight: "lighter",
     fontSize: 22,
+
+    "@media (max-width: 768px)": {
+      fontSize: 18,
+    },
   }),
   link: css({
     color: "white",
@@ -108,6 +130,17 @@ const style = {
     display: "flex",
     flexDirection: "row",
     gap: "3.5rem",
+
+    "@media (max-width: 920px)": {
+      display: "none",
+    },
+
+    "@media (max-width: 768px)": {
+      flexDirection: "column",
+      width: "100%",
+      gap: "1rem",
+      alignItems: "stretch",
+    },
   }),
   dangerZone: css({
     position: "absolute",
@@ -123,6 +156,10 @@ const style = {
   deleteButton: css({
     color: "white",
     backgroundColor: "#2385B7",
+    border: "thick doublergb(255, 255, 255)",
+    width: "100%",
+    cursor: "pointer",
+
     "&:hover": {
       backgroundColor: "#E14B64",
     },
