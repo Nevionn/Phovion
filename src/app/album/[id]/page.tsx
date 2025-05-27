@@ -11,60 +11,19 @@ import { AlbumNaming, AlbumForViewPhotos } from "@/app/types/albumTypes";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import {
   SortableContext,
-  useSortable,
   arrayMove,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { SlSizeFullscreen } from "react-icons/sl";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
 import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
 import Header from "./components/Header";
 import Description from "./components/Description";
 import UploadSection from "./components/UploadSection";
+import SortablePhoto from "./components/SortablePhoto";
 import { dataURLtoFile, proxyToFile } from "./utils/utils";
 
 const emotionCache = createCache({ key: "css", prepend: true });
-
-const SortablePhoto = ({ photo }: { photo: Photo }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: photo.id,
-    transition: {
-      duration: 150,
-      easing: "ease-out",
-    },
-  });
-
-  const styleDnd = {
-    transform: CSS.Transform.toString(transform),
-    transition: isDragging ? transition : "none",
-    zIndex: isDragging ? 100 : 0,
-    boxShadow: isDragging ? "0 8px 16px rgba(0, 0, 0, 0.3)" : "none",
-    opacity: isDragging ? 0.8 : 1,
-  };
-
-  return (
-    <div ref={setNodeRef} css={style.photoContainer} style={styleDnd}>
-      <div css={style.dragHandle} {...attributes} {...listeners}>
-        <SlSizeFullscreen size={20} />
-      </div>
-      <img
-        src={photo.path}
-        alt={`Фото ${photo.id}`}
-        css={style.photo}
-        loading="lazy"
-      />
-    </div>
-  );
-};
 
 const AlbumPageClient = () => {
   const router = useRouter();
