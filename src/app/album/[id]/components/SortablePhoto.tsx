@@ -1,4 +1,3 @@
-// src/app/album/[id]/components/SortablePhoto.tsx
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { useSortable } from "@dnd-kit/sortable";

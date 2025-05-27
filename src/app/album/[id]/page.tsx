@@ -8,19 +8,15 @@ import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Photo } from "./types/photoTypes";
 import { AlbumNaming, AlbumForViewPhotos } from "@/app/types/albumTypes";
-import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
-import {
-  SortableContext,
-  arrayMove,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
+import { DragEndEvent } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
 import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
 import Header from "./components/Header";
 import Description from "./components/Description";
 import UploadSection from "./components/UploadSection";
-import SortablePhoto from "./components/SortablePhoto";
+import PhotoGrid from "./components/PhotoGrid";
 import { dataURLtoFile, proxyToFile } from "./utils/utils";
 
 const emotionCache = createCache({ key: "css", prepend: true });
@@ -417,21 +413,7 @@ const AlbumPageClient = () => {
                   Перетащите изображения сюда или выберите файлы
                 </p>
               ) : (
-                <DndContext
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext
-                    items={photoIds}
-                    strategy={rectSortingStrategy}
-                  >
-                    <div css={style.photoGrid}>
-                      {photos.map((photo) => (
-                        <SortablePhoto key={photo.id} photo={photo} />
-                      ))}
-                    </div>
-                  </SortableContext>
-                </DndContext>
+                <PhotoGrid photos={photos} onDragEnd={handleDragEnd} />
               )}
             </>
           ) : (
