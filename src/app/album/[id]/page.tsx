@@ -10,13 +10,13 @@ import { Photo } from "./types/photoTypes";
 import { AlbumNaming, AlbumForViewPhotos } from "@/app/types/albumTypes";
 import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { FaCloudUploadAlt } from "react-icons/fa";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
 import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
 import Header from "./components/Header";
 import Description from "./components/Description";
 import UploadSection from "./components/UploadSection";
 import PhotoGrid from "./components/PhotoGrid";
+import DropZoneDragging from "./components/DropZoneDragging";
 import { dataURLtoFile, proxyToFile } from "./utils/utils";
 
 const emotionCache = createCache({ key: "css", prepend: true });
@@ -419,14 +419,10 @@ const AlbumPageClient = () => {
           ) : (
             <p css={style.loadingText}>Ошибка загрузки альбома</p>
           )}
-          {isDraggingOver && !isLoading && (
-            <div css={style.dropZoneDragging}>
-              <div css={style.dragOverlay}>
-                <FaCloudUploadAlt size={80} />
-                <span>Загрузить фотографии</span>
-              </div>
-            </div>
-          )}
+          <DropZoneDragging
+            isDraggingOver={isDraggingOver}
+            isLoading={isLoading}
+          />
         </div>
         <RenameAlbumModal
           isOpen={showEdit}
