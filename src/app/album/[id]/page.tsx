@@ -23,43 +23,9 @@ import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
 import Header from "./components/Header";
 import Description from "./components/Description";
 import UploadSection from "./components/UploadSection";
+import { dataURLtoFile, proxyToFile } from "./utils/utils";
 
 const emotionCache = createCache({ key: "css", prepend: true });
-
-// Утилита для преобразования Data URL в File
-function dataURLtoFile(dataurl: string, filename: string): File {
-  const arr = dataurl.split(",");
-  const mime = arr[0].match(/:(.*?);/)?.[1];
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  const u8arr = new Uint8Array(n);
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-  return new File([u8arr], filename, { type: mime });
-}
-
-// Утилита для загрузки файла через прокси
-async function proxyToFile(url: string, filename: string): Promise<File> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10000);
-  try {
-    console.log("Запрос прокси для URL:", url);
-    const response = await fetch(`/api/proxy?url=${encodeURIComponent(url)}`, {
-      signal: controller.signal,
-    });
-    if (!response.ok) {
-      throw new Error(`Ошибка прокси: ${response.statusText}`);
-    }
-    const blob = await response.blob();
-    if (blob.size === 0) {
-      throw new Error("Получен пустой Blob");
-    }
-    return new File([blob], filename, { type: blob.type });
-  } finally {
-    clearTimeout(timeout);
-  }
-}
 
 const SortablePhoto = ({ photo }: { photo: Photo }) => {
   const {
