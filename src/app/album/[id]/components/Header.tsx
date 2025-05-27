@@ -131,7 +131,7 @@ const style = {
     flexDirection: "row",
     gap: "3.5rem",
 
-    "@media (max-width: 920px)": {
+    "@media (max-width: 925px)": {
       display: "none",
     },
 
