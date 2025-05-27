@@ -29,7 +29,7 @@ const style = {
   }),
   descriptionText: css({
     color: "white",
-    fontSize: "1.2rem",
+    fontSize: "17px",
     lineHeight: "1.5",
     opacity: 0.9,
   }),

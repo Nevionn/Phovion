@@ -58,7 +58,13 @@ const style = {
     borderRadius: "8px",
     border: "1px solid rgb(169, 31, 185)",
     boxShadow: "0 0 10px rgba(255, 0, 255, 0.3)",
+
+    "@media (max-width: 768px)": {
+      flexDirection: "column",
+      alignItems: "stretch",
+    },
   }),
+
   uploadButton: css({
     background: "linear-gradient(45deg, #00ffea, #00b8d4)",
     color: "white",
@@ -69,6 +75,11 @@ const style = {
     cursor: "pointer",
     transition: "all 0.3s",
     boxShadow: "0 0 10px rgba(0, 255, 234, 0.5)",
+
+    "@media (max-width: 768px)": {
+      width: "100%",
+    },
+
     "&:hover": {
       background: "linear-gradient(45deg, #00b8d4, #00ffea)",
       boxShadow: "0 0 15px rgba(0, 255, 234, 0.8)",
@@ -79,17 +90,27 @@ const style = {
       cursor: "not-allowed",
     },
   }),
+
   uploadInput: css({
     color: "#00ffea",
+    fontSize: "0.9rem",
+    cursor: "pointer",
+
+    // Сохраняем ширину автоматической части
+    width: "auto",
+    maxWidth: "100%",
+
     "&::file-selector-button": {
       background: "linear-gradient(45deg, #00ffea, #00b8d4)",
       border: "none",
-      padding: "0.5rem 1rem",
+      padding: "0.5rem 1.2rem",
       borderRadius: "8px",
       color: "white",
       cursor: "pointer",
       transition: "all 0.3s",
       boxShadow: "0 0 10px rgba(0, 255, 234, 0.5)",
+      marginRight: "1rem",
+
       "&:hover": {
         background: "linear-gradient(45deg, #00b8d4, #00ffea)",
         boxShadow: "0 0 15px rgba(0, 255, 234, 0.8)",
