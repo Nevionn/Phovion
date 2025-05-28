@@ -7,3 +7,8 @@ export type Album = {
 };
 
 export type AlbumNaming = Pick<Album, "name" | "description">;
+
+export type AlbumForViewPhotos = Pick<
+  Album,
+  "id" | "name" | "photoCount" | "description"
+>;

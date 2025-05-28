@@ -13,6 +13,13 @@ SORT-PHOTOS/
 │   ├── app/
 │   │   ├── album\[id]/
 │   │   │   ├── components/ - Компоненты страницы выбранного альбома
+│   │   │   │   ├── Description.tsx
+│   │   │   │   ├── DropZoneDragging.tsx
+│   │   │   │   ├── Header.tsx
+│   │   │   │   ├── PhotoGrid.tsx
+│   │   │   │   ├── SkeletonLoader.tsx
+│   │   │   │   ├── SortablePhoto.tsx
+│   │   │   │   ├── UploadSection.tsx
 │   │   │   │   └── modals/
 │   │   │   │       └── RenameAlbumModal.tsx
 │   │   │   ├── type/

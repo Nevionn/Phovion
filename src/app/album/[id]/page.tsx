@@ -3,108 +3,26 @@
 import { css, CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import "../../shared/buttons/cyber-button.css";
-import { useEffect, useState, useMemo, useRef, Suspense } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { Photo } from "./types/photoTypes";
-import { Album, AlbumNaming } from "@/app/types/albumTypes";
-import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
-import {
-  SortableContext,
-  useSortable,
-  arrayMove,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { SlSizeFullscreen } from "react-icons/sl";
-import { FaCloudUploadAlt } from "react-icons/fa";
-import CyberButton from "@/app/shared/buttons/CyberButton";
+import { AlbumNaming, AlbumForViewPhotos } from "@/app/types/albumTypes";
+import { DragEndEvent } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
 import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
+import Header from "./components/Header";
+import Description from "./components/Description";
+import UploadSection from "./components/UploadSection";
+import PhotoGrid from "./components/PhotoGrid";
+import DropZoneDragging from "./components/DropZoneDragging";
+import SkeletonLoader from "./components/SkeletonLoader";
+import { dataURLtoFile, proxyToFile } from "./utils/utils";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
-type AlbumForViewPhotos = Pick<
-  Album,
-  "id" | "name" | "photoCount" | "description"
->;
-
-// Утилита для преобразования Data URL в File
-function dataURLtoFile(dataurl: string, filename: string): File {
-  const arr = dataurl.split(",");
-  const mime = arr[0].match(/:(.*?);/)?.[1];
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  const u8arr = new Uint8Array(n);
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-  return new File([u8arr], filename, { type: mime });
-}
-
-// Утилита для загрузки файла через прокси
-async function proxyToFile(url: string, filename: string): Promise<File> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10000);
-  try {
-    console.log("Запрос прокси для URL:", url);
-    const response = await fetch(`/api/proxy?url=${encodeURIComponent(url)}`, {
-      signal: controller.signal,
-    });
-    if (!response.ok) {
-      throw new Error(`Ошибка прокси: ${response.statusText}`);
-    }
-    const blob = await response.blob();
-    if (blob.size === 0) {
-      throw new Error("Получен пустой Blob");
-    }
-    return new File([blob], filename, { type: blob.type });
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
-const SortablePhoto = ({ photo }: { photo: Photo }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: photo.id,
-    transition: {
-      duration: 150,
-      easing: "ease-out",
-    },
-  });
-
-  const styleDnd = {
-    transform: CSS.Transform.toString(transform),
-    transition: isDragging ? transition : "none",
-    zIndex: isDragging ? 100 : 0,
-    boxShadow: isDragging ? "0 8px 16px rgba(0, 0, 0, 0.3)" : "none",
-    opacity: isDragging ? 0.8 : 1,
-  };
-
-  return (
-    <div ref={setNodeRef} css={style.photoContainer} style={styleDnd}>
-      <div css={style.dragHandle} {...attributes} {...listeners}>
-        <SlSizeFullscreen size={20} />
-      </div>
-      <img
-        src={photo.path}
-        alt={`Фото ${photo.id}`}
-        css={style.photo}
-        loading="lazy"
-      />
-    </div>
-  );
-};
-
-const AlbumPageClient = () => {
+const AlbumPage = () => {
   const router = useRouter();
   const { id } = useParams();
   const [album, setAlbum] = useState<AlbumForViewPhotos | null>(null);
@@ -433,23 +351,21 @@ const AlbumPageClient = () => {
       setFiles(finalFiles);
       console.log("Текущее состояние files перед триггером:", files);
       if (finalFiles.length > 0) {
-        setTriggerUpload(true); // Активируем триггер для загрузки
+        setTriggerUpload(true);
       } else {
         alert("Перетащите изображение или выберите файлы!");
       }
     }
   };
 
-  // useEffect для вызова uploadPhotos после обновления состояния
+  // для вызова uploadPhotos после обновления состояния
   useEffect(() => {
     if (triggerUpload && files.length > 0) {
       console.log("Запускаем uploadPhotos с файлами:", files);
       uploadPhotos();
-      setTriggerUpload(false); // Сбрасываем триггер после загрузки
+      setTriggerUpload(false);
     }
   }, [triggerUpload, files]);
-
-  const photoIds = useMemo(() => photos.map((photo) => photo.id), [photos]);
 
   return (
     <CacheProvider value={emotionCache}>
@@ -462,167 +378,43 @@ const AlbumPageClient = () => {
       >
         <div css={style.contentWrapper}>
           {isLoading ? (
-            <div css={style.skeletonWrapper}>
-              <div css={style.skeletonHeader}></div>
-              <div css={style.skeletonGrid}>
-                {Array.from({ length: 4 }).map((_, index) => (
-                  <div key={index} css={style.skeletonPhoto}></div>
-                ))}
-              </div>
-            </div>
+            <SkeletonLoader />
           ) : album ? (
             <>
               <div css={style.header}>
                 <div css={style.headerContainer}>
-                  <div css={style.navigationItem}>
-                    {/* Левая часть — Заголовок */}
-                    <div>
-                      <p css={style.title}>
-                        <Link href="/" css={style.link}>
-                          альбомы
-                        </Link>
-                        <span>&nbsp;&gt;&nbsp;</span>
-                        <span css={style.albumNameNavItem}>
-                          {album.name}
-                          <span css={style.photoCount}>
-                            &nbsp;{album.photoCount}
-                          </span>
-                        </span>
-                      </p>
-                    </div>
-                    {/* Правая часть — Кнопки */}
-                    <div
-                      css={{
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: "3.5rem",
-                        position: "relative",
-                      }}
-                    >
-                      {/* Блок Редактировать */}
-                      <div css={{ position: "relative" }}>
-                        <CyberButton
-                          label="Редактировать"
-                          hue={200}
-                          onClick={() => {
-                            setShowEdit(!showEdit);
-                          }}
-                        />
-                      </div>
-                      {/* Блок Опасная зона */}
-                      <div css={{ position: "relative" }}>
-                        <CyberButton
-                          label="Опасная зона"
-                          hue={0}
-                          onClick={() => setShowDanger(!showDanger)}
-                        />
-                        {showDanger && (
-                          <div
-                            css={{
-                              position: "absolute",
-                              top: "100%",
-                              left: 0,
-                              marginTop: 10,
-                              padding: 8,
-                              backgroundColor: "rgba(212, 36, 65, 0.5)",
-                              border: "dashed #E8374D",
-                              borderRadius: 8,
-                              zIndex: 10,
-                            }}
-                          >
-                            <button
-                              css={{
-                                color: "white",
-                                backgroundColor: "#2385B7",
-                                "&:hover": {
-                                  backgroundColor: "#E14B64",
-                                },
-                              }}
-                              onClick={deleteAlbum}
-                            >
-                              Удалить альбом
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Кнопка Скачать */}
-                      <CyberButton
-                        label="Скачать альбом"
-                        hue={270}
-                        onClick={() => alert("Скачать альбом")}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Описание альбома */}
-                  <div css={style.descriptionContainer}>
-                    <span css={style.descriptionText}>
-                      {album.description || ""}
-                    </span>
-                  </div>
-
-                  <div css={style.uploadSection}>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      ref={fileInputRef}
-                      onChange={(e) =>
-                        setFiles(
-                          e.target.files ? Array.from(e.target.files) : []
-                        )
-                      }
-                      css={style.uploadInput}
-                    />
-                    <button
-                      css={style.uploadButton}
-                      onClick={uploadPhotos}
-                      disabled={files.length === 0 || uploading}
-                    >
-                      {uploading
-                        ? "Загрузка..."
-                        : files.length > 0
-                        ? `Загрузить ${files.length} фото`
-                        : "Загрузить фото"}
-                    </button>
-                  </div>
+                  <Header
+                    album={album}
+                    onEditClick={() => setShowEdit(!showEdit)}
+                    onDangerClick={() => setShowDanger(!showDanger)}
+                    onDownloadClick={() => alert("Скачать альбом")}
+                    deleteAlbum={deleteAlbum}
+                    showDanger={showDanger}
+                  />
+                  <Description description={album.description} />
+                  <UploadSection
+                    files={files}
+                    uploading={uploading}
+                    uploadPhotos={uploadPhotos}
+                    setFiles={setFiles}
+                  />
                 </div>
               </div>
-
               {photos.length === 0 ? (
                 <p css={style.loadingText}>
                   Перетащите изображения сюда или выберите файлы
                 </p>
               ) : (
-                <DndContext
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext
-                    items={photoIds}
-                    strategy={rectSortingStrategy}
-                  >
-                    <div css={style.photoGrid}>
-                      {photos.map((photo) => (
-                        <SortablePhoto key={photo.id} photo={photo} />
-                      ))}
-                    </div>
-                  </SortableContext>
-                </DndContext>
+                <PhotoGrid photos={photos} onDragEnd={handleDragEnd} />
               )}
             </>
           ) : (
             <p css={style.loadingText}>Ошибка загрузки альбома</p>
           )}
-          {isDraggingOver && !isLoading && (
-            <div css={style.dropZoneDragging}>
-              <div css={style.dragOverlay}>
-                <FaCloudUploadAlt size={80} />
-                <span>Загрузить фотографии</span>
-              </div>
-            </div>
-          )}
+          <DropZoneDragging
+            isDraggingOver={isDraggingOver}
+            isLoading={isLoading}
+          />
         </div>
         <RenameAlbumModal
           isOpen={showEdit}
@@ -638,46 +430,16 @@ const AlbumPageClient = () => {
   );
 };
 
-const AlbumPage = dynamic(() => Promise.resolve(AlbumPageClient), {
+export default dynamic(() => Promise.resolve(AlbumPage), {
   ssr: false,
   loading: () => (
     <main css={style.main}>
       <div css={style.contentWrapper}>
-        <div css={style.skeletonWrapper}>
-          <div css={style.skeletonHeader}></div>
-          <div css={style.skeletonGrid}>
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} css={style.skeletonPhoto}></div>
-            ))}
-          </div>
-        </div>
+        <SkeletonLoader />
       </div>
     </main>
   ),
 });
-
-const AlbumPageWithSuspense = () => (
-  <Suspense
-    fallback={
-      <main css={style.main}>
-        <div css={style.contentWrapper}>
-          <div css={style.skeletonWrapper}>
-            <div css={style.skeletonHeader}></div>
-            <div css={style.skeletonGrid}>
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} css={style.skeletonPhoto}></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-    }
-  >
-    <AlbumPage />
-  </Suspense>
-);
-
-export default AlbumPageWithSuspense;
 
 const style = {
   main: css({
@@ -726,63 +488,6 @@ const style = {
       animation: "neonBorder 3s infinite linear",
     },
   }),
-  descriptionContainer: css({
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    marginTop: "1rem",
-    width: "40%",
-    textAlign: "left",
-    overflow: "hidden",
-    overflowWrap: "anywhere", // Современный аналог break-word
-    wordBreak: "break-all", // Переносит текст в любом месте
-  }),
-  descriptionText: css({
-    color: "white",
-    fontSize: "1.2rem",
-    lineHeight: "1.5",
-    opacity: 0.9,
-  }),
-  navigationItem: css({
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  }),
-  title: css({
-    fontSize: "28px",
-    fontWeight: 700,
-    letterSpacing: "2px",
-    margin: 0,
-    "& > span:first-of-type": {
-      color: "white",
-    },
-    "& > span:last-of-type": {
-      color: "#00ffea",
-    },
-  }),
-  albumNameNavItem: css({
-    display: "inline-block",
-    maxWidth: "260px",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    verticalAlign: "bottom",
-  }),
-  photoCount: css({
-    color: "#99D6D1",
-    fontWeight: "lighter",
-    fontSize: 22,
-  }),
-  link: css({
-    color: "white",
-    textDecoration: "none",
-    transition: "all 0.3s",
-    "&:hover": {
-      color: "#00ffea",
-      textShadow: "0 0 10px rgba(0, 255, 234, 0.8)",
-    },
-  }),
   loadingText: css({
     color: "white",
     fontSize: 20,
@@ -793,162 +498,10 @@ const style = {
     zIndex: 3,
     pointerEvents: "none",
   }),
-  uploadSection: css({
-    marginTop: "2rem",
-    display: "flex",
-    gap: "1rem",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "rgba(20, 20, 40, 0.7)",
-    padding: "0.5rem",
-    borderRadius: "8px",
-    border: "1px solid rgb(169, 31, 185)",
-    boxShadow: "0 0 10px rgba(255, 0, 255, 0.3)",
-  }),
-  uploadButton: css({
-    background: "linear-gradient(45deg, #00ffea, #00b8d4)",
-    color: "white",
-    padding: "0.5rem 1rem",
-    border: "none",
-    borderRadius: "8px",
-    fontSize: "1rem",
-    cursor: "pointer",
-    transition: "all 0.3s",
-    boxShadow: "0 0 10px rgba(0, 255, 234, 0.5)",
-    "&:hover": {
-      background: "linear-gradient(45deg, #00b8d4, #00ffea)",
-      boxShadow: "0 0 15px rgba(0, 255, 234, 0.8)",
-    },
-    "&:disabled": {
-      background: "rgba(50, 50, 50, 0.7)",
-      boxShadow: "none",
-      cursor: "not-allowed",
-    },
-  }),
-  uploadInput: css({
-    color: "#00ffea",
-    "&::file-selector-button": {
-      background: "linear-gradient(45deg, #00ffea, #00b8d4)",
-      border: "none",
-      padding: "0.5rem 1rem",
-      borderRadius: "8px",
-      color: "white",
-      cursor: "pointer",
-      transition: "all 0.3s",
-      boxShadow: "0 0 10px rgba(0, 255, 234, 0.5)",
-      "&:hover": {
-        background: "linear-gradient(45deg, #00b8d4, #00ffea)",
-        boxShadow: "0 0 15px rgba(0, 255, 234, 0.8)",
-      },
-    },
-  }),
-  photoGrid: css({
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "1rem",
-    marginTop: "2rem",
-    maxWidth: "1200px",
-    width: "100%",
-    padding: "1rem",
-    borderRadius: 8,
-    position: "relative",
-    zIndex: 5,
-  }),
-  dropZoneDragging: css({
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    border: "2px dashed white",
-    margin: "20px",
-    borderRadius: "8px",
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    zIndex: 20,
-    pointerEvents: "none",
-  }),
-  dragOverlay: css({
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    fontSize: "50px",
-    color: "white",
-    fontWeight: "bold",
-    textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
-    zIndex: 21,
-    pointerEvents: "none",
-    "& > svg": {
-      fontSize: "80px",
-      marginBottom: "10px",
-    },
-  }),
-  photoContainer: css({
-    position: "relative",
-    width: "100%",
-    borderRadius: 8,
-    overflow: "hidden",
-    "&:hover": {
-      transform: "scale(1.02)",
-    },
-  }),
-  photo: css({
-    width: "100%",
-    borderRadius: 8,
-    objectFit: "cover",
-    aspectRatio: "1 / 1",
-  }),
-  dragHandle: css({
-    position: "absolute",
-    top: "10px",
-    left: "10px",
-    padding: "5px",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    borderRadius: "4px",
-    cursor: "grab",
-    color: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 10,
-    "&:active": {
-      cursor: "grabbing",
-    },
-  }),
   skeletonWrapper: css({
     width: "100%",
     maxWidth: "1200px",
     padding: "1rem",
     zIndex: 2,
   }),
-  skeletonHeader: css({
-    height: "60px",
-    width: "80%",
-    margin: "0 auto 2rem",
-    backgroundColor: "#6A5E5C",
-    borderRadius: "8px",
-    animation: "pulse 1.5s infinite",
-  }),
-  skeletonGrid: css({
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "1rem",
-    maxWidth: "1200px",
-    width: "100%",
-  }),
-  skeletonPhoto: css({
-    width: "100%",
-    aspectRatio: "1 / 1",
-    backgroundColor: "#6A5E5C",
-    borderRadius: "8px",
-    animation: "pulse 1.5s infinite",
-  }),
-  "@keyframes pulse": {
-    "0%": { opacity: 1 },
-    "50%": { opacity: 0.6 },
-    "100%": { opacity: 1 },
-  },
 };
