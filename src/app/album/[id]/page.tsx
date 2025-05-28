@@ -17,11 +17,12 @@ import Description from "./components/Description";
 import UploadSection from "./components/UploadSection";
 import PhotoGrid from "./components/PhotoGrid";
 import DropZoneDragging from "./components/DropZoneDragging";
+import SkeletonLoader from "./components/SkeletonLoader";
 import { dataURLtoFile, proxyToFile } from "./utils/utils";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
-const AlbumPageClient = () => {
+const AlbumPage = () => {
   const router = useRouter();
   const { id } = useParams();
   const [album, setAlbum] = useState<AlbumForViewPhotos | null>(null);
@@ -350,14 +351,14 @@ const AlbumPageClient = () => {
       setFiles(finalFiles);
       console.log("Текущее состояние files перед триггером:", files);
       if (finalFiles.length > 0) {
-        setTriggerUpload(true); // Активируем триггер для загрузки
+        setTriggerUpload(true);
       } else {
         alert("Перетащите изображение или выберите файлы!");
       }
     }
   };
 
-  // useEffect для вызова uploadPhotos после обновления состояния
+  // для вызова uploadPhotos после обновления состояния
   useEffect(() => {
     if (triggerUpload && files.length > 0) {
       console.log("Запускаем uploadPhotos с файлами:", files);
@@ -365,8 +366,6 @@ const AlbumPageClient = () => {
       setTriggerUpload(false);
     }
   }, [triggerUpload, files]);
-
-  const photoIds = useMemo(() => photos.map((photo) => photo.id), [photos]);
 
   return (
     <CacheProvider value={emotionCache}>
@@ -379,14 +378,7 @@ const AlbumPageClient = () => {
       >
         <div css={style.contentWrapper}>
           {isLoading ? (
-            <div css={style.skeletonWrapper}>
-              <div css={style.skeletonHeader}></div>
-              <div css={style.skeletonGrid}>
-                {Array.from({ length: 4 }).map((_, index) => (
-                  <div key={index} css={style.skeletonPhoto}></div>
-                ))}
-              </div>
-            </div>
+            <SkeletonLoader />
           ) : album ? (
             <>
               <div css={style.header}>
@@ -438,46 +430,16 @@ const AlbumPageClient = () => {
   );
 };
 
-const AlbumPage = dynamic(() => Promise.resolve(AlbumPageClient), {
+export default dynamic(() => Promise.resolve(AlbumPage), {
   ssr: false,
   loading: () => (
     <main css={style.main}>
       <div css={style.contentWrapper}>
-        <div css={style.skeletonWrapper}>
-          <div css={style.skeletonHeader}></div>
-          <div css={style.skeletonGrid}>
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} css={style.skeletonPhoto}></div>
-            ))}
-          </div>
-        </div>
+        <SkeletonLoader />
       </div>
     </main>
   ),
 });
-
-const AlbumPageWithSuspense = () => (
-  <Suspense
-    fallback={
-      <main css={style.main}>
-        <div css={style.contentWrapper}>
-          <div css={style.skeletonWrapper}>
-            <div css={style.skeletonHeader}></div>
-            <div css={style.skeletonGrid}>
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} css={style.skeletonPhoto}></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-    }
-  >
-    <AlbumPage />
-  </Suspense>
-);
-
-export default AlbumPageWithSuspense;
 
 const style = {
   main: css({
