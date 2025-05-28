@@ -3,7 +3,7 @@
 import { css, CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import "../../shared/buttons/cyber-button.css";
-import { useEffect, useState, useMemo, useRef, Suspense } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Photo } from "./types/photoTypes";
@@ -498,113 +498,10 @@ const style = {
     zIndex: 3,
     pointerEvents: "none",
   }),
-  photoGrid: css({
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "1rem",
-    marginTop: "2rem",
-    maxWidth: "1200px",
-    width: "100%",
-    padding: "1rem",
-    borderRadius: 8,
-    position: "relative",
-    zIndex: 5,
-  }),
-  dropZoneDragging: css({
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    border: "2px dashed white",
-    margin: "20px",
-    borderRadius: "8px",
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    zIndex: 20,
-    pointerEvents: "none",
-  }),
-  dragOverlay: css({
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    fontSize: "50px",
-    color: "white",
-    fontWeight: "bold",
-    textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
-    zIndex: 21,
-    pointerEvents: "none",
-    "& > svg": {
-      fontSize: "80px",
-      marginBottom: "10px",
-    },
-  }),
-  photoContainer: css({
-    position: "relative",
-    width: "100%",
-    borderRadius: 8,
-    overflow: "hidden",
-    "&:hover": {
-      transform: "scale(1.02)",
-    },
-  }),
-  photo: css({
-    width: "100%",
-    borderRadius: 8,
-    objectFit: "cover",
-    aspectRatio: "1 / 1",
-  }),
-  dragHandle: css({
-    position: "absolute",
-    top: "10px",
-    left: "10px",
-    padding: "5px",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    borderRadius: "4px",
-    cursor: "grab",
-    color: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 10,
-    "&:active": {
-      cursor: "grabbing",
-    },
-  }),
   skeletonWrapper: css({
     width: "100%",
     maxWidth: "1200px",
     padding: "1rem",
     zIndex: 2,
   }),
-  skeletonHeader: css({
-    height: "60px",
-    width: "80%",
-    margin: "0 auto 2rem",
-    backgroundColor: "#6A5E5C",
-    borderRadius: "8px",
-    animation: "pulse 1.5s infinite",
-  }),
-  skeletonGrid: css({
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "1rem",
-    maxWidth: "1200px",
-    width: "100%",
-  }),
-  skeletonPhoto: css({
-    width: "100%",
-    aspectRatio: "1 / 1",
-    backgroundColor: "#6A5E5C",
-    borderRadius: "8px",
-    animation: "pulse 1.5s infinite",
-  }),
-  "@keyframes pulse": {
-    "0%": { opacity: 1 },
-    "50%": { opacity: 0.6 },
-    "100%": { opacity: 1 },
-  },
 };
