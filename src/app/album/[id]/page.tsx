@@ -7,7 +7,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Photo } from "./types/photoTypes";
-import { AlbumNaming, AlbumForViewPhotos } from "@/app/types/albumTypes";
+import { AlbumNaming } from "@/app/types/albumTypes";
 import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
@@ -19,61 +19,23 @@ import PhotoGrid from "./components/PhotoGrid";
 import DropZoneDragging from "./components/DropZoneDragging";
 import SkeletonLoader from "./components/SkeletonLoader";
 import { dataURLtoFile, proxyToFile } from "./utils/utils";
+import { useAlbumData } from "./hooks/useAlbumData";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
 const AlbumPage = () => {
   const router = useRouter();
   const { id } = useParams();
-  const [album, setAlbum] = useState<AlbumForViewPhotos | null>(null);
-  const [photos, setPhotos] = useState<Photo[]>([]);
+
+  const { album, photos, isLoading, setAlbum, setPhotos } = useAlbumData(id);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   const [showEdit, setShowEdit] = useState(false);
   const [showDanger, setShowDanger] = useState(false);
 
-  // Ссылка на инпут для сброса значения
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setIsLoading(true);
-        // Запрос данных альбома
-        const albumRes = await fetch(`/api/albums/${id}`, {
-          cache: "no-store",
-        });
-        if (!albumRes.ok) {
-          throw new Error(`Ошибка загрузки альбома: ${albumRes.statusText}`);
-        }
-        const { photos: p, ...alb } = await albumRes.json();
-        console.log("Загруженные данные альбома:", { album: alb, photos: p });
-
-        // Запрос количества фотографий для альбома
-        const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
-          cache: "no-store",
-        });
-        if (!countRes.ok) {
-          throw new Error(
-            `Ошибка загрузки количества фотографий: ${countRes.statusText}`
-          );
-        }
-        const { photoCount } = await countRes.json();
-        console.log("Количество фотографий:", photoCount);
-
-        setAlbum({ ...alb, photoCount });
-        setPhotos(p || []);
-      } catch (error) {
-        console.error("Ошибка загрузки данных:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, [id]);
 
   async function deleteAlbum() {
     if (!confirm("Удалить альбом?")) return;

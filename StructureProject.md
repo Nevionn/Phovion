@@ -24,6 +24,10 @@ SORT-PHOTOS/
 │   │   │   │       └── RenameAlbumModal.tsx
 │   │   │   ├── type/
 │   │   │   │   └── photoTypes.ts
+│   │   │   ├── utils/
+│   │   │   │   └── utils.ts
+│   │   │   ├── hooks/
+│   │   │   │   └── useAlbumData.ts
 │   │   │   └── page.tsx - Страница выбранного альбома (галерея фотографий)
 │   │   ├── api/
 │   │   │   ├── albums/
