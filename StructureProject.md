@@ -28,6 +28,7 @@ SORT-PHOTOS/
 │   │   │   │   └── utils.ts
 │   │   │   ├── hooks/
 │   │   │   │   └── useAlbumData.ts
+│   │   │   │   └── useRenameAlbum.ts
 │   │   │   └── page.tsx - Страница выбранного альбома (галерея фотографий)
 │   │   ├── api/
 │   │   │   ├── albums/
