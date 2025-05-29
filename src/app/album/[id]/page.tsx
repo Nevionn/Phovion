@@ -7,7 +7,6 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Photo } from "./types/photoTypes";
-import { AlbumNaming } from "@/app/types/albumTypes";
 import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
@@ -20,6 +19,7 @@ import DropZoneDragging from "./components/DropZoneDragging";
 import SkeletonLoader from "./components/SkeletonLoader";
 import { dataURLtoFile, proxyToFile } from "./utils/utils";
 import { useAlbumData } from "./hooks/useAlbumData";
+import { useRenameAlbum } from "./hooks/useRenameAlbum";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
@@ -27,13 +27,19 @@ const AlbumPage = () => {
   const router = useRouter();
   const { id } = useParams();
 
-  const { album, photos, isLoading, setAlbum, setPhotos } = useAlbumData(id);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   const [showEdit, setShowEdit] = useState(false);
   const [showDanger, setShowDanger] = useState(false);
+
+  const { album, photos, isLoading, setAlbum, setPhotos } = useAlbumData(id);
+  const { renameAlbum, renameLoading } = useRenameAlbum(
+    album,
+    setAlbum,
+    setShowEdit
+  );
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -112,34 +118,6 @@ const AlbumPage = () => {
       alert(`Ошибка загрузки фотографий: ${errorMessage}`);
     } finally {
       setUploading(false);
-    }
-  }
-
-  async function renameAlbum(data: AlbumNaming) {
-    if (!data.name || !album?.id) return;
-
-    try {
-      const res = await fetch(`/api/albums/${album.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: data.name,
-          description: data.description,
-        }),
-      });
-
-      if (res.ok) {
-        const updatedAlbum = await res.json();
-        setAlbum({ ...updatedAlbum, photoCount: album.photoCount });
-        setShowEdit(false);
-      } else {
-        throw new Error("Ошибка переименования альбома");
-      }
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      console.error("Ошибка переименования:", errorMessage);
-      alert(`Не удалось переименовать альбом: ${errorMessage}`);
     }
   }
 
@@ -384,7 +362,7 @@ const AlbumPage = () => {
           currentDescription={album?.description || null}
           renameAlbum={renameAlbum}
           onClose={() => setShowEdit(false)}
-          loading={false}
+          loading={renameLoading}
         />
         <BackToTopButton />
       </main>
