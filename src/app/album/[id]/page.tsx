@@ -4,7 +4,7 @@ import { css, CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import "../../shared/buttons/cyber-button.css";
 import { useEffect, useState, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Photo } from "./types/photoTypes";
 import { DragEndEvent } from "@dnd-kit/core";
@@ -20,11 +20,11 @@ import SkeletonLoader from "./components/SkeletonLoader";
 import { dataURLtoFile, proxyToFile } from "./utils/utils";
 import { useAlbumData } from "./hooks/useAlbumData";
 import { useRenameAlbum } from "./hooks/useRenameAlbum";
+import { useDeleteAlbum } from "./hooks/useDeleteAlbum";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
 const AlbumPage = () => {
-  const router = useRouter();
   const { id } = useParams();
 
   const [files, setFiles] = useState<File[]>([]);
@@ -35,6 +35,7 @@ const AlbumPage = () => {
   const [showDanger, setShowDanger] = useState(false);
 
   const { album, photos, isLoading, setAlbum, setPhotos } = useAlbumData(id);
+  const { deleteAlbum } = useDeleteAlbum(id);
   const { renameAlbum, renameLoading } = useRenameAlbum(
     album,
     setAlbum,
@@ -42,13 +43,6 @@ const AlbumPage = () => {
   );
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  async function deleteAlbum() {
-    if (!confirm("Удалить альбом?")) return;
-    const res = await fetch(`/api/albums/${id}`, { method: "DELETE" });
-    if (res.ok) router.push("/");
-    else alert("Ошибка удаления альбома");
-  }
 
   async function uploadPhotos() {
     if (files.length === 0) {
