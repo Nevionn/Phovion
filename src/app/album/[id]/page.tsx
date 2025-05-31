@@ -12,6 +12,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
 import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
 import Header from "./components/Header";
+import PhotoViewer from "./components/modals/PhotoViewer";
 import Description from "./components/Description";
 import UploadSection from "./components/UploadSection";
 import PhotoGrid from "./components/PhotoGrid";
@@ -30,6 +31,7 @@ const AlbumPage = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   const [showEdit, setShowEdit] = useState(false);
   const [showDanger, setShowDanger] = useState(false);
@@ -301,6 +303,14 @@ const AlbumPage = () => {
     }
   }, [triggerUpload, files]);
 
+  const handlePhotoClick = (photo: Photo) => {
+    setSelectedPhoto(photo);
+  };
+
+  const handleClosePhotoViewer = () => {
+    setSelectedPhoto(null);
+  };
+
   return (
     <CacheProvider value={emotionCache}>
       <main
@@ -339,7 +349,11 @@ const AlbumPage = () => {
                   Перетащите изображения сюда или выберите файлы
                 </p>
               ) : (
-                <PhotoGrid photos={photos} onDragEnd={handleDragEnd} />
+                <PhotoGrid
+                  photos={photos}
+                  onDragEnd={handleDragEnd}
+                  onPhotoClick={handlePhotoClick}
+                />
               )}
             </>
           ) : (
@@ -358,6 +372,7 @@ const AlbumPage = () => {
           onClose={() => setShowEdit(false)}
           loading={renameLoading}
         />
+        <PhotoViewer photo={selectedPhoto} onClose={handleClosePhotoViewer} />
         <BackToTopButton />
       </main>
     </CacheProvider>

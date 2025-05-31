@@ -8,9 +8,14 @@ import { Photo } from "../types/photoTypes";
 type PhotoGridProps = {
   photos: Photo[];
   onDragEnd: (event: DragEndEvent) => void;
+  onPhotoClick: (photo: Photo) => void;
 };
 
-export default function PhotoGrid({ photos, onDragEnd }: PhotoGridProps) {
+export default function PhotoGrid({
+  photos,
+  onDragEnd,
+  onPhotoClick,
+}: PhotoGridProps) {
   const photoIds = photos.map((photo) => photo.id);
 
   return (
@@ -18,7 +23,11 @@ export default function PhotoGrid({ photos, onDragEnd }: PhotoGridProps) {
       <SortableContext items={photoIds} strategy={rectSortingStrategy}>
         <div css={style.photoGrid}>
           {photos.map((photo) => (
-            <SortablePhoto key={photo.id} photo={photo} />
+            <SortablePhoto
+              key={photo.id}
+              photo={photo}
+              onClick={() => onPhotoClick(photo)}
+            />
           ))}
         </div>
       </SortableContext>

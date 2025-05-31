@@ -7,9 +7,10 @@ import { Photo } from "../types/photoTypes";
 
 type SortablePhotoProps = {
   photo: Photo;
+  onClick: () => void;
 };
 
-export default function SortablePhoto({ photo }: SortablePhotoProps) {
+export default function SortablePhoto({ photo, onClick }: SortablePhotoProps) {
   const {
     attributes,
     listeners,
@@ -34,8 +35,17 @@ export default function SortablePhoto({ photo }: SortablePhotoProps) {
   };
 
   return (
-    <div ref={setNodeRef} css={style.photoContainer} style={styleDnd}>
-      <div css={style.dragHandle} {...attributes} {...listeners}>
+    <div
+      ref={setNodeRef}
+      css={style.photoContainer}
+      style={styleDnd}
+      onClick={onClick}
+    >
+      <div
+        css={style.dragHandle}
+        {...attributes}
+        {...listeners} // Перетаскивание только через dragHandle
+      >
         <SlSizeFullscreen size={20} />
       </div>
       <img
@@ -54,6 +64,7 @@ const style = {
     width: "100%",
     borderRadius: 8,
     overflow: "hidden",
+    cursor: "pointer", // Указываем, что контейнер кликабельный
     "&:hover": {
       transform: "scale(1.02)",
     },
