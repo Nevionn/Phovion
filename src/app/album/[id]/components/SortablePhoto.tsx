@@ -64,7 +64,7 @@ const style = {
     width: "100%",
     borderRadius: 8,
     overflow: "hidden",
-    cursor: "pointer", // Указываем, что контейнер кликабельный
+    cursor: "pointer",
     "&:hover": {
       transform: "scale(1.02)",
     },

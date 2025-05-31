@@ -21,6 +21,7 @@ SORT-PHOTOS/
 │   │   │   │   ├── SortablePhoto.tsx
 │   │   │   │   ├── UploadSection.tsx
 │   │   │   │   └── modals/
+│   │   │   │       └── PhotoViewer.tsx
 │   │   │   │       └── RenameAlbumModal.tsx
 │   │   │   ├── type/
 │   │   │   │   └── photoTypes.ts
