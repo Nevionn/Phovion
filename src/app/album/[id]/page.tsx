@@ -4,83 +4,47 @@ import { css, CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import "../../shared/buttons/cyber-button.css";
 import { useEffect, useState, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Photo } from "./types/photoTypes";
-import { AlbumNaming, AlbumForViewPhotos } from "@/app/types/albumTypes";
 import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
 import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
 import Header from "./components/Header";
+import PhotoViewer from "./components/modals/PhotoViewer";
 import Description from "./components/Description";
 import UploadSection from "./components/UploadSection";
 import PhotoGrid from "./components/PhotoGrid";
 import DropZoneDragging from "./components/DropZoneDragging";
 import SkeletonLoader from "./components/SkeletonLoader";
 import { dataURLtoFile, proxyToFile } from "./utils/utils";
+import { useAlbumData } from "./hooks/useAlbumData";
+import { useRenameAlbum } from "./hooks/useRenameAlbum";
+import { useDeleteAlbum } from "./hooks/useDeleteAlbum";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
 const AlbumPage = () => {
-  const router = useRouter();
   const { id } = useParams();
-  const [album, setAlbum] = useState<AlbumForViewPhotos | null>(null);
-  const [photos, setPhotos] = useState<Photo[]>([]);
+
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   const [showEdit, setShowEdit] = useState(false);
   const [showDanger, setShowDanger] = useState(false);
 
-  // Ссылка на инпут для сброса значения
+  const { album, photos, isLoading, setAlbum, setPhotos } = useAlbumData(id);
+  const { deleteAlbum } = useDeleteAlbum(id);
+  const { renameAlbum, renameLoading } = useRenameAlbum(
+    album,
+    setAlbum,
+    setShowEdit
+  );
+
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setIsLoading(true);
-        // Запрос данных альбома
-        const albumRes = await fetch(`/api/albums/${id}`, {
-          cache: "no-store",
-        });
-        if (!albumRes.ok) {
-          throw new Error(`Ошибка загрузки альбома: ${albumRes.statusText}`);
-        }
-        const { photos: p, ...alb } = await albumRes.json();
-        console.log("Загруженные данные альбома:", { album: alb, photos: p });
-
-        // Запрос количества фотографий для альбома
-        const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
-          cache: "no-store",
-        });
-        if (!countRes.ok) {
-          throw new Error(
-            `Ошибка загрузки количества фотографий: ${countRes.statusText}`
-          );
-        }
-        const { photoCount } = await countRes.json();
-        console.log("Количество фотографий:", photoCount);
-
-        setAlbum({ ...alb, photoCount });
-        setPhotos(p || []);
-      } catch (error) {
-        console.error("Ошибка загрузки данных:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, [id]);
-
-  async function deleteAlbum() {
-    if (!confirm("Удалить альбом?")) return;
-    const res = await fetch(`/api/albums/${id}`, { method: "DELETE" });
-    if (res.ok) router.push("/");
-    else alert("Ошибка удаления альбома");
-  }
 
   async function uploadPhotos() {
     if (files.length === 0) {
@@ -150,34 +114,6 @@ const AlbumPage = () => {
       alert(`Ошибка загрузки фотографий: ${errorMessage}`);
     } finally {
       setUploading(false);
-    }
-  }
-
-  async function renameAlbum(data: AlbumNaming) {
-    if (!data.name || !album?.id) return;
-
-    try {
-      const res = await fetch(`/api/albums/${album.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: data.name,
-          description: data.description,
-        }),
-      });
-
-      if (res.ok) {
-        const updatedAlbum = await res.json();
-        setAlbum({ ...updatedAlbum, photoCount: album.photoCount });
-        setShowEdit(false);
-      } else {
-        throw new Error("Ошибка переименования альбома");
-      }
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      console.error("Ошибка переименования:", errorMessage);
-      alert(`Не удалось переименовать альбом: ${errorMessage}`);
     }
   }
 
@@ -367,6 +303,14 @@ const AlbumPage = () => {
     }
   }, [triggerUpload, files]);
 
+  const handlePhotoClick = (photo: Photo) => {
+    setSelectedPhoto(photo);
+  };
+
+  const handleClosePhotoViewer = () => {
+    setSelectedPhoto(null);
+  };
+
   return (
     <CacheProvider value={emotionCache}>
       <main
@@ -405,7 +349,11 @@ const AlbumPage = () => {
                   Перетащите изображения сюда или выберите файлы
                 </p>
               ) : (
-                <PhotoGrid photos={photos} onDragEnd={handleDragEnd} />
+                <PhotoGrid
+                  photos={photos}
+                  onDragEnd={handleDragEnd}
+                  onPhotoClick={handlePhotoClick}
+                />
               )}
             </>
           ) : (
@@ -422,8 +370,9 @@ const AlbumPage = () => {
           currentDescription={album?.description || null}
           renameAlbum={renameAlbum}
           onClose={() => setShowEdit(false)}
-          loading={false}
+          loading={renameLoading}
         />
+        <PhotoViewer photo={selectedPhoto} onClose={handleClosePhotoViewer} />
         <BackToTopButton />
       </main>
     </CacheProvider>
