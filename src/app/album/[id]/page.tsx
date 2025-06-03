@@ -372,7 +372,11 @@ const AlbumPage = () => {
           onClose={() => setShowEdit(false)}
           loading={renameLoading}
         />
-        <PhotoViewer photo={selectedPhoto} onClose={handleClosePhotoViewer} />
+        <PhotoViewer
+          photo={selectedPhoto}
+          photos={photos}
+          onClose={handleClosePhotoViewer}
+        />
         <BackToTopButton />
       </main>
     </CacheProvider>
