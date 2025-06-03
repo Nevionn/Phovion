@@ -25,7 +25,23 @@ export default function PhotoViewer({
     } else {
       setCurrentIndex(0);
     }
-  }, [photo, photos]);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft" && photos.length > 1) {
+        setCurrentIndex((prev) => (prev - 1 + photos.length) % photos.length);
+      } else if (event.key === "ArrowRight" && photos.length > 1) {
+        setCurrentIndex((prev) => (prev + 1) % photos.length);
+      } else if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [photo, photos, onClose]);
 
   const handlePrev = () => {
     if (photos.length > 1) {
