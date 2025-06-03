@@ -2,7 +2,7 @@
 import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
 import { Photo } from "../../types/photoTypes";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 
 type PhotoViewerProps = {
   photo: Photo | null;
@@ -54,11 +54,11 @@ export default function PhotoViewer({
           ×
         </button>
         <button
-          css={style.arrowButtonLeft}
+          css={style.switchAreaLeft}
           onClick={handlePrev}
           disabled={photos.length <= 1}
         >
-          <FaArrowLeft />
+          <SlArrowLeft css={style.arrowIcon} />
         </button>
         <img
           src={currentPhoto.path}
@@ -66,15 +66,14 @@ export default function PhotoViewer({
           css={style.image}
         />
         <button
-          css={style.arrowButtonRight}
+          css={style.switchAreaRight}
           onClick={handleNext}
           disabled={photos.length <= 1}
         >
-          <FaArrowRight />
+          <SlArrowRight css={style.arrowIcon} />
         </button>
         <div css={style.captionContainer}>
           <p css={style.caption}></p>
-          {/* Плейсхолдер для будущих кнопок */}
           <div css={style.buttonPlaceholder}></div>
         </div>
       </div>
@@ -122,41 +121,55 @@ const style = {
     lineHeight: "1",
     zIndex: 1001,
   }),
-  arrowButtonLeft: css({
+  switchAreaLeft: css({
     position: "absolute",
-    left: "10px",
-    top: "50%",
-    transform: "translateY(-50%)",
-    background: "rgba(0, 0, 0, 0.5)",
+    left: 0,
+    top: 46,
+    bottom: "calc(1rem + 4rem)",
+    width: "60px",
+    background: "transparent",
     border: "none",
-    color: "#00ffea",
-    fontSize: "24px",
     cursor: "pointer",
-    padding: "10px",
-    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "8px 0 0 8px",
+    transition: "background 0.3s",
+    "&:hover": {
+      background: "rgba(0, 255, 234, 0.1)",
+    },
     "&:disabled": {
       cursor: "not-allowed",
       opacity: 0.5,
     },
     zIndex: 2010,
   }),
-  arrowButtonRight: css({
+  switchAreaRight: css({
     position: "absolute",
-    right: "10px",
-    top: "50%",
-    transform: "translateY(-50%)",
-    background: "rgba(0, 0, 0, 0.5)",
+    right: 0,
+    top: 46,
+    bottom: "calc(1rem + 4rem)",
+    width: "60px",
+    background: "transparent",
     border: "none",
-    color: "#00ffea",
-    fontSize: "24px",
     cursor: "pointer",
-    padding: "10px",
-    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "0 8px 8px 0",
+    transition: "background 0.3s",
+    "&:hover": {
+      background: "rgba(0, 255, 234, 0.1)",
+    },
     "&:disabled": {
       cursor: "not-allowed",
       opacity: 0.5,
     },
     zIndex: 2010,
+  }),
+  arrowIcon: css({
+    color: "#00ffea",
+    fontSize: "30px",
   }),
   image: css({
     maxWidth: "100%",
