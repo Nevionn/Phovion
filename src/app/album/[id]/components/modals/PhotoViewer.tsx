@@ -38,6 +38,8 @@ export default function PhotoViewer({
         setCurrentIndex((prev) => (prev + 1) % photos.length);
       } else if (event.key === "Escape") {
         onClose();
+      } else if (event.key === "Delete") {
+        handleDelete();
       }
     };
 
