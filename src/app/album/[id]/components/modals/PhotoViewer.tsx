@@ -18,24 +18,53 @@ export default function PhotoViewer({
   onClose,
   onSyncAfterPhotoDelete,
 }: PhotoViewerProps) {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Инициализация текущей фотографии при открытии пикера
   useEffect(() => {
     console.log("пикер открыт с фото:", photo);
+    console.log("текущий photos:", photos);
     if (photo && photos.length > 0) {
-      setCurrentIndex(
-        photos.findIndex((p) => p.id === photo.id) >= 0
-          ? photos.findIndex((p) => p.id === photo.id)
-          : 0
-      );
+      const initialPhoto = photos.find((p) => p.id === photo.id) || photos[0];
+      setCurrentPhoto(initialPhoto);
+    }
+  }, [photo, photos]);
+
+  // Корректировка после изменения photos (например, после удаления)
+  useEffect(() => {
+    if (photos.length === 0) {
+      console.log("photos пуст, закрываем пикер");
+      onClose();
+      return;
     }
 
+    // Если текущая фотография удалена, выбираем новую
+    if (currentPhoto && !photos.some((p) => p.id === currentPhoto.id)) {
+      console.log("текущая фотография удалена, выбираем новую");
+      const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
+      const newIndex =
+        currentIndex >= photos.length ? photos.length - 1 : currentIndex;
+      setCurrentPhoto(photos[newIndex >= 0 ? newIndex : 0] || null);
+    }
+  }, [photos, currentPhoto, onClose]);
+
+  // Обработчик клавиш
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft" && photos.length > 1) {
-        setCurrentIndex((prev) => (prev - 1 + photos.length) % photos.length);
-      } else if (event.key === "ArrowRight" && photos.length > 1) {
-        setCurrentIndex((prev) => (prev + 1) % photos.length);
+      if (!currentPhoto || photos.length <= 1) return;
+
+      const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
+      if (currentIndex === -1) return;
+
+      if (event.key === "ArrowLeft") {
+        const newIndex = (currentIndex - 1 + photos.length) % photos.length;
+        console.log("переключение влево, новый индекс:", newIndex);
+        setCurrentPhoto(photos[newIndex]);
+      } else if (event.key === "ArrowRight") {
+        const newIndex = (currentIndex + 1) % photos.length;
+        console.log("переключение вправо, новый индекс:", newIndex);
+        setCurrentPhoto(photos[newIndex]);
       } else if (event.key === "Escape") {
         onClose();
       } else if (event.key === "Delete") {
@@ -45,28 +74,46 @@ export default function PhotoViewer({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [photo, photos, onClose]);
+  }, [photos, currentPhoto, onClose]);
 
   const handlePrev = () => {
-    photos.length > 1 &&
-      setCurrentIndex((prev) => (prev - 1 + photos.length) % photos.length);
+    if (!currentPhoto || photos.length <= 1) return;
+
+    const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
+    if (currentIndex === -1) return;
+
+    const newIndex = (currentIndex - 1 + photos.length) % photos.length;
+    console.log("кнопка влево, новый индекс:", newIndex);
+    setCurrentPhoto(photos[newIndex]);
   };
 
   const handleNext = () => {
-    photos.length > 1 && setCurrentIndex((prev) => (prev + 1) % photos.length);
+    if (!currentPhoto || photos.length <= 1) return;
+
+    const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
+    if (currentIndex === -1) return;
+
+    const newIndex = (currentIndex + 1) % photos.length;
+    console.log("кнопка вправо, новый индекс:", newIndex);
+    setCurrentPhoto(photos[newIndex]);
   };
 
   const handleClose = () => onClose();
 
   const handleDelete = async () => {
-    if (!photo) return;
+    if (!currentPhoto) {
+      console.log("currentPhoto не определена, прерываем удаление");
+      return;
+    }
+
+    console.log("удаляем фотографию с id:", currentPhoto.id);
 
     setIsDeleting(true);
     try {
       const res = await fetch("/api/photos/delete", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ photoId: Number(photo.id) }),
+        body: JSON.stringify({ photoId: Number(currentPhoto.id) }),
       });
 
       if (!res.ok) {
@@ -77,16 +124,9 @@ export default function PhotoViewer({
       const data = await res.json();
       console.log("Фотография удалена:", data);
 
-      onSyncAfterPhotoDelete(photo.id);
+      onSyncAfterPhotoDelete(currentPhoto.id);
 
-      if (photos.length === 1) {
-        onClose();
-      } else {
-        setCurrentIndex((prev) => {
-          const newIndex = prev === photos.length - 1 ? prev - 1 : prev;
-          return newIndex >= 0 ? newIndex : 0;
-        });
-      }
+      // photos обновится через родительский компонент
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -97,9 +137,7 @@ export default function PhotoViewer({
     }
   };
 
-  if (!photo) return null;
-
-  const currentPhoto = photos[currentIndex] || photo;
+  if (!photo || photos.length === 0 || !currentPhoto) return null;
 
   return (
     <div css={style.overlay} onClick={handleClose}>
