@@ -123,7 +123,6 @@ export default function PhotoViewer({
 
       const data = await res.json();
       console.log("Фотография удалена:", data);
-
       onSyncAfterPhotoDelete(currentPhoto.id);
 
       // photos обновится через родительский компонент
@@ -138,6 +137,11 @@ export default function PhotoViewer({
   };
 
   if (!photo || photos.length === 0 || !currentPhoto) return null;
+
+  // Вычисляем текущий индекс для индикации (например, "2 из 8")
+  const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
+  const photoPosition =
+    photos.length > 1 ? `${currentIndex + 1} из ${photos.length}` : "";
 
   return (
     <div css={style.overlay} onClick={handleClose}>
@@ -165,7 +169,7 @@ export default function PhotoViewer({
           <SlArrowRight css={style.arrowIcon} />
         </button>
         <div css={style.captionContainer}>
-          <div css={style.actionButtons}>
+          <div style={{ display: "flex", alignItems: "center" }}>
             <span
               css={[style.actionButton, isDeleting && style.disabledButton]}
               onClick={handleDelete}
@@ -174,6 +178,11 @@ export default function PhotoViewer({
             </span>
             <TbSeparator />
             <span css={style.actionButton}>Перенести</span>
+          </div>
+          <div style={{}}>
+            {photoPosition && (
+              <span css={style.photoPosition}>{photoPosition}</span>
+            )}
           </div>
         </div>
       </div>
@@ -262,17 +271,13 @@ const style = {
   captionContainer: css({
     width: "100%",
     display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: "1rem",
     padding: "0.5rem",
     background: "rgba(0, 0, 0, 0.3)",
     borderRadius: "8px",
-  }),
-  actionButtons: css({
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
   }),
   actionButton: css({
     color: "#00ffea",
@@ -287,5 +292,12 @@ const style = {
     cursor: "not-allowed",
     opacity: 0.5,
     "&:hover": { background: "none" },
+  }),
+  photoPosition: css({
+    color: "#00ffea",
+    fontFamily: "'Orbitron', sans-serif",
+    fontSize: "14px",
+    padding: "0.1rem 0.5rem",
+    borderRadius: "4px",
   }),
 };
