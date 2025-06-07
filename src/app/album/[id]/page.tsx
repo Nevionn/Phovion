@@ -391,6 +391,7 @@ const AlbumPage = () => {
         <PhotoViewer
           photo={selectedPhoto}
           photos={photos}
+          albumId={Number(id)}
           onClose={handleClosePhotoViewer}
           onSyncAfterPhotoDelete={syncAfterPhotoDelete}
         />

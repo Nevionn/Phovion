@@ -8,6 +8,7 @@ import { TbSeparator } from "react-icons/tb";
 type PhotoViewerProps = {
   photo: Photo | null;
   photos: Photo[];
+  albumId: number;
   onClose: () => void;
   onSyncAfterPhotoDelete: (photoId: number) => void;
 };
@@ -15,13 +16,13 @@ type PhotoViewerProps = {
 export default function PhotoViewer({
   photo,
   photos,
+  albumId,
   onClose,
   onSyncAfterPhotoDelete,
 }: PhotoViewerProps) {
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Инициализация текущей фотографии при открытии пикера
   useEffect(() => {
     console.log("пикер открыт с фото:", photo);
     console.log("текущий photos:", photos);
@@ -39,7 +40,6 @@ export default function PhotoViewer({
       return;
     }
 
-    // Если текущая фотография удалена, выбираем новую
     if (currentPhoto && !photos.some((p) => p.id === currentPhoto.id)) {
       console.log("текущая фотография удалена, выбираем новую");
       const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
@@ -59,11 +59,11 @@ export default function PhotoViewer({
 
       if (event.key === "ArrowLeft") {
         const newIndex = (currentIndex - 1 + photos.length) % photos.length;
-        console.log("переключение влево, новый индекс:", newIndex);
+        // console.log("переключение влево, новый индекс:", newIndex);
         setCurrentPhoto(photos[newIndex]);
       } else if (event.key === "ArrowRight") {
         const newIndex = (currentIndex + 1) % photos.length;
-        console.log("переключение вправо, новый индекс:", newIndex);
+        // console.log("переключение вправо, новый индекс:", newIndex);
         setCurrentPhoto(photos[newIndex]);
       } else if (event.key === "Escape") {
         onClose();
@@ -124,8 +124,6 @@ export default function PhotoViewer({
       const data = await res.json();
       console.log("Фотография удалена:", data);
       onSyncAfterPhotoDelete(currentPhoto.id);
-
-      // photos обновится через родительский компонент
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -133,6 +131,42 @@ export default function PhotoViewer({
       alert(`Не удалось удалить фотографию: ${errorMessage}`);
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleSetCover = async () => {
+    if (!currentPhoto) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/albums/cover`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ photoId: currentPhoto.id, albumId: albumId }),
+      });
+
+      console.log("Response status:", res.status);
+      const text = await res.text();
+      console.log("Response text:", text);
+
+      if (!res.ok) {
+        let errorData;
+        try {
+          errorData = JSON.parse(text);
+        } catch {
+          throw new Error("Сервер вернул некорректный ответ");
+        }
+        throw new Error(errorData.error || "Ошибка установки обложки");
+      }
+
+      const data = JSON.parse(text);
+      console.log("Обложка установлена:", data);
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      console.error("Ошибка при установке обложки:", errorMessage);
+      alert(`Не удалось установить обложку: ${errorMessage}`);
     }
   };
 
@@ -178,6 +212,10 @@ export default function PhotoViewer({
             </span>
             <TbSeparator />
             <span css={style.actionButton}>Перенести</span>
+            <TbSeparator />
+            <span css={style.actionButton} onClick={handleSetCover}>
+              Сделать обложкой
+            </span>
           </div>
           <div style={{}}>
             {photoPosition && (
