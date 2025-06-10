@@ -23,6 +23,7 @@ SORT-PHOTOS/
 │   │   │   │   └── modals/
 │   │   │   │       └── PhotoViewer.tsx
 │   │   │   │       └── RenameAlbumModal.tsx
+│   │   │   │       └── MovePhotoModal.tsx
 │   │   │   ├── type/
 │   │   │   │   └── photoTypes.ts
 │   │   │   ├── utils/

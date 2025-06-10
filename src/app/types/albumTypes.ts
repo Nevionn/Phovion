@@ -3,7 +3,8 @@ export type Album = {
   name: string;
   description: string | null;
   photoCount: number | null;
-  coverPhotoId?: number | null; // обложка альбома
+  coverPhotoId?: number | null;
+  coverPhotoPath?: string | null;
 };
 
 export type AlbumNaming = Pick<Album, "name" | "description">;

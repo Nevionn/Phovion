@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Photo } from "../../types/photoTypes";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 import { TbSeparator } from "react-icons/tb";
+import MovePhotoModal from "./MovePhotoModal";
 
 type PhotoViewerProps = {
   photo: Photo | null;
@@ -22,6 +23,7 @@ export default function PhotoViewer({
 }: PhotoViewerProps) {
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
 
   useEffect(() => {
     console.log("пикер открыт с фото:", photo);
@@ -170,6 +172,15 @@ export default function PhotoViewer({
     }
   };
 
+  const handleMoveClick = () => {
+    setIsMoveModalOpen(true);
+  };
+
+  const handleMove = (targetAlbumId: number) => {
+    console.log(`Перенос фото ${currentPhoto?.id} в альбом ${targetAlbumId}`);
+    // Здесь будет логика переноса
+  };
+
   if (!photo || photos.length === 0 || !currentPhoto) return null;
 
   // Вычисляем текущий индекс для индикации (например, "2 из 8")
@@ -178,53 +189,65 @@ export default function PhotoViewer({
     photos.length > 1 ? `${currentIndex + 1} из ${photos.length}` : "";
 
   return (
-    <div css={style.overlay} onClick={handleClose}>
-      <div css={style.viewer} onClick={(e) => e.stopPropagation()}>
-        <button css={style.closeButton} onClick={handleClose}>
-          ×
-        </button>
-        <button
-          css={style.switchAreaLeft}
-          onClick={handlePrev}
-          disabled={photos.length <= 1}
-        >
-          <SlArrowLeft css={style.arrowIcon} />
-        </button>
-        <img
-          src={currentPhoto.path}
-          alt={`Photo ${currentPhoto.id}`}
-          css={style.image}
-        />
-        <button
-          css={style.switchAreaRight}
-          onClick={handleNext}
-          disabled={photos.length <= 1}
-        >
-          <SlArrowRight css={style.arrowIcon} />
-        </button>
-        <div css={style.captionContainer}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <span
-              css={[style.actionButton, isDeleting && style.disabledButton]}
-              onClick={handleDelete}
-            >
-              {isDeleting ? "Удаление..." : "Удалить"}
-            </span>
-            <TbSeparator />
-            <span css={style.actionButton}>Перенести</span>
-            <TbSeparator />
-            <span css={style.actionButton} onClick={handleSetCover}>
-              Сделать обложкой
-            </span>
-          </div>
-          <div style={{}}>
-            {photoPosition && (
-              <span css={style.photoPosition}>{photoPosition}</span>
-            )}
+    <>
+      <div css={style.overlay} onClick={handleClose}>
+        <div css={style.viewer} onClick={(e) => e.stopPropagation()}>
+          <button css={style.closeButton} onClick={handleClose}>
+            ×
+          </button>
+          <button
+            css={style.switchAreaLeft}
+            onClick={handlePrev}
+            disabled={photos.length <= 1}
+          >
+            <SlArrowLeft css={style.arrowIcon} />
+          </button>
+          <img
+            src={currentPhoto.path}
+            alt={`Photo ${currentPhoto.id}`}
+            css={style.image}
+          />
+          <button
+            css={style.switchAreaRight}
+            onClick={handleNext}
+            disabled={photos.length <= 1}
+          >
+            <SlArrowRight css={style.arrowIcon} />
+          </button>
+          <div css={style.captionContainer}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <span
+                css={[style.actionButton, isDeleting && style.disabledButton]}
+                onClick={handleDelete}
+              >
+                {isDeleting ? "Удаление..." : "Удалить"}
+              </span>
+              <TbSeparator />
+              <span css={style.actionButton} onClick={handleMoveClick}>
+                Перенести
+              </span>
+              <TbSeparator />
+              <span css={style.actionButton} onClick={handleSetCover}>
+                Сделать обложкой
+              </span>
+            </div>
+            <div style={{}}>
+              {photoPosition && (
+                <span css={style.photoPosition}>{photoPosition}</span>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      {isMoveModalOpen && (
+        <MovePhotoModal
+          photoId={currentPhoto.id}
+          currentAlbumId={albumId}
+          onClose={() => setIsMoveModalOpen(false)}
+          onMove={handleMove}
+        />
+      )}
+    </>
   );
 }
 
