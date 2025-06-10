@@ -13,12 +13,8 @@ import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
 import { Album } from "../types/albumTypes";
 
-interface AlbumWithCoverPath extends Album {
-  coverPhotoPath?: string | null;
-}
-
 interface SortableAlbumProps {
-  album: AlbumWithCoverPath;
+  album: Album;
   onClick: () => void;
 }
 
@@ -83,8 +79,8 @@ const SortableAlbum = ({ album, onClick }: SortableAlbumProps) => {
 };
 
 interface AlbumsGridProps {
-  albums: AlbumWithCoverPath[];
-  setAlbums: React.Dispatch<React.SetStateAction<AlbumWithCoverPath[]>>;
+  albums: Album[];
+  setAlbums: React.Dispatch<React.SetStateAction<Album[]>>;
 }
 
 const AlbumsGrid = ({ albums, setAlbums }: AlbumsGridProps) => {
@@ -94,22 +90,20 @@ const AlbumsGrid = ({ albums, setAlbums }: AlbumsGridProps) => {
     const { active, over } = event;
 
     if (active.id !== over?.id) {
-      setAlbums((prevAlbums: AlbumWithCoverPath[]) => {
+      setAlbums((prevAlbums: Album[]) => {
         const oldIndex = prevAlbums.findIndex(
-          (album: AlbumWithCoverPath) => album.id === active.id
+          (album: Album) => album.id === active.id
         );
         const newIndex = prevAlbums.findIndex(
-          (album: AlbumWithCoverPath) => album.id === over?.id
+          (album: Album) => album.id === over?.id
         );
 
         const newAlbums = arrayMove(prevAlbums, oldIndex, newIndex);
 
-        const updatedOrder = newAlbums.map(
-          (album: AlbumWithCoverPath, index: number) => ({
-            id: album.id,
-            order: index,
-          })
-        );
+        const updatedOrder = newAlbums.map((album: Album, index: number) => ({
+          id: album.id,
+          order: index,
+        }));
 
         fetch("/api/albums/reorder", {
           method: "POST",
@@ -123,7 +117,7 @@ const AlbumsGrid = ({ albums, setAlbums }: AlbumsGridProps) => {
   };
 
   const albumIds = useMemo(
-    () => albums.map((album: AlbumWithCoverPath) => album.id),
+    () => albums.map((album: Album) => album.id),
     [albums]
   );
 
@@ -131,7 +125,7 @@ const AlbumsGrid = ({ albums, setAlbums }: AlbumsGridProps) => {
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={albumIds} strategy={rectSortingStrategy}>
         <div css={styles.albumListStyle}>
-          {albums.map((album: AlbumWithCoverPath) => (
+          {albums.map((album: Album) => (
             <SortableAlbum
               key={album.id}
               album={album}
