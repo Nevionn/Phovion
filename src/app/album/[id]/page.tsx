@@ -311,11 +311,11 @@ const AlbumPage = () => {
     setSelectedPhoto(null);
   };
 
-  const syncAfterPhotoDelete = async (photoId: number) => {
+  // Вспомогательная функция для общей логики
+  const syncAfterPhotoChange = async (photoId: number) => {
     setPhotos((prevPhotos) =>
       prevPhotos.filter((photo) => photo.id !== photoId)
     );
-
     handleClosePhotoViewer();
 
     const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
@@ -325,6 +325,14 @@ const AlbumPage = () => {
       const { photoCount } = await countRes.json();
       setAlbum((prev) => (prev ? { ...prev, photoCount } : null));
     }
+  };
+
+  const syncAfterPhotoDelete = async (photoId: number) => {
+    await syncAfterPhotoChange(photoId);
+  };
+
+  const syncAfterPhotoMove = async (photoId: number) => {
+    await syncAfterPhotoChange(photoId);
   };
 
   return (
@@ -394,6 +402,7 @@ const AlbumPage = () => {
           albumId={Number(id)}
           onClose={handleClosePhotoViewer}
           onSyncAfterPhotoDelete={syncAfterPhotoDelete}
+          onSyncAfterPhotoMove={syncAfterPhotoMove}
         />
         <BackToTopButton />
       </main>

@@ -12,6 +12,7 @@ type PhotoViewerProps = {
   albumId: number;
   onClose: () => void;
   onSyncAfterPhotoDelete: (photoId: number) => void;
+  onSyncAfterPhotoMove: (photoId: number) => void;
 };
 
 export default function PhotoViewer({
@@ -20,6 +21,7 @@ export default function PhotoViewer({
   albumId,
   onClose,
   onSyncAfterPhotoDelete,
+  onSyncAfterPhotoMove,
 }: PhotoViewerProps) {
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -61,11 +63,9 @@ export default function PhotoViewer({
 
       if (event.key === "ArrowLeft") {
         const newIndex = (currentIndex - 1 + photos.length) % photos.length;
-        // console.log("переключение влево, новый индекс:", newIndex);
         setCurrentPhoto(photos[newIndex]);
       } else if (event.key === "ArrowRight") {
         const newIndex = (currentIndex + 1) % photos.length;
-        // console.log("переключение вправо, новый индекс:", newIndex);
         setCurrentPhoto(photos[newIndex]);
       } else if (event.key === "Escape") {
         onClose();
@@ -85,7 +85,6 @@ export default function PhotoViewer({
     if (currentIndex === -1) return;
 
     const newIndex = (currentIndex - 1 + photos.length) % photos.length;
-    console.log("кнопка влево, новый индекс:", newIndex);
     setCurrentPhoto(photos[newIndex]);
   };
 
@@ -96,18 +95,13 @@ export default function PhotoViewer({
     if (currentIndex === -1) return;
 
     const newIndex = (currentIndex + 1) % photos.length;
-    console.log("кнопка вправо, новый индекс:", newIndex);
     setCurrentPhoto(photos[newIndex]);
   };
 
   const handleClose = () => onClose();
 
   const handleDelete = async () => {
-    if (!currentPhoto) {
-      console.log("currentPhoto не определена, прерываем удаление");
-      return;
-    }
-
+    if (!currentPhoto) return;
     console.log("удаляем фотографию с id:", currentPhoto.id);
 
     setIsDeleting(true);
@@ -123,10 +117,8 @@ export default function PhotoViewer({
         throw new Error(errorData.message || "Ошибка удаления фотографии");
       }
 
-      const data = await res.json();
-      console.log("Фотография удалена:", data);
       onSyncAfterPhotoDelete(currentPhoto.id);
-    } catch (error: unknown) {
+    } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       console.error("Ошибка при удалении:", errorMessage);
@@ -137,22 +129,17 @@ export default function PhotoViewer({
   };
 
   const handleSetCover = async () => {
-    if (!currentPhoto) {
-      return;
-    }
+    if (!currentPhoto) return;
 
     try {
       const res = await fetch(`/api/albums/cover`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ photoId: currentPhoto.id, albumId: albumId }),
+        body: JSON.stringify({ photoId: currentPhoto.id, albumId }),
       });
 
-      console.log("Response status:", res.status);
-      const text = await res.text();
-      console.log("Response text:", text);
-
       if (!res.ok) {
+        const text = await res.text();
         let errorData;
         try {
           errorData = JSON.parse(text);
@@ -161,10 +148,7 @@ export default function PhotoViewer({
         }
         throw new Error(errorData.error || "Ошибка установки обложки");
       }
-
-      const data = JSON.parse(text);
-      console.log("Обложка установлена:", data);
-    } catch (error: unknown) {
+    } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       console.error("Ошибка при установке обложки:", errorMessage);
@@ -176,9 +160,10 @@ export default function PhotoViewer({
     setIsMoveModalOpen(true);
   };
 
-  const handleMove = (targetAlbumId: number) => {
-    console.log(`Перенос фото ${currentPhoto?.id} в альбом ${targetAlbumId}`);
-    // Здесь будет логика переноса
+  const handleMove = () => {
+    if (onSyncAfterPhotoMove) {
+      onSyncAfterPhotoMove(currentPhoto!.id);
+    }
   };
 
   if (!photo || photos.length === 0 || !currentPhoto) return null;
@@ -231,7 +216,7 @@ export default function PhotoViewer({
                 Сделать обложкой
               </span>
             </div>
-            <div style={{}}>
+            <div>
               {photoPosition && (
                 <span css={style.photoPosition}>{photoPosition}</span>
               )}
