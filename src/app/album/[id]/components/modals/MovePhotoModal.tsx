@@ -2,12 +2,13 @@
 import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
 import { Album } from "@/app/types/albumTypes";
+import { AiOutlineClose } from "react-icons/ai";
 
 type MovePhotoModalProps = {
   photoId: number;
   currentAlbumId: number;
   onClose: () => void;
-  onMove: (targetAlbumId: number) => void;
+  onMove: (targetAlbumId: number) => void; // Коллбэк для уведомления PhotoViewer об успешном перемещении
 };
 
 export default function MovePhotoModal({
@@ -56,9 +57,30 @@ export default function MovePhotoModal({
     };
   }, [onClose]);
 
-  const handleMove = (albumId: number) => {
-    onMove(albumId);
-    onClose();
+  const handleMove = async (albumId: number) => {
+    try {
+      const res = await fetch("/api/albums/move", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          photoId,
+          targetAlbumId: albumId,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Ошибка перемещения фотографии");
+      }
+
+      onMove(albumId);
+      onClose();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      console.error("Ошибка при перемещении:", errorMessage);
+      alert(`Не удалось переместить фотографию: ${errorMessage}`);
+    }
   };
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -74,7 +96,7 @@ export default function MovePhotoModal({
     <div css={styles.modalOverlay} onClick={handleOverlayClick}>
       <div css={styles.modalContent}>
         <span css={styles.closeIcon} onClick={onClose}>
-          ×
+          <AiOutlineClose />
         </span>
         <h2 css={styles.modalTitle}>Выберите альбом для переноса</h2>
         <div css={styles.grid}>
