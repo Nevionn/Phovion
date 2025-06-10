@@ -11,6 +11,7 @@ import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
 import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
+import BackToBottomButton from "@/app/shared/buttons/BackToBottomButton";
 import Header from "./components/Header";
 import PhotoViewer from "./components/modals/PhotoViewer";
 import Description from "./components/Description";
@@ -405,6 +406,7 @@ const AlbumPage = () => {
           onSyncAfterPhotoMove={syncAfterPhotoMove}
         />
         <BackToTopButton />
+        <BackToBottomButton />
       </main>
     </CacheProvider>
   );

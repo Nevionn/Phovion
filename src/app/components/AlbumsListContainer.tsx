@@ -6,6 +6,7 @@ import { AlbumNaming } from "../types/albumTypes";
 import AlbumsControls from "./AlbumsControls";
 import AlbumsGrid from "./AlbumsGrid";
 import BackToTopButton from "../shared/buttons/BackToTopButton";
+import BackToBottomButton from "../shared/buttons/BackToBottomButton";
 
 const AlbumsListContainer = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -105,6 +106,7 @@ const AlbumsListContainer = () => {
       />
       <AlbumsGrid albums={albums} setAlbums={setAlbums} />
       <BackToTopButton />
+      <BackToBottomButton />
     </div>
   );
 };
