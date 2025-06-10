@@ -1,6 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { Album } from "../types/albumTypes";
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
@@ -12,6 +11,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
+import { Album } from "../types/albumTypes";
 
 interface SortableAlbumProps {
   album: Album;
@@ -52,10 +52,10 @@ const SortableAlbum = ({ album, onClick }: SortableAlbumProps) => {
       <div css={styles.dragHandleStyle} {...attributes} {...listeners}>
         <SlSizeFullscreen size={24} />
       </div>
-      {album.avatar ? (
+      {album.coverPhotoPath ? (
         <>
           <img
-            src={album.avatar}
+            src={album.coverPhotoPath}
             alt={album.name}
             css={styles.albumAvatarStyle}
             loading="lazy"

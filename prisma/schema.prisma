@@ -12,6 +12,7 @@ model Album {
   name   String
   description String?
   order     Int      @default(0)
+  coverPhotoId Int?   
   photos Photo[] 
 }
 

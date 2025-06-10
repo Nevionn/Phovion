@@ -311,6 +311,22 @@ const AlbumPage = () => {
     setSelectedPhoto(null);
   };
 
+  const syncAfterPhotoDelete = async (photoId: number) => {
+    setPhotos((prevPhotos) =>
+      prevPhotos.filter((photo) => photo.id !== photoId)
+    );
+
+    handleClosePhotoViewer();
+
+    const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
+      cache: "no-store",
+    });
+    if (countRes.ok) {
+      const { photoCount } = await countRes.json();
+      setAlbum((prev) => (prev ? { ...prev, photoCount } : null));
+    }
+  };
+
   return (
     <CacheProvider value={emotionCache}>
       <main
@@ -375,7 +391,9 @@ const AlbumPage = () => {
         <PhotoViewer
           photo={selectedPhoto}
           photos={photos}
+          albumId={Number(id)}
           onClose={handleClosePhotoViewer}
+          onSyncAfterPhotoDelete={syncAfterPhotoDelete}
         />
         <BackToTopButton />
       </main>

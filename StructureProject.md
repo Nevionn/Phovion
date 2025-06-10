@@ -23,6 +23,7 @@ SORT-PHOTOS/
 │   │   │   │   └── modals/
 │   │   │   │       └── PhotoViewer.tsx
 │   │   │   │       └── RenameAlbumModal.tsx
+│   │   │   │       └── MovePhotoModal.tsx
 │   │   │   ├── type/
 │   │   │   │   └── photoTypes.ts
 │   │   │   ├── utils/
@@ -38,6 +39,8 @@ SORT-PHOTOS/
 │   │   │   │   │   └── route.ts - Эндпоинт для получения и удаления выбранного альбома и всех его фотографий, переименование альбома, методы GET & DELETE & PUT
 │   │   │   │   ├── count/
 │   │   │   │   │   └── route.ts - Эндпоинт для поучения количества всех альбомов, метод GET
+│   │   │   │   ├── cover/
+│   │   │   │   │   └── cover.ts - Эндпоинт для установки новой обложки для альбома, метод PATCH
 │   │   │   │   ├── create/
 │   │   │   │   │   └── route.ts - Эндпоинт для создания нового альбома, метод POST
 │   │   │   │   ├── deleteAll/
