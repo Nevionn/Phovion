@@ -5,6 +5,7 @@ import { Photo } from "../../types/photoTypes";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 import { TbSeparator } from "react-icons/tb";
 import MovePhotoModal from "./MovePhotoModal";
+import { AiOutlineClose } from "react-icons/ai";
 
 type PhotoViewerProps = {
   photo: Photo | null;
@@ -177,8 +178,8 @@ export default function PhotoViewer({
     <>
       <div css={style.overlay} onClick={handleClose}>
         <div css={style.viewer} onClick={(e) => e.stopPropagation()}>
-          <button css={style.closeButton} onClick={handleClose}>
-            ×
+          <button css={style.closeIcon} onClick={handleClose}>
+            <AiOutlineClose />
           </button>
           <button
             css={style.switchAreaLeft}
@@ -263,7 +264,7 @@ const style = {
     alignItems: "center",
     justifyContent: "center",
   }),
-  closeButton: css({
+  closeIcon: css({
     position: "absolute",
     top: "10px",
     right: "10px",
@@ -275,6 +276,9 @@ const style = {
     padding: "0",
     lineHeight: "1",
     zIndex: 1001,
+    "&:hover": {
+      color: "#00d1ea",
+    },
   }),
   switchAreaLeft: css({
     position: "absolute",

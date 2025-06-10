@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
 import { Album } from "@/app/types/albumTypes";
+import { AiOutlineClose } from "react-icons/ai";
 
 type MovePhotoModalProps = {
   photoId: number;
@@ -95,7 +96,7 @@ export default function MovePhotoModal({
     <div css={styles.modalOverlay} onClick={handleOverlayClick}>
       <div css={styles.modalContent}>
         <span css={styles.closeIcon} onClick={onClose}>
-          ×
+          <AiOutlineClose />
         </span>
         <h2 css={styles.modalTitle}>Выберите альбом для переноса</h2>
         <div css={styles.grid}>
