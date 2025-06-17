@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import fs from "fs/promises";
+import path from "path";
 
 const prisma = new PrismaClient();
 
@@ -14,6 +16,27 @@ export async function DELETE(req: NextRequest) {
   }
 
   try {
+    const photo = await prisma.photo.findUnique({
+      where: { id: photoId },
+      select: { path: true },
+    });
+
+    if (!photo) {
+      return NextResponse.json(
+        { message: "Фотография не найдена" },
+        { status: 404 }
+      );
+    }
+
+    // Удаляем файл из папки public/uploads
+    const filePath = path.join(process.cwd(), "public", photo.path);
+    try {
+      await fs.unlink(filePath);
+      console.log(`Файл ${filePath} успешно удалён`);
+    } catch (error) {
+      console.warn(`Файл ${filePath} не найден:`, error);
+    }
+
     const deletedPhoto = await prisma.photo.delete({
       where: { id: photoId },
     });
