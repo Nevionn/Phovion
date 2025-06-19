@@ -3,6 +3,7 @@ import { css } from "@emotion/react";
 import { useState } from "react";
 import CreateAlbumModal from "./modals/CreateAlbumModal";
 import { AlbumNaming } from "../types/albumTypes";
+import Separator from "../shared/separator/Separator";
 
 interface AlbumControlsProps {
   loading: boolean;
@@ -25,8 +26,7 @@ const AlbumsControls = ({
     <>
       <div css={styles.headerStyle}>
         <h1 css={styles.titleStyle}>
-          Альбомы
-          <br /> альбомов: {albumCount} фотографий: {photoCount}
+          альбомов: {albumCount} фотографий: {photoCount}
         </h1>
         <button
           css={styles.openModalButton}
@@ -36,6 +36,9 @@ const AlbumsControls = ({
           Создать альбом
         </button>
       </div>
+
+      <Separator css={styles.horizonatalSeparator} />
+
       <div css={styles.createAlbumStyle}>
         <button
           css={styles.deleteButtonStyle}
@@ -62,13 +65,18 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    width: "100%",
     gap: "1rem",
-    marginBottom: "1.5rem",
-    backgroundColor: "grey",
+    backgroundColor: "transparent",
   }),
   titleStyle: css({
     fontSize: "2rem",
     color: "white",
+  }),
+  horizonatalSeparator: css({
+    width: "100%",
+    height: 1,
+    backgroundColor: "white",
   }),
   createAlbumStyle: css({
     display: "flex",

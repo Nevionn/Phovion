@@ -52,6 +52,10 @@ SORT-PHOTOS/
 │   │   │   ├── photos/
 │   │   │   │   ├── count/
 │   │   │   │   │   └── route.ts - Эндпоинт для поучения количества всех фотографий, метод GET
+│   │   │   │   ├── countByAlbum/
+│   │   │   │   │   └── route.ts - Эндпоинт для получения количества фотографий в альбоме (счётчик)
+│   │   │   │   ├── delete/
+│   │   │   │   │   └── route.ts - Эндпоинт для удаления выбраной фотографии, метод DELETE
 │   │   │   │   ├── reorder/
 │   │   │   │   │   └── route.ts - Эндпоинт для сортировки фотографий внутри альбома путём dnd, метод POST
 │   │   │   │   └── upload/
@@ -60,10 +64,12 @@ SORT-PHOTOS/
 │   │   │       └── route.ts - Эндпоинт для получения файла от внешнего ресурса, для дальнейшей обработки (межвкладочный трансфер), метод GET
 │   │   │
 │   │   ├── shared/ - Переиспользуемые глобальные компоненты
-│   │   │   └── buttons/
-│   │   │       ├── CyberButton.tsx
-│   │   │       ├── cyber-button.css
-│   │   │       └── BackToTopButton.tsx
+│   │   │   ├── buttons/
+│   │   │   │   ├── CyberButton.tsx
+│   │   │   │   ├── cyber-button.css
+│   │   │   │   └── BackToTopButton.tsx
+│   │   │   └── separator/
+│   │   │       └── Separator.tsx
 │   │   │
 │   │   └── components/ - Компоненты главной страницы (списка альбомов)
 │   │       ├── AlbumsControls.tsx
