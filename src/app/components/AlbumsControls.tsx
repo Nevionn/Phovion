@@ -3,6 +3,7 @@ import { css } from "@emotion/react";
 import { useState } from "react";
 import CreateAlbumModal from "./modals/CreateAlbumModal";
 import { AlbumNaming } from "../types/albumTypes";
+import { FaMicrochip } from "react-icons/fa6";
 import Separator from "../shared/separator/Separator";
 
 interface AlbumControlsProps {
@@ -20,7 +21,7 @@ const AlbumsControls = ({
   createAlbum,
   deleteAllAlbums,
 }: AlbumControlsProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateAlbumModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
@@ -28,13 +29,22 @@ const AlbumsControls = ({
         <h1 css={styles.titleStyle}>
           альбомов: {albumCount} фотографий: {photoCount}
         </h1>
-        <button
-          css={styles.openModalButton}
-          onClick={() => setIsModalOpen(true)}
-          disabled={loading}
-        >
-          Создать альбом
-        </button>
+
+        <div css={styles.mergeButtonsItem}>
+          <button
+            css={styles.openCreateAlbumModalButton}
+            onClick={() => setIsModalOpen(true)}
+            disabled={loading}
+          >
+            Создать альбом
+          </button>
+          <button
+            css={styles.openSettingsModalButton}
+            onClick={() => console.log()}
+          >
+            <FaMicrochip style={{ fontSize: 20 }} />
+          </button>
+        </div>
       </div>
 
       <Separator css={styles.horizonatalSeparator} />
@@ -49,7 +59,7 @@ const AlbumsControls = ({
         </button>
       </div>
       <CreateAlbumModal
-        isOpen={isModalOpen}
+        isOpen={isCreateAlbumModalOpen}
         onClose={() => setIsModalOpen(false)}
         createAlbum={createAlbum}
         loading={loading}
@@ -73,6 +83,12 @@ const styles = {
     fontSize: "2rem",
     color: "white",
   }),
+  mergeButtonsItem: css({
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 10,
+  }),
   horizonatalSeparator: css({
     width: "100%",
     height: 1,
@@ -83,7 +99,7 @@ const styles = {
     gap: "1rem",
     marginBottom: "2rem",
   }),
-  openModalButton: css({
+  openCreateAlbumModalButton: css({
     padding: "0.5rem 1rem",
     backgroundImage: "linear-gradient(211deg, #846392 0%, #604385 100%)",
     color: "white",
@@ -102,6 +118,11 @@ const styles = {
       cursor: "not-allowed",
       boxShadow: "none",
     },
+  }),
+  openSettingsModalButton: css({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   }),
   deleteButtonStyle: css({
     padding: "0.5rem 1rem",
