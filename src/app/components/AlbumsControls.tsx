@@ -5,6 +5,12 @@ import CreateAlbumModal from "./modals/CreateAlbumModal";
 import { AlbumNaming } from "../types/albumTypes";
 import { FaMicrochip } from "react-icons/fa6";
 import Separator from "../shared/separator/Separator";
+import SettingsModal from "./modals/SettingsModal";
+
+/**
+ * Компонент управления альбомами, отображающий статистику и кнопки для создания и удаления альбомов.
+ * @component
+ */
 
 interface AlbumControlsProps {
   loading: boolean;
@@ -21,34 +27,32 @@ const AlbumsControls = ({
   createAlbum,
   deleteAllAlbums,
 }: AlbumControlsProps) => {
-  const [isCreateAlbumModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateAlbumModalOpen, setIsCreateAlbumModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   return (
     <>
       <div css={styles.headerStyle}>
-        <h1 css={styles.titleStyle}>
-          альбомов: {albumCount} фотографий: {photoCount}
-        </h1>
-
+        <p css={styles.titleStyle}>
+          Альбомов: {albumCount}; Фотографий: {photoCount}
+        </p>
         <div css={styles.mergeButtonsItem}>
           <button
             css={styles.openCreateAlbumModalButton}
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsCreateAlbumModalOpen(true)}
             disabled={loading}
           >
             Создать альбом
           </button>
           <button
             css={styles.openSettingsModalButton}
-            onClick={() => console.log()}
+            onClick={() => setIsSettingsModalOpen(true)}
           >
             <FaMicrochip style={{ fontSize: 20 }} />
           </button>
         </div>
       </div>
-
-      <Separator css={styles.horizonatalSeparator} />
-
+      <Separator css={styles.horizontalSeparator} />
       <div css={styles.createAlbumStyle}>
         <button
           css={styles.deleteButtonStyle}
@@ -60,8 +64,13 @@ const AlbumsControls = ({
       </div>
       <CreateAlbumModal
         isOpen={isCreateAlbumModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => setIsCreateAlbumModalOpen(false)}
         createAlbum={createAlbum}
+        loading={loading}
+      />
+      <SettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
         loading={loading}
       />
     </>
@@ -82,6 +91,7 @@ const styles = {
   titleStyle: css({
     fontSize: "2rem",
     color: "white",
+    margin: "0",
   }),
   mergeButtonsItem: css({
     display: "flex",
@@ -89,10 +99,11 @@ const styles = {
     alignItems: "center",
     gap: 10,
   }),
-  horizonatalSeparator: css({
+  horizontalSeparator: css({
     width: "100%",
     height: 1,
     backgroundColor: "white",
+    marginTop: 10,
   }),
   createAlbumStyle: css({
     display: "flex",
