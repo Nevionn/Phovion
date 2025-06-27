@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
+import { TiArrowUp } from "react-icons/ti";
 
 const BackToTopButton = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -23,7 +24,7 @@ const BackToTopButton = () => {
 
   return (
     <button css={styles.backToTopStyle} onClick={scrollToTop}>
-      ↑
+      <TiArrowUp />
     </button>
   );
 };
@@ -32,6 +33,9 @@ export default BackToTopButton;
 
 const styles = {
   backToTopStyle: css({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     position: "fixed",
     bottom: "100px",
     right: "14px",
@@ -42,6 +46,8 @@ const styles = {
     border: "none",
     cursor: "pointer",
     fontSize: "1.5rem",
+    padding: 0,
+    margin: 0,
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
     transition: "opacity 0.3s, transform 0.3s",
     zIndex: 1000,
