@@ -1,22 +1,40 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useState } from "react";
+import { FC, useState } from "react";
+import { FaPalette } from "react-icons/fa6";
+import { GiTechnoHeart } from "react-icons/gi";
+import { TbAlertOctagonFilled } from "react-icons/tb";
+import { AiFillCloseSquare } from "react-icons/ai";
+import Separator from "@/app/shared/separator/Separator";
+
+/**
+ * Модальное окно настроек с разделами для оформления, системной информации и опасной зоны.
+ * @component
+ * @returns {JSX.Element} Рендер модального окна с настройками.
+ */
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  deleteAllAlbums: () => Promise<void>;
+  albumCount: number;
   loading?: boolean;
 }
 
-const SettingsModal = ({
+const SettingsModal: FC<SettingsModalProps> = ({
   isOpen,
   onClose,
+  deleteAllAlbums,
+  albumCount,
   loading = false,
-}: SettingsModalProps) => {
+}) => {
   const [settings, setSettings] = useState({
     autoSync: false,
     theme: "dark",
   });
+
+  // Симуляция веса папки uploads (заменить на реальную логику)
+  const [uploadFolderSize, setUploadFolderSize] = useState("1.2 GB");
 
   if (!isOpen) return null;
 
@@ -32,31 +50,68 @@ const SettingsModal = ({
     <div css={styles.modalOverlay} onClick={onClose}>
       <div css={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <h2 css={styles.modalTitle}>Настройки</h2>
-        <div css={styles.settingsContainer}>
-          <label css={styles.settingItem}>
-            <input
-              type="checkbox"
-              checked={settings.autoSync}
-              onChange={handleToggleAutoSync}
-              disabled={loading}
-            />
-            Автосинхронизация
-          </label>
-          <label css={styles.settingItem}>
-            Тема:
-            <select
-              value={settings.theme}
-              onChange={handleThemeChange}
-              disabled={loading}
-              css={styles.selectStyle}
+
+        {/* Секция 1: Оформление */}
+        <Separator css={styles.section}>
+          <h3 css={styles.sectionTitle}>
+            <FaPalette /> &nbsp; Оформление
+          </h3>
+          <div css={styles.settingsContainer}>
+            <label css={styles.settingItem}>
+              <input
+                type="checkbox"
+                checked={settings.autoSync}
+                onChange={handleToggleAutoSync}
+                disabled={loading}
+              />
+              Автосинхронизация
+            </label>
+            <label css={styles.settingItem}>
+              Тема:
+              <select
+                value={settings.theme}
+                onChange={handleThemeChange}
+                disabled={loading}
+                css={styles.selectStyle}
+              >
+                <option value="dark">Тёмная</option>
+                <option value="light">Светлая</option>
+              </select>
+            </label>
+          </div>
+        </Separator>
+
+        {/* Секция 2: Системная информация */}
+        <Separator css={styles.section}>
+          <h3 css={styles.sectionTitle}>
+            <GiTechnoHeart /> &nbsp; Системная информация
+          </h3>
+          <div css={styles.settingsContainer}>
+            <p css={styles.infoItem}>
+              Вес папки uploads (кеш): {uploadFolderSize}
+            </p>
+            {/* Здесь нужно добавить логику для обновления размера*/}
+          </div>
+        </Separator>
+
+        {/* Секция 3: Опасная зона */}
+        <Separator css={styles.section}>
+          <h3 css={styles.sectionTitle}>
+            <TbAlertOctagonFilled /> &nbsp; Опасная зона
+          </h3>
+          <div css={styles.settingsContainer}>
+            <button
+              css={styles.deleteButtonStyle}
+              onClick={() => deleteAllAlbums()}
+              disabled={loading || albumCount === 0}
             >
-              <option value="dark">Тёмная</option>
-              <option value="light">Светлая</option>
-            </select>
-          </label>
-        </div>
+              {loading ? "Удаление..." : "Удалить все"}
+            </button>
+          </div>
+        </Separator>
+
         <button css={styles.closeButton} onClick={onClose} disabled={loading}>
-          Закрыть
+          <AiFillCloseSquare css={styles.closeIcon} />
         </button>
       </div>
     </div>
@@ -83,15 +138,28 @@ const styles = {
     padding: "2rem",
     borderRadius: "8px",
     width: "90%",
-    maxWidth: "400px",
+    maxWidth: "500px",
     color: "white",
     position: "relative",
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
   }),
   modalTitle: css({
     fontSize: "1.5rem",
-    marginBottom: "1rem",
+    marginBottom: "1.5rem",
     textAlign: "center",
+  }),
+  section: css({
+    marginBottom: "1.5rem",
+    borderBottom: "1px solid #333",
+    paddingBottom: "1rem",
+  }),
+  sectionTitle: css({
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    fontSize: "1.2rem",
+    color: "#00ffea",
+    marginBottom: "0.5rem",
   }),
   settingsContainer: css({
     display: "flex",
@@ -103,6 +171,10 @@ const styles = {
     alignItems: "center",
     gap: "0.5rem",
   }),
+  infoItem: css({
+    fontSize: "1rem",
+    color: "#ccc",
+  }),
   selectStyle: css({
     marginLeft: "0.5rem",
     padding: "0.25rem",
@@ -111,14 +183,38 @@ const styles = {
     backgroundColor: "#2e2e3a",
     color: "white",
   }),
+  closeIcon: css({
+    fontSize: 30,
+  }),
   closeButton: css({
-    marginTop: "1rem",
+    display: "flex",
+    position: "absolute",
+    top: "1rem",
+    right: "0.8rem",
+    backgroundColor: "transparent",
+    color: "#00ffea",
+    border: "none",
+    cursor: "pointer",
+    alignItems: "center",
+    justifyContent: "center",
+    "&:hover": {
+      color: "#02b2c7",
+    },
+    "&:disabled": {
+      backgroundImage: "none",
+      backgroundColor: "#ccc",
+      cursor: "not-allowed",
+    },
+  }),
+  deleteButtonStyle: css({
     padding: "0.5rem 1rem",
-    backgroundImage: "linear-gradient(211deg, #846392 0%, #604385 100%)",
-    color: "white",
+    backgroundColor: "#ED7095",
+    color: "black",
+    fontSize: "16px",
     border: "none",
     borderRadius: "8px",
     cursor: "pointer",
+    transition: "filter 0.2s",
     "&:hover": {
       filter: "brightness(1.15)",
     },

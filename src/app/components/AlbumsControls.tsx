@@ -52,16 +52,9 @@ const AlbumsControls = ({
           </button>
         </div>
       </div>
+
       <Separator css={styles.horizontalSeparator} />
-      <div css={styles.createAlbumStyle}>
-        <button
-          css={styles.deleteButtonStyle}
-          onClick={() => deleteAllAlbums()}
-          disabled={loading || albumCount === 0}
-        >
-          {loading ? "Удаление..." : "Удалить все"}
-        </button>
-      </div>
+
       <CreateAlbumModal
         isOpen={isCreateAlbumModalOpen}
         onClose={() => setIsCreateAlbumModalOpen(false)}
@@ -71,6 +64,8 @@ const AlbumsControls = ({
       <SettingsModal
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
+        deleteAllAlbums={deleteAllAlbums}
+        albumCount={albumCount}
         loading={loading}
       />
     </>
@@ -105,11 +100,6 @@ const styles = {
     backgroundColor: "white",
     marginTop: 10,
   }),
-  createAlbumStyle: css({
-    display: "flex",
-    gap: "1rem",
-    marginBottom: "2rem",
-  }),
   openCreateAlbumModalButton: css({
     padding: "0.5rem 1rem",
     backgroundImage: "linear-gradient(211deg, #846392 0%, #604385 100%)",
@@ -134,25 +124,5 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-  }),
-  deleteButtonStyle: css({
-    padding: "0.5rem 1rem",
-    backgroundImage: "linear-gradient(211deg, #933232 0%, #7a2a2a 100%)",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    transition: "filter 0.2s, box-shadow 0.2s",
-    fontSize: "1rem",
-    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-    "&:hover": {
-      filter: "brightness(1.15)",
-    },
-    "&:disabled": {
-      backgroundImage: "none",
-      backgroundColor: "#ccc",
-      cursor: "not-allowed",
-      boxShadow: "none",
-    },
   }),
 };
