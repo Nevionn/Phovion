@@ -29,7 +29,6 @@ const SettingsModal: FC<SettingsModalProps> = ({
   loading = false,
 }) => {
   const [settings, setSettings] = useState({
-    autoSync: false,
     theme: "dark",
   });
 
@@ -37,14 +36,6 @@ const SettingsModal: FC<SettingsModalProps> = ({
   const [uploadFolderSize, setUploadFolderSize] = useState("1.2 GB");
 
   if (!isOpen) return null;
-
-  const handleToggleAutoSync = () => {
-    setSettings((prev) => ({ ...prev, autoSync: !prev.autoSync }));
-  };
-
-  const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSettings((prev) => ({ ...prev, theme: e.target.value }));
-  };
 
   return (
     <div css={styles.modalOverlay} onClick={onClose}>
@@ -57,27 +48,48 @@ const SettingsModal: FC<SettingsModalProps> = ({
             <FaPalette /> &nbsp; Оформление
           </h3>
           <div css={styles.settingsContainer}>
-            <label css={styles.settingItem}>
-              <input
-                type="checkbox"
-                checked={settings.autoSync}
-                onChange={handleToggleAutoSync}
-                disabled={loading}
-              />
-              Автосинхронизация
-            </label>
-            <label css={styles.settingItem}>
-              Тема:
-              <select
-                value={settings.theme}
-                onChange={handleThemeChange}
-                disabled={loading}
-                css={styles.selectStyle}
+            <div css={styles.themesContainer}>
+              <div
+                css={styles.themeBox}
+                onClick={() =>
+                  setSettings((prev) => ({ ...prev, theme: "tokyoNight" }))
+                }
               >
-                <option value="dark">Тёмная</option>
-                <option value="light">Светлая</option>
-              </select>
-            </label>
+                Tokyo Night
+              </div>
+              <div
+                css={styles.themeBox}
+                onClick={() =>
+                  setSettings((prev) => ({ ...prev, theme: "midnight" }))
+                }
+              >
+                Midnight
+              </div>
+              <div
+                css={styles.themeBox}
+                onClick={() =>
+                  setSettings((prev) => ({ ...prev, theme: "solarized" }))
+                }
+              >
+                Solarized
+              </div>
+              <div
+                css={styles.themeBox}
+                onClick={() =>
+                  setSettings((prev) => ({ ...prev, theme: "dracula" }))
+                }
+              >
+                Dracula
+              </div>
+              <div
+                css={styles.themeBox}
+                onClick={() =>
+                  setSettings((prev) => ({ ...prev, theme: "nord" }))
+                }
+              >
+                Nord
+              </div>
+            </div>
           </div>
         </Separator>
 
@@ -175,6 +187,24 @@ const styles = {
     fontSize: "1rem",
     color: "#ccc",
   }),
+  themesContainer: css({
+    display: "flex",
+    flexDirection: "column",
+    gap: "1px",
+    marginTop: 10,
+    backgroundColor: "grey",
+  }),
+  themeBox: css({
+    padding: "0.5rem 1rem",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    cursor: "pointer",
+    backgroundColor: "#2e2e3a", // Плейсхолдер, заменить на реальные цвета позже
+    color: "white",
+    "&:hover": {
+      backgroundColor: "#3e3e4a",
+    },
+  }),
   selectStyle: css({
     marginLeft: "0.5rem",
     padding: "0.25rem",
@@ -208,6 +238,7 @@ const styles = {
   }),
   deleteButtonStyle: css({
     padding: "0.5rem 1rem",
+    marginTop: 10,
     backgroundColor: "#ED7095",
     color: "black",
     fontSize: "16px",
