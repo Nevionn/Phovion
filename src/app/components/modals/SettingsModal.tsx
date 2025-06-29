@@ -5,6 +5,7 @@ import { FaPalette } from "react-icons/fa6";
 import { GiTechnoHeart } from "react-icons/gi";
 import { TbAlertOctagonFilled } from "react-icons/tb";
 import { AiFillCloseSquare } from "react-icons/ai";
+import { PiMemoryFill } from "react-icons/pi";
 import Separator from "@/app/shared/separator/Separator";
 
 /**
@@ -100,7 +101,7 @@ const SettingsModal: FC<SettingsModalProps> = ({
           </h3>
           <div css={styles.settingsContainer}>
             <p css={styles.infoItem}>
-              Вес папки uploads (кеш): {uploadFolderSize}
+              <PiMemoryFill /> Вес папки uploads (кеш): {uploadFolderSize}
             </p>
             {/* Здесь нужно добавить логику для обновления размера*/}
           </div>
@@ -184,6 +185,10 @@ const styles = {
     gap: "0.5rem",
   }),
   infoItem: css({
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    gap: 10,
     fontSize: "1rem",
     color: "#ccc",
   }),
