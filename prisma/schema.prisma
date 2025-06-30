@@ -25,7 +25,3 @@ model Photo {
   createdAt DateTime @default(now())
 }
 
-model AppTheme {
-  id    Int    @id @default(autoincrement())
-  theme String // Храним название темы (например, "SpaceBlue")
-}
