@@ -1,12 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { FaPalette } from "react-icons/fa6";
 import { GiTechnoHeart } from "react-icons/gi";
 import { TbAlertOctagonFilled } from "react-icons/tb";
 import { AiFillCloseSquare } from "react-icons/ai";
 import { PiMemoryFill } from "react-icons/pi";
 import Separator from "@/app/shared/separator/Separator";
+import { themeColors } from "@/app/shared/theme/themePalette";
 
 /**
  * Модальное окно настроек с разделами для оформления, системной информации и опасной зоны.
@@ -29,12 +30,31 @@ const SettingsModal: FC<SettingsModalProps> = ({
   albumCount,
   loading = false,
 }) => {
-  const [settings, setSettings] = useState({
-    theme: "dark",
+  const [settings, setSettings] = useState<{
+    theme: "SpaceBlue" | "RoseMoon" | "solarized" | "dracula" | "nord";
+  }>({
+    theme: "SpaceBlue", // Начальная тема, должна быть одной из допустимых
   });
 
   // Симуляция веса папки uploads (заменить на реальную логику)
   const [uploadFolderSize, setUploadFolderSize] = useState("1.2 GB");
+
+  // Применение темы к глобальным стилям
+  useEffect(() => {
+    const currentTheme = themeColors[settings.theme];
+    document.documentElement.style.setProperty(
+      "--theme-background",
+      currentTheme.mainGradient
+    );
+    document.documentElement.style.setProperty(
+      "--modal-background",
+      currentTheme.modalBackground
+    );
+    document.documentElement.style.setProperty(
+      "--modal-text-color",
+      currentTheme.modalTextColor
+    );
+  }, [settings.theme]);
 
   if (!isOpen) return null;
 
@@ -46,28 +66,46 @@ const SettingsModal: FC<SettingsModalProps> = ({
         {/* Секция 1: Оформление */}
         <Separator css={styles.section}>
           <h3 css={styles.sectionTitle}>
-            <FaPalette /> &nbsp; Оформление
+            <FaPalette />   Оформление
           </h3>
           <div css={styles.settingsContainer}>
             <div css={styles.themesContainer}>
               <div
-                css={styles.themeBox}
+                css={css`
+                  ${styles.themeBox}
+                  background: ${themeColors["SpaceBlue"].settingBoxGradient};
+                  border: ${settings.theme === "SpaceBlue"
+                    ? `2px solid ${themeColors["SpaceBlue"].settingBoxBorder}`
+                    : "1px solid transparent"};
+                `}
                 onClick={() =>
-                  setSettings((prev) => ({ ...prev, theme: "tokyoNight" }))
+                  setSettings((prev) => ({ ...prev, theme: "SpaceBlue" }))
                 }
               >
-                Tokyo Night
+                Space Blue
               </div>
               <div
-                css={styles.themeBox}
+                css={css`
+                  ${styles.themeBox}
+                  background: ${themeColors["RoseMoon"].settingBoxGradient};
+                  border: ${settings.theme === "RoseMoon"
+                    ? `2px solid ${themeColors["RoseMoon"].settingBoxBorder}`
+                    : "1px solid transparent"};
+                `}
                 onClick={() =>
-                  setSettings((prev) => ({ ...prev, theme: "midnight" }))
+                  setSettings((prev) => ({ ...prev, theme: "RoseMoon" }))
                 }
               >
-                Midnight
+                Rose Moon
               </div>
               <div
-                css={styles.themeBox}
+                css={css`
+                  ${styles.themeBox}
+                  background: ${themeColors["solarized"].settingBoxGradient};
+                  border: ${settings.theme === "solarized"
+                    ? `2px solid ${themeColors["solarized"].settingBoxBorder}`
+                    : "1px solid transparent"};
+                `}
                 onClick={() =>
                   setSettings((prev) => ({ ...prev, theme: "solarized" }))
                 }
@@ -75,7 +113,13 @@ const SettingsModal: FC<SettingsModalProps> = ({
                 Solarized
               </div>
               <div
-                css={styles.themeBox}
+                css={css`
+                  ${styles.themeBox}
+                  background: ${themeColors["dracula"].settingBoxGradient};
+                  border: ${settings.theme === "dracula"
+                    ? `2px solid ${themeColors["dracula"].settingBoxBorder}`
+                    : "1px solid transparent"};
+                `}
                 onClick={() =>
                   setSettings((prev) => ({ ...prev, theme: "dracula" }))
                 }
@@ -83,7 +127,13 @@ const SettingsModal: FC<SettingsModalProps> = ({
                 Dracula
               </div>
               <div
-                css={styles.themeBox}
+                css={css`
+                  ${styles.themeBox}
+                  background: ${themeColors["nord"].settingBoxGradient};
+                  border: ${settings.theme === "nord"
+                    ? `2px solid ${themeColors["nord"].settingBoxBorder}`
+                    : "1px solid transparent"};
+                `}
                 onClick={() =>
                   setSettings((prev) => ({ ...prev, theme: "nord" }))
                 }
@@ -97,20 +147,20 @@ const SettingsModal: FC<SettingsModalProps> = ({
         {/* Секция 2: Системная информация */}
         <Separator css={styles.section}>
           <h3 css={styles.sectionTitle}>
-            <GiTechnoHeart /> &nbsp; Системная информация
+            <GiTechnoHeart />   Системная информация
           </h3>
           <div css={styles.settingsContainer}>
             <p css={styles.infoItem}>
               <PiMemoryFill /> Вес папки uploads (кеш): {uploadFolderSize}
             </p>
-            {/* Здесь нужно добавить логику для обновления размера*/}
+            {/* Здесь нужно добавить логику для обновления размера */}
           </div>
         </Separator>
 
         {/* Секция 3: Опасная зона */}
         <Separator css={styles.section}>
           <h3 css={styles.sectionTitle}>
-            <TbAlertOctagonFilled /> &nbsp; Опасная зона
+            <TbAlertOctagonFilled />   Опасная зона
           </h3>
           <div css={styles.settingsContainer}>
             <button
@@ -147,12 +197,12 @@ const styles = {
     zIndex: 1000,
   }),
   modalContent: css({
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "var(--modal-background, #1a1a2e)",
     padding: "2rem",
     borderRadius: "8px",
     width: "90%",
     maxWidth: "500px",
-    color: "white",
+    color: "var(--modal-text-color, white)",
     position: "relative",
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
   }),
@@ -160,10 +210,11 @@ const styles = {
     fontSize: "1.5rem",
     marginBottom: "1.5rem",
     textAlign: "center",
+    color: "white",
   }),
   section: css({
     marginBottom: "1.5rem",
-    borderBottom: "1px solid #333",
+    borderBottom: "1px solid var(--modal-text-color, #333)",
     paddingBottom: "1rem",
   }),
   sectionTitle: css({
@@ -171,7 +222,7 @@ const styles = {
     justifyContent: "flex-start",
     alignItems: "center",
     fontSize: "1.2rem",
-    color: "#00ffea",
+    color: "var(--modal-text-color, #00ffea)",
     marginBottom: "0.5rem",
   }),
   settingsContainer: css({
@@ -195,17 +246,15 @@ const styles = {
   themesContainer: css({
     display: "flex",
     flexDirection: "column",
-    gap: "1px",
+    gap: "6px",
     marginTop: 10,
-    backgroundColor: "grey",
+    backgroundColor: "transparent",
   }),
   themeBox: css({
     padding: "0.5rem 1rem",
-    border: "1px solid #ccc",
     borderRadius: "4px",
     cursor: "pointer",
-    backgroundColor: "#2e2e3a", // Плейсхолдер, заменить на реальные цвета позже
-    color: "white",
+    color: "var(--modal-text-color, white)",
     "&:hover": {
       backgroundColor: "#3e3e4a",
     },
@@ -214,12 +263,13 @@ const styles = {
     marginLeft: "0.5rem",
     padding: "0.25rem",
     borderRadius: "4px",
-    border: "1px solid #ccc",
+    border: "1px solid var(--modal-text-color, #ccc)",
     backgroundColor: "#2e2e3a",
-    color: "white",
+    color: "var(--modal-text-color, white)",
   }),
   closeIcon: css({
     fontSize: 30,
+    color: "var(--modal-text-color, #00ffea)",
   }),
   closeButton: css({
     display: "flex",
@@ -227,13 +277,14 @@ const styles = {
     top: "1rem",
     right: "0.8rem",
     backgroundColor: "transparent",
-    color: "#00ffea",
+    color: "var(--modal-text-color, #00ffea)",
     border: "none",
     cursor: "pointer",
     alignItems: "center",
     justifyContent: "center",
     "&:hover": {
-      color: "#02b2c7",
+      color: "var(--modal-text-color)",
+      filter: "brightness(1.2)",
     },
     "&:disabled": {
       backgroundImage: "none",
@@ -245,7 +296,7 @@ const styles = {
     padding: "0.5rem 1rem",
     marginTop: 10,
     backgroundColor: "#ED7095",
-    color: "black",
+    color: "white",
     fontSize: "16px",
     border: "none",
     borderRadius: "8px",
