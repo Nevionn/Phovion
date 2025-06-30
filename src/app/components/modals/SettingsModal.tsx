@@ -1,12 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { FC, useState, useEffect } from "react";
+import { FC, useState } from "react";
 import { FaPalette } from "react-icons/fa6";
 import { GiTechnoHeart } from "react-icons/gi";
 import { TbAlertOctagonFilled } from "react-icons/tb";
 import { AiFillCloseSquare } from "react-icons/ai";
 import { PiMemoryFill } from "react-icons/pi";
 import Separator from "@/app/shared/separator/Separator";
+import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 import { themeColors } from "@/app/shared/theme/themePalette";
 
 /**
@@ -30,31 +31,8 @@ const SettingsModal: FC<SettingsModalProps> = ({
   albumCount,
   loading = false,
 }) => {
-  const [settings, setSettings] = useState<{
-    theme: "SpaceBlue" | "RoseMoon" | "solarized" | "dracula" | "nord";
-  }>({
-    theme: "SpaceBlue", // Начальная тема, должна быть одной из допустимых
-  });
-
-  // Симуляция веса папки uploads (заменить на реальную логику)
+  const { theme, setTheme } = useThemeManager();
   const [uploadFolderSize, setUploadFolderSize] = useState("1.2 GB");
-
-  // Применение темы к глобальным стилям
-  useEffect(() => {
-    const currentTheme = themeColors[settings.theme];
-    document.documentElement.style.setProperty(
-      "--theme-background",
-      currentTheme.mainGradient
-    );
-    document.documentElement.style.setProperty(
-      "--modal-background",
-      currentTheme.modalBackground
-    );
-    document.documentElement.style.setProperty(
-      "--modal-text-color",
-      currentTheme.modalTextColor
-    );
-  }, [settings.theme]);
 
   if (!isOpen) return null;
 
@@ -66,7 +44,7 @@ const SettingsModal: FC<SettingsModalProps> = ({
         {/* Секция 1: Оформление */}
         <Separator css={styles.section}>
           <h3 css={styles.sectionTitle}>
-            <FaPalette />   Оформление
+            <FaPalette /> &nbsp; Оформление
           </h3>
           <div css={styles.settingsContainer}>
             <div css={styles.themesContainer}>
@@ -74,13 +52,11 @@ const SettingsModal: FC<SettingsModalProps> = ({
                 css={css`
                   ${styles.themeBox}
                   background: ${themeColors["SpaceBlue"].settingBoxGradient};
-                  border: ${settings.theme === "SpaceBlue"
+                  border: ${theme === "SpaceBlue"
                     ? `2px solid ${themeColors["SpaceBlue"].settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
-                onClick={() =>
-                  setSettings((prev) => ({ ...prev, theme: "SpaceBlue" }))
-                }
+                onClick={() => setTheme("SpaceBlue")}
               >
                 Space Blue
               </div>
@@ -88,13 +64,11 @@ const SettingsModal: FC<SettingsModalProps> = ({
                 css={css`
                   ${styles.themeBox}
                   background: ${themeColors["RoseMoon"].settingBoxGradient};
-                  border: ${settings.theme === "RoseMoon"
+                  border: ${theme === "RoseMoon"
                     ? `2px solid ${themeColors["RoseMoon"].settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
-                onClick={() =>
-                  setSettings((prev) => ({ ...prev, theme: "RoseMoon" }))
-                }
+                onClick={() => setTheme("RoseMoon")}
               >
                 Rose Moon
               </div>
@@ -102,13 +76,11 @@ const SettingsModal: FC<SettingsModalProps> = ({
                 css={css`
                   ${styles.themeBox}
                   background: ${themeColors["solarized"].settingBoxGradient};
-                  border: ${settings.theme === "solarized"
+                  border: ${theme === "solarized"
                     ? `2px solid ${themeColors["solarized"].settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
-                onClick={() =>
-                  setSettings((prev) => ({ ...prev, theme: "solarized" }))
-                }
+                onClick={() => setTheme("solarized")}
               >
                 Solarized
               </div>
@@ -116,13 +88,11 @@ const SettingsModal: FC<SettingsModalProps> = ({
                 css={css`
                   ${styles.themeBox}
                   background: ${themeColors["dracula"].settingBoxGradient};
-                  border: ${settings.theme === "dracula"
+                  border: ${theme === "dracula"
                     ? `2px solid ${themeColors["dracula"].settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
-                onClick={() =>
-                  setSettings((prev) => ({ ...prev, theme: "dracula" }))
-                }
+                onClick={() => setTheme("dracula")}
               >
                 Dracula
               </div>
@@ -130,13 +100,11 @@ const SettingsModal: FC<SettingsModalProps> = ({
                 css={css`
                   ${styles.themeBox}
                   background: ${themeColors["nord"].settingBoxGradient};
-                  border: ${settings.theme === "nord"
+                  border: ${theme === "nord"
                     ? `2px solid ${themeColors["nord"].settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
-                onClick={() =>
-                  setSettings((prev) => ({ ...prev, theme: "nord" }))
-                }
+                onClick={() => setTheme("nord")}
               >
                 Nord
               </div>
@@ -147,20 +115,19 @@ const SettingsModal: FC<SettingsModalProps> = ({
         {/* Секция 2: Системная информация */}
         <Separator css={styles.section}>
           <h3 css={styles.sectionTitle}>
-            <GiTechnoHeart />   Системная информация
+            <GiTechnoHeart /> &nbsp; Системная информация
           </h3>
           <div css={styles.settingsContainer}>
             <p css={styles.infoItem}>
               <PiMemoryFill /> Вес папки uploads (кеш): {uploadFolderSize}
             </p>
-            {/* Здесь нужно добавить логику для обновления размера */}
           </div>
         </Separator>
 
         {/* Секция 3: Опасная зона */}
         <Separator css={styles.section}>
           <h3 css={styles.sectionTitle}>
-            <TbAlertOctagonFilled />   Опасная зона
+            <TbAlertOctagonFilled /> &nbsp; Опасная зона
           </h3>
           <div css={styles.settingsContainer}>
             <button
@@ -197,7 +164,7 @@ const styles = {
     zIndex: 1000,
   }),
   modalContent: css({
-    backgroundColor: "var(--modal-background, #1a1a2e)",
+    backgroundColor: "var(--modal-background, #142b5c)",
     padding: "2rem",
     borderRadius: "8px",
     width: "90%",
@@ -230,11 +197,6 @@ const styles = {
     flexDirection: "column",
     gap: "1rem",
   }),
-  settingItem: css({
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-  }),
   infoItem: css({
     display: "flex",
     justifyContent: "flex-start",
@@ -254,18 +216,10 @@ const styles = {
     padding: "0.5rem 1rem",
     borderRadius: "4px",
     cursor: "pointer",
-    color: "var(--modal-text-color, white)",
+    color: "white",
     "&:hover": {
       backgroundColor: "#3e3e4a",
     },
-  }),
-  selectStyle: css({
-    marginLeft: "0.5rem",
-    padding: "0.25rem",
-    borderRadius: "4px",
-    border: "1px solid var(--modal-text-color, #ccc)",
-    backgroundColor: "#2e2e3a",
-    color: "var(--modal-text-color, white)",
   }),
   closeIcon: css({
     fontSize: 30,
@@ -296,7 +250,7 @@ const styles = {
     padding: "0.5rem 1rem",
     marginTop: 10,
     backgroundColor: "#ED7095",
-    color: "white",
+    color: "black",
     fontSize: "16px",
     border: "none",
     borderRadius: "8px",

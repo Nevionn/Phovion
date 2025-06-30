@@ -85,7 +85,7 @@ const styles = {
     zIndex: 1000,
   }),
   modalContent: css({
-    backgroundColor: "rgb(20, 43, 92)", // 1a1a1a
+    backgroundColor: "var(--modal-background, #142b5c)",
     padding: "2rem",
     borderRadius: "8px",
     width: "90%",

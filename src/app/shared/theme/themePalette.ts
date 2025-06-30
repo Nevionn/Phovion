@@ -1,5 +1,7 @@
+export type Theme = "SpaceBlue" | "RoseMoon" | "solarized" | "dracula" | "nord";
+
 export const themeColors: Record<
-  "SpaceBlue" | "RoseMoon" | "solarized" | "dracula" | "nord",
+  Theme,
   {
     mainGradient: string; // Градиент для главной страницы
     settingBoxGradient: string; // Градиент для themeBox в настройках (настройки -> оформление)
@@ -13,7 +15,7 @@ export const themeColors: Record<
       "radial-gradient(150% 100% at 50% 100%, #135bc7 10%, #000814 60%, #041225 100%)",
     settingBoxGradient: "linear-gradient(to right, #135bc7, #041225)",
     settingBoxBorder: "#00ffea",
-    modalBackground: "#0a1e3a", // Тёмно-синий фон для модального окна
+    modalBackground: "#142b5c", // Тёмно-синий фон для модального окна
     modalTextColor: "#00ffea", // Яркий текст для контраста
   },
   RoseMoon: {
