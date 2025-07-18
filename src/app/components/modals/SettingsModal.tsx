@@ -31,7 +31,8 @@ const SettingsModal: FC<SettingsModalProps> = ({
   albumCount,
   loading = false,
 }) => {
-  const { theme, setTheme } = useThemeManager();
+  const { theme, setTheme, enableAlbumBorder, setEnableAlbumBorder } =
+    useThemeManager();
   const [uploadFolderSize, setUploadFolderSize] = useState("1.2 GB");
 
   if (!isOpen) return null;
@@ -75,40 +76,49 @@ const SettingsModal: FC<SettingsModalProps> = ({
               <div
                 css={css`
                   ${styles.themeBox}
-                  background: ${themeColors["solarized"].settingBoxGradient};
-                  border: ${theme === "solarized"
-                    ? `2px solid ${themeColors["solarized"].settingBoxBorder}`
+                  background: ${themeColors["Solarized"].settingBoxGradient};
+                  border: ${theme === "Solarized"
+                    ? `2px solid ${themeColors["Solarized"].settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
-                onClick={() => setTheme("solarized")}
+                onClick={() => setTheme("Solarized")}
               >
                 Solarized
               </div>
               <div
                 css={css`
                   ${styles.themeBox}
-                  background: ${themeColors["dracula"].settingBoxGradient};
-                  border: ${theme === "dracula"
-                    ? `2px solid ${themeColors["dracula"].settingBoxBorder}`
+                  background: ${themeColors["OnyxStorm"].settingBoxGradient};
+                  border: ${theme === "OnyxStorm"
+                    ? `2px solid ${themeColors["OnyxStorm"].settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
-                onClick={() => setTheme("dracula")}
+                onClick={() => setTheme("OnyxStorm")}
               >
-                Dracula
+                Onyx Storm
               </div>
               <div
                 css={css`
                   ${styles.themeBox}
-                  background: ${themeColors["nord"].settingBoxGradient};
-                  border: ${theme === "nord"
-                    ? `2px solid ${themeColors["nord"].settingBoxBorder}`
+                  background: ${themeColors["Nord"].settingBoxGradient};
+                  border: ${theme === "Nord"
+                    ? `2px solid ${themeColors["Nord"].settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
-                onClick={() => setTheme("nord")}
+                onClick={() => setTheme("Nord")}
               >
                 Nord
               </div>
             </div>
+            {/* Новая галочка для обводки панели альбомов */}
+            <label css={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={enableAlbumBorder}
+                onChange={(e) => setEnableAlbumBorder(e.target.checked)}
+              />
+              <span>Включить обводку для панели альбомов</span>
+            </label>
           </div>
         </Separator>
 
@@ -220,6 +230,13 @@ const styles = {
     "&:hover": {
       backgroundColor: "#3e3e4a",
     },
+  }),
+  checkboxLabel: css({
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    color: "var(--modal-text-color, white)",
+    fontSize: "1rem",
   }),
   closeIcon: css({
     fontSize: 30,

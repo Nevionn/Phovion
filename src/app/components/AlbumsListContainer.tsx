@@ -128,7 +128,7 @@ const styles = {
     background:
       "linear-gradient(180deg, rgba(35, 42, 70, 0.4) 0%, rgba(20, 25, 45, 0.4) 100%)",
     boxShadow: "0 0 30px rgba(0, 0, 0, 0.6)",
-    border: "1px solid rgba(21, 133, 208, 0.94)",
+    border: "var(--list-container-border-color)",
     color: "white",
     position: "relative",
   }),
