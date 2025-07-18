@@ -118,7 +118,7 @@ const styles = {
     zIndex: 1000,
   }),
   modalContent: css({
-    backgroundColor: "rgb(20, 43, 92)",
+    backgroundColor: "var(--modal-background, #142b5c)",
     padding: "2rem",
     borderRadius: "8px",
     width: "90%",
@@ -135,31 +135,33 @@ const styles = {
     margin: 0,
   }),
   inputStyle: css({
-    border: "2px solid rgb(12, 117, 236)",
+    border:
+      "2px solid var(--create-album-modal-input-fields-border-color-non-target)",
     borderRadius: "8px",
     fontSize: "1rem",
     height: "34px",
     width: "100%",
-    backgroundColor: "rgba(52, 93, 139, 0.4)",
+    backgroundColor: "var(--create-album-modal-input-fields-color)",
     color: "white",
     outline: "none",
     "&:focus": {
-      borderColor: "rgb(85, 182, 247)",
+      borderColor: "var(--create-album-modal-input-fields-border-color-target)",
       boxShadow: "0 0 0 2px rgba(168, 85, 247, 0.3)",
     },
   }),
   textareaStyle: css({
-    border: "2px solid rgb(12, 117, 236)",
+    border:
+      "2px solid var(--create-album-modal-input-fields-border-color-non-target)",
     borderRadius: "8px",
     fontSize: "1rem",
     width: "100%",
     minHeight: "100px",
-    backgroundColor: "rgba(52, 93, 139, 0.4)",
+    backgroundColor: "var(--create-album-modal-input-fields-color)",
     color: "white",
     resize: "vertical",
     outline: "none",
     "&:focus": {
-      borderColor: "rgb(85, 182, 247)",
+      borderColor: "var(--create-album-modal-input-fields-border-color-target)",
       boxShadow: "0 0 0 2px rgba(168, 85, 247, 0.3)",
     },
   }),

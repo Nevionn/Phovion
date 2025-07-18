@@ -102,7 +102,7 @@ const styles = {
   }),
   openCreateAlbumModalButton: css({
     padding: "0.5rem 1rem",
-    backgroundImage: "linear-gradient(211deg, #846392 0%, #604385 100%)",
+    backgroundImage: "var(--create-album-button-color)",
     color: "white",
     border: "none",
     borderRadius: "8px",

@@ -52,9 +52,10 @@ const SettingsModal: FC<SettingsModalProps> = ({
               <div
                 css={css`
                   ${styles.themeBox}
-                  background: ${themeColors["SpaceBlue"].settingBoxGradient};
+                  background: ${themeColors["SpaceBlue"].modals.settingsModal
+                    .settingBoxGradient};
                   border: ${theme === "SpaceBlue"
-                    ? `2px solid ${themeColors["SpaceBlue"].settingBoxBorder}`
+                    ? `2px solid ${themeColors["SpaceBlue"].modals.settingsModal.settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
                 onClick={() => setTheme("SpaceBlue")}
@@ -64,9 +65,10 @@ const SettingsModal: FC<SettingsModalProps> = ({
               <div
                 css={css`
                   ${styles.themeBox}
-                  background: ${themeColors["RoseMoon"].settingBoxGradient};
+                  background: ${themeColors["RoseMoon"].modals.settingsModal
+                    .settingBoxGradient};
                   border: ${theme === "RoseMoon"
-                    ? `2px solid ${themeColors["RoseMoon"].settingBoxBorder}`
+                    ? `2px solid ${themeColors["RoseMoon"].modals.settingsModal.settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
                 onClick={() => setTheme("RoseMoon")}
@@ -76,9 +78,10 @@ const SettingsModal: FC<SettingsModalProps> = ({
               <div
                 css={css`
                   ${styles.themeBox}
-                  background: ${themeColors["Solarized"].settingBoxGradient};
+                  background: ${themeColors["Solarized"].modals.settingsModal
+                    .settingBoxGradient};
                   border: ${theme === "Solarized"
-                    ? `2px solid ${themeColors["Solarized"].settingBoxBorder}`
+                    ? `2px solid ${themeColors["Solarized"].modals.settingsModal.settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
                 onClick={() => setTheme("Solarized")}
@@ -88,9 +91,10 @@ const SettingsModal: FC<SettingsModalProps> = ({
               <div
                 css={css`
                   ${styles.themeBox}
-                  background: ${themeColors["OnyxStorm"].settingBoxGradient};
+                  background: ${themeColors["OnyxStorm"].modals.settingsModal
+                    .settingBoxGradient};
                   border: ${theme === "OnyxStorm"
-                    ? `2px solid ${themeColors["OnyxStorm"].settingBoxBorder}`
+                    ? `2px solid ${themeColors["OnyxStorm"].modals.settingsModal.settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
                 onClick={() => setTheme("OnyxStorm")}
@@ -100,9 +104,10 @@ const SettingsModal: FC<SettingsModalProps> = ({
               <div
                 css={css`
                   ${styles.themeBox}
-                  background: ${themeColors["Nord"].settingBoxGradient};
+                  background: ${themeColors["Nord"].modals.settingsModal
+                    .settingBoxGradient};
                   border: ${theme === "Nord"
-                    ? `2px solid ${themeColors["Nord"].settingBoxBorder}`
+                    ? `2px solid ${themeColors["Nord"].modals.settingsModal.settingBoxBorder}`
                     : "1px solid transparent"};
                 `}
                 onClick={() => setTheme("Nord")}
