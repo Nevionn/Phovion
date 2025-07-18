@@ -172,8 +172,7 @@ const styles = {
   }),
   buttonStyle: css({
     padding: "0.5rem 1rem",
-    backgroundImage:
-      "linear-gradient(211deg,rgb(47, 101, 152) 0%,rgb(67, 93, 133) 100%)",
+    backgroundImage: "var(--create-album-button-color)",
     color: "white",
     border: "none",
     borderRadius: "8px",

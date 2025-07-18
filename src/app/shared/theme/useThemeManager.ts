@@ -67,7 +67,7 @@ export function useThemeManager() {
       );
       document.documentElement.style.setProperty(
         "--create-album-button-color",
-        currentTheme.globalButtons.createAlbumButton.bgColor
+        currentTheme.globalButtons.openCreateAlbumModalButton.bgColor
       );
       localStorage.setItem("appTheme", theme);
       localStorage.setItem(

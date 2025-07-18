@@ -23,13 +23,14 @@ export const themeColors: Record<
         modalTextColor: string; // Цвет текста в модальном окне
       };
       createAlbumModal: {
+        // работает и для RenameAlbumModal
         inputFieldBg: string;
         inputFieldBorderTarget: string;
         inputFieldBorderNonTarget: string;
       };
     };
     globalButtons: {
-      createAlbumButton: {
+      openCreateAlbumModalButton: {
         bgColor: string; // общий цвет и для кнопки "создать" внутри компонента CreateAlbumModal
       };
     };
@@ -57,7 +58,7 @@ export const themeColors: Record<
       },
     },
     globalButtons: {
-      createAlbumButton: {
+      openCreateAlbumModalButton: {
         bgColor:
           "linear-gradient(211deg,rgb(47, 101, 152) 0%,rgb(67, 93, 133) 100%)",
       },
@@ -86,7 +87,7 @@ export const themeColors: Record<
       },
     },
     globalButtons: {
-      createAlbumButton: {
+      openCreateAlbumModalButton: {
         bgColor: "linear-gradient(211deg, #846392 0%, #604385 100%)",
       },
     },
@@ -113,7 +114,7 @@ export const themeColors: Record<
       },
     },
     globalButtons: {
-      createAlbumButton: {
+      openCreateAlbumModalButton: {
         bgColor: "linear-gradient(211deg, #638592ff 0%, #438569ff 100%)",
       },
     },
@@ -140,7 +141,7 @@ export const themeColors: Record<
       },
     },
     globalButtons: {
-      createAlbumButton: {
+      openCreateAlbumModalButton: {
         bgColor: "linear-gradient(211deg, #444b4eff 0%, #6a887cff 100%)",
       },
     },
@@ -167,7 +168,7 @@ export const themeColors: Record<
       },
     },
     globalButtons: {
-      createAlbumButton: {
+      openCreateAlbumModalButton: {
         bgColor: "linear-gradient(211deg, #637492ff 0%, #435885ff 100%)",
       },
     },
