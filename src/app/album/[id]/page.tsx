@@ -23,6 +23,7 @@ import { dataURLtoFile, proxyToFile } from "./utils/utils";
 import { useAlbumData } from "./hooks/useAlbumData";
 import { useRenameAlbum } from "./hooks/useRenameAlbum";
 import { useDeleteAlbum } from "./hooks/useDeleteAlbum";
+import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
@@ -46,6 +47,8 @@ const AlbumPage = () => {
   );
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useThemeManager();
 
   async function uploadPhotos() {
     if (files.length === 0) {
