@@ -20,7 +20,7 @@ export function useThemeManager() {
         ? storedTheme
         : "SpaceBlue";
     }
-    return "SpaceBlue"; // Дефолт на сервере
+    return "SpaceBlue";
   });
 
   const [enableAlbumBorder, setEnableAlbumBorder] = useState<boolean>(() => {
@@ -38,6 +38,10 @@ export function useThemeManager() {
       document.documentElement.style.setProperty(
         "--theme-background",
         currentTheme.pages.main.mainGradient
+      );
+      document.documentElement.style.setProperty(
+        "--theme-photo-page-background",
+        currentTheme.pages.photoPage.backgroundColor
       );
       document.documentElement.style.setProperty(
         "--list-container-border-color",

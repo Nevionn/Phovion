@@ -13,7 +13,9 @@ export const themeColors: Record<
         mainGradient: string; // Градиент для главной страницы (список альбомов)
         albumListContainerBorder: string; // Обводка панели альбомов
       };
-      // Страница фотографий todo
+      photoPage: {
+        backgroundColor: string; // Страница выбранного альбома
+      };
     };
     modals: {
       settingsModal: {
@@ -43,6 +45,10 @@ export const themeColors: Record<
           "radial-gradient(150% 100% at 50% 100%, #135bc7 10%, #000814 60%, #041225 100%)",
         albumListContainerBorder: "1px solid rgba(21, 133, 208, 0.94)",
       },
+      photoPage: {
+        backgroundColor:
+          "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+      },
     },
     modals: {
       settingsModal: {
@@ -70,6 +76,11 @@ export const themeColors: Record<
         mainGradient:
           "radial-gradient(150% 100% at 50% 100%, rgb(94, 19, 199) 10%, rgb(17, 4, 37) 60%, rgb(9, 0, 20) 100%)",
         albumListContainerBorder: "1px solid rgba(202, 21, 208, 0.94)",
+      },
+
+      photoPage: {
+        backgroundColor:
+          "linear-gradient(135deg, #1f1a2eff 0%, #20163eff 50%, #230f60ff 100%)",
       },
     },
     modals: {
@@ -99,6 +110,9 @@ export const themeColors: Record<
           "radial-gradient(150% 100% at 50% 100%, #073642 10%, #002b36 60%, #001f27 100%)",
         albumListContainerBorder: "1px solid rgba(26, 143, 49, 0.94)",
       },
+      photoPage: {
+        backgroundColor: "",
+      },
     },
     modals: {
       settingsModal: {
@@ -126,6 +140,9 @@ export const themeColors: Record<
           "radial-gradient(150% 100% at 50% 100%, #282a36 10%, #1e1f29 60%, #14151a 100%)",
         albumListContainerBorder: "1px solid rgba(137, 65, 205, 0.94)",
       },
+      photoPage: {
+        backgroundColor: "",
+      },
     },
     modals: {
       settingsModal: {
@@ -152,6 +169,9 @@ export const themeColors: Record<
         mainGradient:
           "radial-gradient(150% 100% at 50% 100%, #2e3440 10%, #242931 60%, #1a1f26 100%)",
         albumListContainerBorder: "1px solid rgba(92, 90, 91, 0.94)",
+      },
+      photoPage: {
+        backgroundColor: "",
       },
     },
     modals: {
