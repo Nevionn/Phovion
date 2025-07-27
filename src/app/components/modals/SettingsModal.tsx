@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { FaPalette } from "react-icons/fa6";
 import { GiTechnoHeart } from "react-icons/gi";
 import { TbAlertOctagonFilled } from "react-icons/tb";
@@ -34,9 +34,26 @@ const SettingsModal: FC<SettingsModalProps> = ({
 }) => {
   const { theme, setTheme, enableAlbumBorder, setEnableAlbumBorder } =
     useThemeManager();
-  const [uploadFolderSize, setUploadFolderSize] = useState("1.2 GB");
+  const [uploadFolderSize, setUploadFolderSize] = useState("");
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (isOpen) {
+      fetch("/api/dirSize")
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          return res.json();
+        })
+        .then((data) => {
+          setUploadFolderSize(data.size || "Неизвестно");
+        })
+        .catch((error) => {
+          console.error("Ошибка при загрузке размера папки:", error);
+          setUploadFolderSize("Неизвестно");
+        });
+    }
+  }, [isOpen]);
 
   const themes: Theme[] = [
     "SpaceBlue",
@@ -45,6 +62,8 @@ const SettingsModal: FC<SettingsModalProps> = ({
     "OnyxStorm",
     "Nord",
   ];
+
+  if (!isOpen) return null;
 
   return (
     <div css={styles.modalOverlay} onClick={onClose}>
@@ -67,7 +86,6 @@ const SettingsModal: FC<SettingsModalProps> = ({
                 />
               ))}
             </div>
-            {/* Новая галочка для обводки панели альбомов */}
             <label css={styles.checkboxLabel}>
               <input
                 type="checkbox"
