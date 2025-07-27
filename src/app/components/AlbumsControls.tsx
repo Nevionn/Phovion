@@ -8,7 +8,7 @@ import Separator from "../shared/separator/Separator";
 import SettingsModal from "./modals/SettingsModal";
 
 /**
- * Компонент управления альбомами, отображающий статистику и кнопки для создания и удаления альбомов.
+ * Компонент управления альбомами, отображающий статистику контента (счётчики), и кнопки для создания альбома и открытия настроек.
  * @component
  */
 
@@ -102,7 +102,7 @@ const styles = {
   }),
   openCreateAlbumModalButton: css({
     padding: "0.5rem 1rem",
-    backgroundImage: "linear-gradient(211deg, #846392 0%, #604385 100%)",
+    backgroundImage: "var(--create-album-button-color)",
     color: "white",
     border: "none",
     borderRadius: "8px",
@@ -124,5 +124,6 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    cursor: "pointer",
   }),
 };

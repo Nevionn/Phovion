@@ -1,29 +1,19 @@
 html,
 body {
-  /* padding: 0;
-  margin: 0;
-  scroll-behavior: smooth;
-  background-image: var(--gradient-purple); */
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background: radial-gradient(
-    150% 100% at 50% 100%,
-    #135bc7 10%,
-    #000814 60%,
-    #041225 100%
+  background: var(
+    --theme-background,
+    radial-gradient(
+      150% 100% at 50% 100%,
+      #135bc7 10%,
+      #000814 60%,
+      #041225 100%
+    )
   );
   background-color: black;
   background-repeat: no-repeat;
   background-attachment: fixed;
   color: white;
 }
-
-/* :root {
-  --gradient-purple: linear-gradient(211deg, #846392 0%, #604385 100%);
-  --gradient-blue-purple: linear-gradient(
-    to bottom right,
-    #9ea6d7 0%,
-    #3a307d 100%
-  );
-} */

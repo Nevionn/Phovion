@@ -5,7 +5,10 @@ import { FaPalette } from "react-icons/fa6";
 import { GiTechnoHeart } from "react-icons/gi";
 import { TbAlertOctagonFilled } from "react-icons/tb";
 import { AiFillCloseSquare } from "react-icons/ai";
+import { PiMemoryFill } from "react-icons/pi";
 import Separator from "@/app/shared/separator/Separator";
+import { useThemeManager } from "@/app/shared/theme/useThemeManager";
+import { themeColors } from "@/app/shared/theme/themePalette";
 
 /**
  * Модальное окно настроек с разделами для оформления, системной информации и опасной зоны.
@@ -28,23 +31,11 @@ const SettingsModal: FC<SettingsModalProps> = ({
   albumCount,
   loading = false,
 }) => {
-  const [settings, setSettings] = useState({
-    autoSync: false,
-    theme: "dark",
-  });
-
-  // Симуляция веса папки uploads (заменить на реальную логику)
+  const { theme, setTheme, enableAlbumBorder, setEnableAlbumBorder } =
+    useThemeManager();
   const [uploadFolderSize, setUploadFolderSize] = useState("1.2 GB");
 
   if (!isOpen) return null;
-
-  const handleToggleAutoSync = () => {
-    setSettings((prev) => ({ ...prev, autoSync: !prev.autoSync }));
-  };
-
-  const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSettings((prev) => ({ ...prev, theme: e.target.value }));
-  };
 
   return (
     <div css={styles.modalOverlay} onClick={onClose}>
@@ -57,26 +48,81 @@ const SettingsModal: FC<SettingsModalProps> = ({
             <FaPalette /> &nbsp; Оформление
           </h3>
           <div css={styles.settingsContainer}>
-            <label css={styles.settingItem}>
+            <div css={styles.themesContainer}>
+              <div
+                css={css`
+                  ${styles.themeBox}
+                  background: ${themeColors["SpaceBlue"].modals.settingsModal
+                    .settingBoxGradient};
+                  border: ${theme === "SpaceBlue"
+                    ? `2px solid ${themeColors["SpaceBlue"].modals.settingsModal.settingBoxBorder}`
+                    : "1px solid transparent"};
+                `}
+                onClick={() => setTheme("SpaceBlue")}
+              >
+                Space Blue
+              </div>
+              <div
+                css={css`
+                  ${styles.themeBox}
+                  background: ${themeColors["RoseMoon"].modals.settingsModal
+                    .settingBoxGradient};
+                  border: ${theme === "RoseMoon"
+                    ? `2px solid ${themeColors["RoseMoon"].modals.settingsModal.settingBoxBorder}`
+                    : "1px solid transparent"};
+                `}
+                onClick={() => setTheme("RoseMoon")}
+              >
+                Rose Moon
+              </div>
+              <div
+                css={css`
+                  ${styles.themeBox}
+                  background: ${themeColors["Solarized"].modals.settingsModal
+                    .settingBoxGradient};
+                  border: ${theme === "Solarized"
+                    ? `2px solid ${themeColors["Solarized"].modals.settingsModal.settingBoxBorder}`
+                    : "1px solid transparent"};
+                `}
+                onClick={() => setTheme("Solarized")}
+              >
+                Solarized
+              </div>
+              <div
+                css={css`
+                  ${styles.themeBox}
+                  background: ${themeColors["OnyxStorm"].modals.settingsModal
+                    .settingBoxGradient};
+                  border: ${theme === "OnyxStorm"
+                    ? `2px solid ${themeColors["OnyxStorm"].modals.settingsModal.settingBoxBorder}`
+                    : "1px solid transparent"};
+                `}
+                onClick={() => setTheme("OnyxStorm")}
+              >
+                Onyx Storm
+              </div>
+              <div
+                css={css`
+                  ${styles.themeBox}
+                  background: ${themeColors["Nord"].modals.settingsModal
+                    .settingBoxGradient};
+                  border: ${theme === "Nord"
+                    ? `2px solid ${themeColors["Nord"].modals.settingsModal.settingBoxBorder}`
+                    : "1px solid transparent"};
+                `}
+                onClick={() => setTheme("Nord")}
+              >
+                Nord
+              </div>
+            </div>
+            {/* Новая галочка для обводки панели альбомов */}
+            <label css={styles.checkboxLabel}>
               <input
                 type="checkbox"
-                checked={settings.autoSync}
-                onChange={handleToggleAutoSync}
-                disabled={loading}
+                checked={enableAlbumBorder}
+                onChange={(e) => setEnableAlbumBorder(e.target.checked)}
               />
-              Автосинхронизация
-            </label>
-            <label css={styles.settingItem}>
-              Тема:
-              <select
-                value={settings.theme}
-                onChange={handleThemeChange}
-                disabled={loading}
-                css={styles.selectStyle}
-              >
-                <option value="dark">Тёмная</option>
-                <option value="light">Светлая</option>
-              </select>
+              <span>Включить обводку для панели альбомов</span>
             </label>
           </div>
         </Separator>
@@ -88,9 +134,8 @@ const SettingsModal: FC<SettingsModalProps> = ({
           </h3>
           <div css={styles.settingsContainer}>
             <p css={styles.infoItem}>
-              Вес папки uploads (кеш): {uploadFolderSize}
+              <PiMemoryFill /> Вес папки uploads (кеш): {uploadFolderSize}
             </p>
-            {/* Здесь нужно добавить логику для обновления размера*/}
           </div>
         </Separator>
 
@@ -134,12 +179,12 @@ const styles = {
     zIndex: 1000,
   }),
   modalContent: css({
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "var(--modal-background, #142b5c)",
     padding: "2rem",
     borderRadius: "8px",
     width: "90%",
     maxWidth: "500px",
-    color: "white",
+    color: "var(--modal-text-color, white)",
     position: "relative",
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
   }),
@@ -147,10 +192,11 @@ const styles = {
     fontSize: "1.5rem",
     marginBottom: "1.5rem",
     textAlign: "center",
+    color: "white",
   }),
   section: css({
     marginBottom: "1.5rem",
-    borderBottom: "1px solid #333",
+    borderBottom: "1px solid var(--modal-text-color, #333)",
     paddingBottom: "1rem",
   }),
   sectionTitle: css({
@@ -158,7 +204,7 @@ const styles = {
     justifyContent: "flex-start",
     alignItems: "center",
     fontSize: "1.2rem",
-    color: "#00ffea",
+    color: "var(--modal-text-color, #00ffea)",
     marginBottom: "0.5rem",
   }),
   settingsContainer: css({
@@ -166,25 +212,40 @@ const styles = {
     flexDirection: "column",
     gap: "1rem",
   }),
-  settingItem: css({
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-  }),
   infoItem: css({
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    gap: 10,
     fontSize: "1rem",
     color: "#ccc",
   }),
-  selectStyle: css({
-    marginLeft: "0.5rem",
-    padding: "0.25rem",
+  themesContainer: css({
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px",
+    marginTop: 10,
+    backgroundColor: "transparent",
+  }),
+  themeBox: css({
+    padding: "0.5rem 1rem",
     borderRadius: "4px",
-    border: "1px solid #ccc",
-    backgroundColor: "#2e2e3a",
+    cursor: "pointer",
     color: "white",
+    "&:hover": {
+      backgroundColor: "#3e3e4a",
+    },
+  }),
+  checkboxLabel: css({
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    color: "var(--modal-text-color, white)",
+    fontSize: "1rem",
   }),
   closeIcon: css({
     fontSize: 30,
+    color: "var(--modal-text-color, #00ffea)",
   }),
   closeButton: css({
     display: "flex",
@@ -192,13 +253,14 @@ const styles = {
     top: "1rem",
     right: "0.8rem",
     backgroundColor: "transparent",
-    color: "#00ffea",
+    color: "var(--modal-text-color, #00ffea)",
     border: "none",
     cursor: "pointer",
     alignItems: "center",
     justifyContent: "center",
     "&:hover": {
-      color: "#02b2c7",
+      color: "var(--modal-text-color)",
+      filter: "brightness(1.2)",
     },
     "&:disabled": {
       backgroundImage: "none",
@@ -208,6 +270,7 @@ const styles = {
   }),
   deleteButtonStyle: css({
     padding: "0.5rem 1rem",
+    marginTop: 10,
     backgroundColor: "#ED7095",
     color: "black",
     fontSize: "16px",

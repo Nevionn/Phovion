@@ -24,3 +24,4 @@ model Photo {
   order    Int
   createdAt DateTime @default(now())
 }
+

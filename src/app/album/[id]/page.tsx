@@ -23,6 +23,7 @@ import { dataURLtoFile, proxyToFile } from "./utils/utils";
 import { useAlbumData } from "./hooks/useAlbumData";
 import { useRenameAlbum } from "./hooks/useRenameAlbum";
 import { useDeleteAlbum } from "./hooks/useDeleteAlbum";
+import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
@@ -46,6 +47,8 @@ const AlbumPage = () => {
   );
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useThemeManager();
 
   async function uploadPhotos() {
     if (files.length === 0) {
@@ -430,8 +433,7 @@ const style = {
     alignItems: "center",
     padding: "2rem",
     textAlign: "center",
-    background:
-      "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+    background: "var(--theme-photo-page-background)",
     fontFamily: "'Orbitron', sans-serif",
     minHeight: "100vh",
     position: "relative",
