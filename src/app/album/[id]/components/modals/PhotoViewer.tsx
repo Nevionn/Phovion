@@ -257,7 +257,7 @@ const style = {
     background: "#1a1a2e",
     border: "2px solid #00ffea",
     borderRadius: "12px",
-    padding: "1rem",
+    padding: "2rem",
     boxShadow: "0 0 20px rgba(0, 255, 234, 0.5)",
     display: "flex",
     flexDirection: "column",
@@ -317,7 +317,7 @@ const style = {
     zIndex: 2010,
   }),
   arrowIcon: css({ color: "#00ffea", fontSize: "30px" }),
-  image: css({ maxWidth: "100%", maxHeight: "70vh", objectFit: "contain" }),
+  image: css({ maxWidth: "100%", maxHeight: "91vh", objectFit: "contain" }),
   captionContainer: css({
     width: "100%",
     display: "flex",

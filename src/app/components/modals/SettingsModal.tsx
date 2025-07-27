@@ -1,14 +1,15 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { FaPalette } from "react-icons/fa6";
 import { GiTechnoHeart } from "react-icons/gi";
 import { TbAlertOctagonFilled } from "react-icons/tb";
 import { AiFillCloseSquare } from "react-icons/ai";
 import { PiMemoryFill } from "react-icons/pi";
 import Separator from "@/app/shared/separator/Separator";
+import { ThemeBox } from "../ThemeBox";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
-import { themeColors } from "@/app/shared/theme/themePalette";
+import { Theme } from "@/app/shared/theme/themePalette";
 
 /**
  * Модальное окно настроек с разделами для оформления, системной информации и опасной зоны.
@@ -33,7 +34,34 @@ const SettingsModal: FC<SettingsModalProps> = ({
 }) => {
   const { theme, setTheme, enableAlbumBorder, setEnableAlbumBorder } =
     useThemeManager();
-  const [uploadFolderSize, setUploadFolderSize] = useState("1.2 GB");
+  const [uploadFolderSize, setUploadFolderSize] = useState("");
+
+  useEffect(() => {
+    if (isOpen) {
+      fetch("/api/dirSize")
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          return res.json();
+        })
+        .then((data) => {
+          setUploadFolderSize(data.size || "Неизвестно");
+        })
+        .catch((error) => {
+          console.error("Ошибка при загрузке размера папки:", error);
+          setUploadFolderSize("Неизвестно");
+        });
+    }
+  }, [isOpen]);
+
+  const themes: Theme[] = [
+    "SpaceBlue",
+    "RoseMoon",
+    "Solarized",
+    "OnyxStorm",
+    "Nord",
+  ];
 
   if (!isOpen) return null;
 
@@ -49,73 +77,15 @@ const SettingsModal: FC<SettingsModalProps> = ({
           </h3>
           <div css={styles.settingsContainer}>
             <div css={styles.themesContainer}>
-              <div
-                css={css`
-                  ${styles.themeBox}
-                  background: ${themeColors["SpaceBlue"].modals.settingsModal
-                    .settingBoxGradient};
-                  border: ${theme === "SpaceBlue"
-                    ? `2px solid ${themeColors["SpaceBlue"].modals.settingsModal.settingBoxBorder}`
-                    : "1px solid transparent"};
-                `}
-                onClick={() => setTheme("SpaceBlue")}
-              >
-                Space Blue
-              </div>
-              <div
-                css={css`
-                  ${styles.themeBox}
-                  background: ${themeColors["RoseMoon"].modals.settingsModal
-                    .settingBoxGradient};
-                  border: ${theme === "RoseMoon"
-                    ? `2px solid ${themeColors["RoseMoon"].modals.settingsModal.settingBoxBorder}`
-                    : "1px solid transparent"};
-                `}
-                onClick={() => setTheme("RoseMoon")}
-              >
-                Rose Moon
-              </div>
-              <div
-                css={css`
-                  ${styles.themeBox}
-                  background: ${themeColors["Solarized"].modals.settingsModal
-                    .settingBoxGradient};
-                  border: ${theme === "Solarized"
-                    ? `2px solid ${themeColors["Solarized"].modals.settingsModal.settingBoxBorder}`
-                    : "1px solid transparent"};
-                `}
-                onClick={() => setTheme("Solarized")}
-              >
-                Solarized
-              </div>
-              <div
-                css={css`
-                  ${styles.themeBox}
-                  background: ${themeColors["OnyxStorm"].modals.settingsModal
-                    .settingBoxGradient};
-                  border: ${theme === "OnyxStorm"
-                    ? `2px solid ${themeColors["OnyxStorm"].modals.settingsModal.settingBoxBorder}`
-                    : "1px solid transparent"};
-                `}
-                onClick={() => setTheme("OnyxStorm")}
-              >
-                Onyx Storm
-              </div>
-              <div
-                css={css`
-                  ${styles.themeBox}
-                  background: ${themeColors["Nord"].modals.settingsModal
-                    .settingBoxGradient};
-                  border: ${theme === "Nord"
-                    ? `2px solid ${themeColors["Nord"].modals.settingsModal.settingBoxBorder}`
-                    : "1px solid transparent"};
-                `}
-                onClick={() => setTheme("Nord")}
-              >
-                Nord
-              </div>
+              {themes.map((themeName) => (
+                <ThemeBox
+                  key={themeName}
+                  themeName={themeName}
+                  currentTheme={theme}
+                  onSelect={setTheme}
+                />
+              ))}
             </div>
-            {/* Новая галочка для обводки панели альбомов */}
             <label css={styles.checkboxLabel}>
               <input
                 type="checkbox"
@@ -226,15 +196,6 @@ const styles = {
     gap: "6px",
     marginTop: 10,
     backgroundColor: "transparent",
-  }),
-  themeBox: css({
-    padding: "0.5rem 1rem",
-    borderRadius: "4px",
-    cursor: "pointer",
-    color: "white",
-    "&:hover": {
-      backgroundColor: "#3e3e4a",
-    },
   }),
   checkboxLabel: css({
     display: "flex",
