@@ -11,12 +11,6 @@ import { ThemeBox } from "../ThemeBox";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 import { Theme } from "@/app/shared/theme/themePalette";
 
-/**
- * Модальное окно настроек с разделами для оформления, системной информации и опасной зоны.
- * @component
- * @returns {JSX.Element} Рендер модального окна с настройками.
- */
-
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -24,6 +18,12 @@ interface SettingsModalProps {
   albumCount: number;
   loading?: boolean;
 }
+
+/**
+ * Модальное окно настроек с разделами для оформления, системной информации и опасной зоны.
+ * @component
+ * @returns {JSX.Element} Рендер модального окна с настройками.
+ */
 
 const SettingsModal: FC<SettingsModalProps> = ({
   isOpen,

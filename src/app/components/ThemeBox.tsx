@@ -3,6 +3,12 @@ import { css } from "@emotion/react";
 import { FC } from "react";
 import { Theme, themeColors } from "@/app/shared/theme/themePalette";
 
+interface ThemeBoxProps {
+  themeName: Theme;
+  currentTheme: Theme;
+  onSelect: (theme: Theme) => void;
+}
+
 /**
  * Компонент для отображения и выбора одной темы оформления в SettingsModal.
  * Отображает элемент с градиентом и обводкой, зависящими от текущей темы,
@@ -15,11 +21,6 @@ import { Theme, themeColors } from "@/app/shared/theme/themePalette";
  * @param {function} props.onSelect - Функция-обработчик клика, вызываемая с выбранной темой.
  * @returns {JSX.Element} Элемент с визуальным представлением темы.
  */
-interface ThemeBoxProps {
-  themeName: Theme;
-  currentTheme: Theme;
-  onSelect: (theme: Theme) => void;
-}
 
 export const ThemeBox: FC<ThemeBoxProps> = ({
   themeName,
