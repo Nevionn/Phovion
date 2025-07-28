@@ -36,6 +36,14 @@ const SettingsModal: FC<SettingsModalProps> = ({
     useThemeManager();
   const [uploadFolderSize, setUploadFolderSize] = useState("");
 
+  const themes: Theme[] = [
+    "SpaceBlue",
+    "RoseMoon",
+    "Solarized",
+    "OnyxStorm",
+    "Nord",
+  ];
+
   useEffect(() => {
     if (isOpen) {
       fetch("/api/dirSize")
@@ -54,14 +62,6 @@ const SettingsModal: FC<SettingsModalProps> = ({
         });
     }
   }, [isOpen]);
-
-  const themes: Theme[] = [
-    "SpaceBlue",
-    "RoseMoon",
-    "Solarized",
-    "OnyxStorm",
-    "Nord",
-  ];
 
   if (!isOpen) return null;
 
