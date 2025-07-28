@@ -5,7 +5,7 @@ import * as path from "path";
 /**
  * Обработчик GET-запроса для получения размера папки uploads.
  * Выполняет расчёт общего размера файлов и вложенных папок в директории public/uploads
- * и возвращает результат в формате JSON.
+ * и возвращает результат в формате JSON, используя ГБ, если размер превышает 1024 МБ.
  *
  * @returns {Promise<NextResponse>} Объект ответа с размером папки в мегабайтах или ошибкой.
  * @throws {Error} Выбрасывает ошибку, если не удаётся определить размер папки.
@@ -14,8 +14,13 @@ export async function GET(req: NextRequest, res: NextResponse) {
   const uploadsPath = path.join(process.cwd(), "public", "uploads");
   try {
     const sizeInBytes = getFolderSize(uploadsPath);
-    const sizeInMB = (sizeInBytes / (1024 * 1024)).toFixed(2);
-    return NextResponse.json({ size: `${sizeInMB} MB` }, { status: 200 });
+    if (sizeInBytes >= 1024 * 1024 * 1024) {
+      const sizeInGB = (sizeInBytes / (1024 * 1024 * 1024)).toFixed(2);
+      return NextResponse.json({ size: `${sizeInGB} GB` }, { status: 200 });
+    } else {
+      const sizeInMB = (sizeInBytes / (1024 * 1024)).toFixed(2);
+      return NextResponse.json({ size: `${sizeInMB} MB` }, { status: 200 });
+    }
   } catch (error) {
     console.error("Ошибка при измерении размера папки:", error);
     return NextResponse.json(
