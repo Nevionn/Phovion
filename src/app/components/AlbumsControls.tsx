@@ -7,11 +7,6 @@ import { FaMicrochip } from "react-icons/fa6";
 import Separator from "../shared/separator/Separator";
 import SettingsModal from "./modals/SettingsModal";
 
-/**
- * Компонент управления альбомами, отображающий статистику контента (счётчики), и кнопки для создания альбома и открытия настроек.
- * @component
- */
-
 interface AlbumControlsProps {
   loading: boolean;
   albumCount: number;
@@ -19,6 +14,11 @@ interface AlbumControlsProps {
   createAlbum: (data: AlbumNaming) => Promise<void>;
   deleteAllAlbums: () => Promise<void>;
 }
+
+/**
+ * Компонент управления альбомами, отображающий статистику контента (счётчики), и кнопки для создания альбома и открытия настроек.
+ * @component
+ */
 
 const AlbumsControls = ({
   loading,
