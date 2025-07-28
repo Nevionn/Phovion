@@ -17,9 +17,17 @@ export async function GET(req: NextRequest, res: NextResponse) {
     if (sizeInBytes >= 1024 * 1024 * 1024) {
       const sizeInGB = (sizeInBytes / (1024 * 1024 * 1024)).toFixed(2);
       return NextResponse.json({ size: `${sizeInGB} GB` }, { status: 200 });
-    } else {
+    } else if (sizeInBytes >= 1024 * 1024) {
       const sizeInMB = (sizeInBytes / (1024 * 1024)).toFixed(2);
       return NextResponse.json({ size: `${sizeInMB} MB` }, { status: 200 });
+    } else if (sizeInBytes >= 1024) {
+      const sizeInKB = (sizeInBytes / 1024).toFixed(2);
+      return NextResponse.json({ size: `${sizeInKB} KB` }, { status: 200 });
+    } else {
+      return NextResponse.json(
+        { size: `${sizeInBytes} bytes` },
+        { status: 200 }
+      );
     }
   } catch (error) {
     console.error("Ошибка при измерении размера папки:", error);
