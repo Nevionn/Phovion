@@ -4,7 +4,7 @@ import Link from "next/link";
 import CyberButton from "@/app/shared/buttons/CyberButton";
 import { AlbumForViewPhotos } from "@/app/types/albumTypes";
 
-type HeaderProps = {
+type HeaderItemsProps = {
   album: AlbumForViewPhotos | null;
   onEditClick: () => void;
   onDangerClick: () => void;
@@ -13,14 +13,20 @@ type HeaderProps = {
   showDanger: boolean;
 };
 
-function Header({
+/**
+ * Компонент, хедера, отображающий навигацию текущего альбома: альбомы > album[название], и предоставляющий набор кнопок и функций для редактирования, удаления и скачивания
+ * @component
+ * @returns {JSX.Element}
+ */
+
+function HeaderItems({
   album,
   onEditClick,
   onDangerClick,
   onDownloadClick,
   deleteAlbum,
   showDanger,
-}: HeaderProps) {
+}: HeaderItemsProps) {
   return (
     <div css={style.navigationItem}>
       <div>
@@ -61,7 +67,7 @@ function Header({
   );
 }
 
-export default Header;
+export default HeaderItems;
 
 const style = {
   navigationItem: css({

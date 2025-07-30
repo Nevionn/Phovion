@@ -5,6 +5,12 @@ type DescriptionProps = {
   description: string | null;
 };
 
+/**
+ * Компонент для описания альбома
+ * @component
+ * @returns {JSX.Element}
+ */
+
 function Description({ description }: DescriptionProps) {
   return (
     <div css={style.descriptionContainer}>
