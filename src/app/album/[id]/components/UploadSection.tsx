@@ -9,6 +9,12 @@ type UploadSectionProps = {
   setFiles: (files: File[]) => void;
 };
 
+/**
+ * Компонент секция для загрузки фотографий из файловой системы, состоит из кнопки открытия ФС, текста названия файла и кнопки загрузки
+ * @component
+ * @returns {JSX.Element}
+ */
+
 function UploadSection({
   files,
   uploading,
