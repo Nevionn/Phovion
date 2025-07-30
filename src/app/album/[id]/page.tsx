@@ -12,7 +12,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
 import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
 import BackToBottomButton from "@/app/shared/buttons/BackToBottomButton";
-import Header from "./components/Header";
+import HeaderItems from "./components/HeaderItems";
 import PhotoViewer from "./components/modals/PhotoViewer";
 import Description from "./components/Description";
 import UploadSection from "./components/UploadSection";
@@ -355,7 +355,7 @@ const AlbumPage = () => {
             <>
               <div css={style.header}>
                 <div css={style.headerContainer}>
-                  <Header
+                  <HeaderItems
                     album={album}
                     onEditClick={() => setShowEdit(!showEdit)}
                     onDangerClick={() => setShowDanger(!showDanger)}
