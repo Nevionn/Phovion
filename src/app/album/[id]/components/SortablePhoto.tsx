@@ -10,6 +10,12 @@ type SortablePhotoProps = {
   onClick: () => void;
 };
 
+/**
+ * Компонент фотографии выбранного альбома с функционалом ручной сортировки через dnd
+ * @component
+ * @returns {JSX.Element}
+ */
+
 export default function SortablePhoto({ photo, onClick }: SortablePhotoProps) {
   const {
     attributes,
