@@ -11,6 +11,12 @@ type PhotoGridProps = {
   onPhotoClick: (photo: Photo) => void;
 };
 
+/**
+ * Компонент сетка для отображения фотографий текущего альбома
+ * @component
+ * @returns {JSX.Element}
+ */
+
 export default function PhotoGrid({
   photos,
   onDragEnd,
