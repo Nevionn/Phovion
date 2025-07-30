@@ -7,6 +7,13 @@ type DropZoneDraggingProps = {
   isLoading: boolean;
 };
 
+/**
+ * Компонент область для загрузки фотографий в альбом из вне (файловая система, соседняя вкладка браузера) при помощи DND
+ * Компонент отображается при перетаскивания контента в область всей страницы альбома
+ * @component
+ * @returns {JSX.Element}
+ */
+
 export default function DropZoneDragging({
   isDraggingOver,
   isLoading,
