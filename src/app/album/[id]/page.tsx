@@ -228,10 +228,9 @@ const AlbumPage = () => {
     e.preventDefault();
     if (!isLoading) {
       setIsDraggingOver(false);
-
       const droppedFiles: Set<File> = new Set();
 
-      // Логируем все типы данных в DataTransfer
+      // Логируем все типы данных в DataTransfer для отладки
       console.log("DataTransfer types:", e.dataTransfer.types);
       for (const type of e.dataTransfer.types) {
         console.log(`Data for ${type}:`, e.dataTransfer.getData(type));
@@ -244,6 +243,9 @@ const AlbumPage = () => {
       if (localFiles.length > 0) {
         console.log("Найдены локальные файлы:", localFiles);
         localFiles.forEach((file) => droppedFiles.add(file));
+      } else {
+        console.log("Нет валидных файлов в dataTransfer.files, игнорируем.");
+        return; // Игнорируем, если нет реальных файлов
       }
 
       // 2. Проверяем URL (перетаскивание из вкладки/браузера)
@@ -287,10 +289,9 @@ const AlbumPage = () => {
       const finalFiles: File[] = Array.from(droppedFiles);
       console.log("Итоговый список файлов для загрузки:", finalFiles);
 
-      // Очищаем и устанавливаем новые файлы
-      setFiles(finalFiles);
-      console.log("Текущее состояние files перед триггером:", files);
+      // Очищаем и устанавливаем новые файлы только если есть валидные данные
       if (finalFiles.length > 0) {
+        setFiles(finalFiles);
         setTriggerUpload(true);
       } else {
         alert("Перетащите изображение или выберите файлы!");
@@ -298,7 +299,7 @@ const AlbumPage = () => {
     }
   };
 
-  // для вызова uploadPhotos после обновления состояния
+  // Вызов uploadPhotos после обновления состояния
   useEffect(() => {
     if (triggerUpload && files.length > 0) {
       console.log("Запускаем uploadPhotos с файлами:", files);
@@ -321,7 +322,6 @@ const AlbumPage = () => {
       prevPhotos.filter((photo) => photo.id !== photoId)
     );
     handleClosePhotoViewer();
-
     const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
       cache: "no-store",
     });
@@ -381,6 +381,8 @@ const AlbumPage = () => {
                   photos={photos}
                   onDragEnd={handleDragEnd}
                   onPhotoClick={handlePhotoClick}
+                  onDragStart={(e) => e.preventDefault()} // Предотвращаем копирование
+                  onContextMenu={(e) => e.preventDefault()} // Отключаем контекстное меню
                 />
               )}
             </>
