@@ -32,6 +32,7 @@ const AlbumPage = () => {
 
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [triggerUpload, setTriggerUpload] = useState(false);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
@@ -222,16 +223,13 @@ const AlbumPage = () => {
     if (!isLoading) setIsDraggingOver(false);
   };
 
-  const [triggerUpload, setTriggerUpload] = useState(false);
-
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (!isLoading) {
       setIsDraggingOver(false);
-
       const droppedFiles: Set<File> = new Set();
 
-      // Логируем все типы данных в DataTransfer
+      // Логируем все типы данных в DataTransfer для отладки
       console.log("DataTransfer types:", e.dataTransfer.types);
       for (const type of e.dataTransfer.types) {
         console.log(`Data for ${type}:`, e.dataTransfer.getData(type));
@@ -246,17 +244,21 @@ const AlbumPage = () => {
         localFiles.forEach((file) => droppedFiles.add(file));
       }
 
-      // 2. Проверяем URL (перетаскивание из вкладки/браузера)
+      // 2. Проверяем URL (перетаскивание из другой вкладки/сайта)
       const uriList = e.dataTransfer.getData("text/uri-list");
       const plainText = e.dataTransfer.getData("text/plain");
       const url = uriList || plainText;
-      if (url && url.startsWith("http") && !url.startsWith("data:image/")) {
-        console.log("Найден URL:", url);
+
+      if (url && (url.startsWith("http") || url.startsWith("https"))) {
+        console.log("Найден URL из другой вкладки:", url);
         try {
-          const filename = url.split("/").pop() || "image.jpg";
+          const filename =
+            url.split("/").pop() || `image_from_${Date.now()}.jpg`;
           const file = await proxyToFile(url, filename);
-          droppedFiles.add(file);
-          console.log("Успешно загружен файл через прокси:", file);
+          if (file.type.startsWith("image/")) {
+            droppedFiles.add(file);
+            console.log("Успешно загружен файл через прокси:", file);
+          }
         } catch (error: unknown) {
           const errorMessage =
             error instanceof Error ? error.message : String(error);
@@ -272,7 +274,10 @@ const AlbumPage = () => {
       if (plainText && plainText.startsWith("data:image/")) {
         console.log("Найден Data URL:", plainText);
         try {
-          const file = dataURLtoFile(plainText, "image-from-data-url.jpg");
+          const file = dataURLtoFile(
+            plainText,
+            `image_from_data_${Date.now()}.jpg`
+          );
           droppedFiles.add(file);
           console.log("Успешно преобразован Data URL в файл:", file);
         } catch (error: unknown) {
@@ -287,18 +292,17 @@ const AlbumPage = () => {
       const finalFiles: File[] = Array.from(droppedFiles);
       console.log("Итоговый список файлов для загрузки:", finalFiles);
 
-      // Очищаем и устанавливаем новые файлы
-      setFiles(finalFiles);
-      console.log("Текущее состояние files перед триггером:", files);
+      // Очищаем и устанавливаем новые файлы только если есть валидные данные
       if (finalFiles.length > 0) {
+        setFiles(finalFiles);
         setTriggerUpload(true);
       } else {
-        alert("Перетащите изображение или выберите файлы!");
+        console.log("Нет валидных файлов для загрузки, игнорируем.");
       }
     }
   };
 
-  // для вызова uploadPhotos после обновления состояния
+  // Вызов uploadPhotos после обновления состояния
   useEffect(() => {
     if (triggerUpload && files.length > 0) {
       console.log("Запускаем uploadPhotos с файлами:", files);
@@ -321,7 +325,6 @@ const AlbumPage = () => {
       prevPhotos.filter((photo) => photo.id !== photoId)
     );
     handleClosePhotoViewer();
-
     const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
       cache: "no-store",
     });
@@ -381,6 +384,8 @@ const AlbumPage = () => {
                   photos={photos}
                   onDragEnd={handleDragEnd}
                   onPhotoClick={handlePhotoClick}
+                  onDragStart={(e) => e.preventDefault()} // Предотвращаем копирование
+                  onContextMenu={(e) => e.preventDefault()} // Отключаем контекстное меню
                 />
               )}
             </>

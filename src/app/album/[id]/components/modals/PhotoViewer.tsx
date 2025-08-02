@@ -16,6 +16,13 @@ type PhotoViewerProps = {
   onSyncAfterPhotoMove: (photoId: number) => void;
 };
 
+/**
+ * Компонент для просмотра, навигации и удаления фотографий
+ * Компонент отображает фотографии в оверлее, поддерживает переключение с помощью клавиатуры и удаление через API-запросы, а также синхронизируется с родительским компонентом после удаления
+ * @component
+ * @returns {JSX.Element}
+ */
+
 export default function PhotoViewer({
   photo,
   photos,

@@ -8,15 +8,27 @@ import { Photo } from "../types/photoTypes";
 type SortablePhotoProps = {
   photo: Photo;
   onClick: () => void;
+  onDragStart?: (e: React.DragEvent<HTMLImageElement>) => void;
+  onContextMenu?: (e: React.MouseEvent<HTMLImageElement>) => void;
 };
 
 /**
- * Компонент фотографии выбранного альбома с функционалом ручной сортировки через dnd
+ * Компонент фотографии выбранного альбома с функционалом ручной сортировки через DND.
+ * Предотвращает нежелательное копирование изображения в буфер обмена при зажатии ЛКМ.
  * @component
+ * @param {SortablePhotoProps} props - Свойства компонента.
+ * @param {Photo} props.photo - Объект фотографии.
+ * @param {function} props.onClick - Обработчик клика по фото.
+ * @param {function} [props.onDragStart] - Необязательный обработчик начала перетаскивания для предотвращения копирования (по умолчанию предотвращает).
+ * @param {function} [props.onContextMenu] - Необязательный обработчик контекстного меню для отключения копирования (по умолчанию предотвращает).
  * @returns {JSX.Element}
  */
-
-export default function SortablePhoto({ photo, onClick }: SortablePhotoProps) {
+export default function SortablePhoto({
+  photo,
+  onClick,
+  onDragStart = (e) => e.preventDefault(),
+  onContextMenu = (e) => e.preventDefault(),
+}: SortablePhotoProps) {
   const {
     attributes,
     listeners,
@@ -59,6 +71,9 @@ export default function SortablePhoto({ photo, onClick }: SortablePhotoProps) {
         alt={`Фото ${photo.id}`}
         css={style.photo}
         loading="lazy"
+        onDragStart={onDragStart} // Предотвращаем копирование в буфер обмена
+        onContextMenu={onContextMenu}
+        draggable="false" // Блокируем стандартное перетаскивание изображения
       />
     </div>
   );

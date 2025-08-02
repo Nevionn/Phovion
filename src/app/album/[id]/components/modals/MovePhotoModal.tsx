@@ -11,6 +11,12 @@ type MovePhotoModalProps = {
   onMove: (targetAlbumId: number) => void; // Коллбэк для уведомления PhotoViewer об успешном перемещении
 };
 
+/**
+ * Компонент модального окна для перемещения фотографии из одного альбома в другой
+ * @component
+ * @returns {JSX.Element}
+ */
+
 export default function MovePhotoModal({
   photoId,
   currentAlbumId,

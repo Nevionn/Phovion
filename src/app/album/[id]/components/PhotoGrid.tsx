@@ -9,18 +9,28 @@ type PhotoGridProps = {
   photos: Photo[];
   onDragEnd: (event: DragEndEvent) => void;
   onPhotoClick: (photo: Photo) => void;
+  onDragStart?: (e: React.DragEvent<HTMLImageElement>) => void;
+  onContextMenu?: (e: React.MouseEvent<HTMLImageElement>) => void;
 };
 
 /**
- * Компонент сетка для отображения фотографий текущего альбома
+ * Компонент сетка для отображения фотографий текущего альбома.
+ * Поддерживает перетаскивание для сортировки и предотвращает нежелательное копирование изображений в буфер обмена.
  * @component
+ * @param {PhotoGridProps} props - Свойства компонента.
+ * @param {Photo[]} props.photos - Массив фотографий для отображения.
+ * @param {function} props.onDragEnd - Обработчик события окончания перетаскивания.
+ * @param {function} props.onPhotoClick - Обработчик клика по фото.
+ * @param {function} [props.onDragStart] - Необязательный обработчик начала перетаскивания для предотвращения копирования (по умолчанию предотвращает).
+ * @param {function} [props.onContextMenu] - Необязательный обработчик контекстного меню для отключения копирования (по умолчанию предотвращает).
  * @returns {JSX.Element}
  */
-
 export default function PhotoGrid({
   photos,
   onDragEnd,
   onPhotoClick,
+  onDragStart = (e) => e.preventDefault(),
+  onContextMenu = (e) => e.preventDefault(),
 }: PhotoGridProps) {
   const photoIds = photos.map((photo) => photo.id);
 
@@ -33,6 +43,8 @@ export default function PhotoGrid({
               key={photo.id}
               photo={photo}
               onClick={() => onPhotoClick(photo)}
+              onDragStart={onDragStart}
+              onContextMenu={onContextMenu}
             />
           ))}
         </div>
