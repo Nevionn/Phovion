@@ -1,4 +1,9 @@
-// Утилита для преобразования Data URL в File
+/**
+ * Метод для преобразования Data URL в File
+ * @function
+ * @returns {function}
+ */
+
 export function dataURLtoFile(dataurl: string, filename: string): File {
   const arr = dataurl.split(",");
   const mime = arr[0].match(/:(.*?);/)?.[1];
@@ -11,7 +16,12 @@ export function dataURLtoFile(dataurl: string, filename: string): File {
   return new File([u8arr], filename, { type: mime });
 }
 
-// Утилита для загрузки файла через прокси
+/**
+ * Метод для загрузки файла через прокси (межвкладочный трансфер)
+ * @function
+ * @returns {function}
+ */
+
 export async function proxyToFile(
   url: string,
   filename: string
