@@ -36,6 +36,12 @@ export async function DELETE(req: NextRequest, context: Context) {
 
     const photos = await prisma.photo.findMany({ where: { albumId: id } });
 
+    if (photos.length === 0) {
+      return NextResponse.json({
+        message: "Альбом уже пуст, ничего не удалено",
+      });
+    }
+
     // Удаляем файлы фотографий из public/uploads
     for (const photo of photos) {
       const filePath = path.join(process.cwd(), "public", photo.path);
