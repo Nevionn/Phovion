@@ -5,10 +5,18 @@ import path from "path";
 import { randomUUID } from "crypto";
 import { Photo } from "@/app/album/[id]/types/photoTypes";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL,
+    },
+  },
+  //log: ["query", "error"],
+});
 
 /**
  * Обрабатывает загрузку фотографий для альбома, сохраняет файлы и обновляет базу данных.
+ * @param {Request} request - Объект запроса от Next.js.
  * @param {string} albumId - Идентификатор альбома, в который загружаются фото.
  * @param {File[]} files - Массив файлов для загрузки.
  * @returns {Promise<NextResponse>} Объект ответа с массивом созданных фотографий или ошибкой.
@@ -118,7 +126,5 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Ошибка при загрузке фотографий:", error);
     return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }
