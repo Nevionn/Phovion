@@ -9,6 +9,7 @@ type HeaderItemsProps = {
   onEditClick: () => void;
   onDangerClick: () => void;
   deleteAlbum: () => void;
+  clearAlbum: () => void;
   onDownloadClick: () => void;
   showDanger: boolean;
 };
@@ -25,6 +26,7 @@ function HeaderItems({
   onDangerClick,
   onDownloadClick,
   deleteAlbum,
+  clearAlbum,
   showDanger,
 }: HeaderItemsProps) {
   return (
@@ -51,6 +53,9 @@ function HeaderItems({
             <div css={style.dangerZone}>
               <button css={style.deleteButton} onClick={deleteAlbum}>
                 Удалить альбом
+              </button>
+              <button css={style.deleteButton} onClick={clearAlbum}>
+                Очистить альбом
               </button>
             </div>
           )}
@@ -165,6 +170,11 @@ const style = {
     border: "thick doublergb(255, 255, 255)",
     width: "100%",
     cursor: "pointer",
+    marginBottom: "0.5rem",
+
+    "&:last-child": {
+      marginBottom: 0,
+    },
 
     "&:hover": {
       backgroundColor: "#E14B64",

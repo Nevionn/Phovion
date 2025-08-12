@@ -5,11 +5,19 @@ import path from "path";
 
 const prisma = new PrismaClient();
 
+// Определяем, что params может быть промисом
 interface Context {
-  params: { id: string };
+  params: Promise<{ id: string }> | { id: string };
 }
 
-export async function GET(request: Request, { params }: Context) {
+export async function GET(request: Request, context: Context) {
+  // Ждём разрешения params, если это промис
+  const params = await (context.params as Promise<{ id: string }>);
+
+  if (!params || !params.id) {
+    return NextResponse.json({ error: "Неверный ID" }, { status: 400 });
+  }
+
   try {
     const album = await prisma.album.findUnique({
       where: { id: Number(params.id) },
@@ -33,7 +41,14 @@ export async function GET(request: Request, { params }: Context) {
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: Context) {
+export async function DELETE(req: NextRequest, context: Context) {
+  // Ждём разрешения params, если это промис
+  const params = await (context.params as Promise<{ id: string }>);
+
+  if (!params || !params.id) {
+    return NextResponse.json({ error: "Неверный ID" }, { status: 400 });
+  }
+
   const id = Number(params.id);
 
   if (isNaN(id)) {
@@ -74,8 +89,18 @@ export async function DELETE(req: NextRequest, { params }: Context) {
 // Переименование альбома по ID и обновление описания
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> | { id: string } }
 ) {
+  // Ждём разрешения params, если это промис
+  const params = await (context.params as Promise<{ id: string }>);
+
+  if (!params || !params.id) {
+    return NextResponse.json(
+      { error: "ID и новое имя обязательны" },
+      { status: 400 }
+    );
+  }
+
   const { id } = params;
   const { name, description } = await request.json();
 

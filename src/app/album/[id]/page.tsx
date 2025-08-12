@@ -23,6 +23,7 @@ import { dataURLtoFile, proxyToFile } from "./utils/utils";
 import { useAlbumData } from "./hooks/useAlbumData";
 import { useRenameAlbum } from "./hooks/useRenameAlbum";
 import { useDeleteAlbum } from "./hooks/useDeleteAlbum";
+import { useClearAlbum } from "./hooks/useClearAlbum";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 
 const emotionCache = createCache({ key: "css", prepend: true });
@@ -41,6 +42,7 @@ const AlbumPage = () => {
 
   const { album, photos, isLoading, setAlbum, setPhotos } = useAlbumData(id);
   const { deleteAlbum } = useDeleteAlbum(id);
+  const { clearAlbum } = useClearAlbum(id);
   const { renameAlbum, renameLoading } = useRenameAlbum(
     album,
     setAlbum,
@@ -364,6 +366,7 @@ const AlbumPage = () => {
                     onDangerClick={() => setShowDanger(!showDanger)}
                     onDownloadClick={() => alert("Скачать альбом")}
                     deleteAlbum={deleteAlbum}
+                    clearAlbum={clearAlbum}
                     showDanger={showDanger}
                   />
                   <Description description={album.description} />
