@@ -13,7 +13,7 @@ export const useClearAlbum = (id: string | string[] | undefined) => {
     try {
       const res = await fetch(`/api/albums/clear/${id}`, { method: "DELETE" });
       if (res.ok) {
-        router.refresh();
+        router.push("/");
       } else {
         throw new Error("Ошибка очистки альбома");
       }
