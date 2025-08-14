@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { AlbumForViewPhotos } from "@/app/types/albumTypes";
 import { Photo } from "../types/photoTypes";
 
+/**
+ * Хук для получения данных о выбранном альбоме (все его фотографии, счетчик фотографий)
+ */
+
 export const useAlbumData = (id: string | string[] | undefined) => {
   const [album, setAlbum] = useState<AlbumForViewPhotos | null>(null);
   const [photos, setPhotos] = useState<Photo[]>([]);
