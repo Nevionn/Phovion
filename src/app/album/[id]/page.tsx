@@ -25,6 +25,7 @@ import { useRenameAlbum } from "./hooks/useRenameAlbum";
 import { useDeleteAlbum } from "./hooks/useDeleteAlbum";
 import { useClearAlbum } from "./hooks/useClearAlbum";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
+import { useUploadPhotos } from "./hooks/useUploadPhotos";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
@@ -32,13 +33,14 @@ const AlbumPage = () => {
   const { id } = useParams();
 
   const [files, setFiles] = useState<File[]>([]);
-  const [uploading, setUploading] = useState(false);
   const [triggerUpload, setTriggerUpload] = useState(false);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   const [showEdit, setShowEdit] = useState(false);
   const [showDanger, setShowDanger] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { album, photos, isLoading, setAlbum, setPhotos } = useAlbumData(id);
   const { deleteAlbum } = useDeleteAlbum(id);
@@ -49,80 +51,15 @@ const AlbumPage = () => {
     setShowEdit
   );
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { uploadPhotos, uploading } = useUploadPhotos(
+    id,
+    setFiles,
+    setPhotos,
+    setAlbum,
+    fileInputRef
+  );
 
   useThemeManager();
-
-  async function uploadPhotos() {
-    if (files.length === 0) {
-      console.log("Нет файлов для загрузки.");
-      return;
-    }
-    setUploading(true);
-
-    console.log("Начинаем загрузку файлов:", files);
-
-    const form = new FormData();
-    form.append("albumId", String(id));
-    files.forEach((file, index) => {
-      if (file instanceof File && file.size > 0) {
-        console.log(
-          `Добавляем файл ${index + 1}:`,
-          file.name,
-          file.type,
-          file.size
-        );
-        form.append("photos", file);
-      } else {
-        console.warn(`Файл ${index + 1} невалиден:`, file);
-      }
-    });
-
-    try {
-      console.log("Отправляем запрос на /api/photos/upload...");
-      const controller = new AbortController();
-      const res = await fetch("/api/photos/upload", {
-        method: "POST",
-        body: form,
-        signal: controller.signal,
-      });
-
-      if (res.ok) {
-        const newPhotos: Photo[] = await res.json();
-        console.log("Успешно загружено:", newPhotos);
-        setFiles([]); // Очищаем буфер после успешной загрузки
-        setPhotos((prev) => [...prev, ...newPhotos]); // Обновляем список фотографий
-
-        // Сбрасываем значение инпута
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-          console.log("ИНПУТ СБРОШЕН");
-        }
-
-        // Обновляем photoCount после загрузки
-        const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
-          cache: "no-store",
-        });
-        if (countRes.ok) {
-          const { photoCount } = await countRes.json();
-          setAlbum((prev) => (prev ? { ...prev, photoCount } : null));
-        } else {
-          throw new Error(
-            `Ошибка обновления количества фотографий: ${countRes.statusText}`
-          );
-        }
-      } else {
-        throw new Error(`Ошибка загрузки фотографий: ${res.statusText}`);
-      }
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      console.error("Ошибка загрузки:", errorMessage);
-      alert(`Ошибка загрузки фотографий: ${errorMessage}`);
-    } finally {
-      setUploading(false);
-    }
-  }
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
