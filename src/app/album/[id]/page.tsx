@@ -26,6 +26,7 @@ import { useDeleteAlbum } from "./hooks/useDeleteAlbum";
 import { useClearAlbum } from "./hooks/useClearAlbum";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 import { useUploadPhotos } from "./hooks/useUploadPhotos";
+import { useDownloadAlbum } from "./hooks/useDownloadAlbum";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
@@ -58,6 +59,8 @@ const AlbumPage = () => {
     setAlbum,
     fileInputRef
   );
+
+  const downloadAlbum = useDownloadAlbum(photos, album?.name, id);
 
   useThemeManager();
 
@@ -301,10 +304,11 @@ const AlbumPage = () => {
                     album={album}
                     onEditClick={() => setShowEdit(!showEdit)}
                     onDangerClick={() => setShowDanger(!showDanger)}
-                    onDownloadClick={() => alert("Скачать альбом")}
+                    onDownloadClick={downloadAlbum}
                     deleteAlbum={deleteAlbum}
                     clearAlbum={clearAlbum}
                     showDanger={showDanger}
+                    photoCount={album?.photoCount || 0}
                   />
                   <Description description={album.description} />
                   <UploadSection

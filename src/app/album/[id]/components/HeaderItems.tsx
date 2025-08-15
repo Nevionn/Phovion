@@ -3,6 +3,8 @@ import { css } from "@emotion/react";
 import Link from "next/link";
 import CyberButton from "@/app/shared/buttons/CyberButton";
 import { AlbumForViewPhotos } from "@/app/types/albumTypes";
+import { useState } from "react";
+import DownloadAlbumModal from "./modals/DownloadAlbumModal";
 
 type HeaderItemsProps = {
   album: AlbumForViewPhotos | null;
@@ -12,6 +14,7 @@ type HeaderItemsProps = {
   clearAlbum: () => void;
   onDownloadClick: () => void;
   showDanger: boolean;
+  photoCount: number;
 };
 
 /**
@@ -28,7 +31,15 @@ function HeaderItems({
   deleteAlbum,
   clearAlbum,
   showDanger,
+  photoCount,
 }: HeaderItemsProps) {
+  const [visibleDownloadAlbumModal, setVisibleDownloadAlbumModal] =
+    useState(false);
+
+  const handleOpenDownloadModal = () => {
+    setVisibleDownloadAlbumModal(true);
+  };
+
   return (
     <div css={style.navigationItem}>
       <div>
@@ -64,10 +75,23 @@ function HeaderItems({
           <CyberButton
             label="Скачать альбом"
             hue={270}
-            onClick={onDownloadClick}
+            onClick={handleOpenDownloadModal}
           />
         </div>
       </div>
+      {visibleDownloadAlbumModal && (
+        <DownloadAlbumModal
+          onAccept={() => {
+            onDownloadClick();
+            setVisibleDownloadAlbumModal(false);
+          }}
+          onCancel={() => {
+            setVisibleDownloadAlbumModal(false);
+          }}
+          album={album?.name}
+          photoCount={photoCount}
+        />
+      )}
     </div>
   );
 }
