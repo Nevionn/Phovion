@@ -1,29 +1,28 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, FC } from "react";
 import { Album } from "@/app/types/albumTypes";
 import { AiOutlineClose } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
 
-type MovePhotoModalProps = {
+interface MovePhotoModalProps {
   photoId: number;
   currentAlbumId: number;
   onClose: () => void;
   onMove: (targetAlbumId: number) => void; // Коллбэк для уведомления PhotoViewer об успешном перемещении
-};
+}
 
 /**
  * Компонент модального окна для перемещения фотографии из одного альбома в другой
  * @component
  * @returns {JSX.Element}
  */
-
-export default function MovePhotoModal({
+const MovePhotoModal: FC<MovePhotoModalProps> = ({
   photoId,
   currentAlbumId,
   onClose,
   onMove,
-}: MovePhotoModalProps) {
+}) => {
   const [albums, setAlbums] = useState<Album[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -162,7 +161,9 @@ export default function MovePhotoModal({
       </div>
     </div>
   );
-}
+};
+
+export default MovePhotoModal;
 
 const styles = {
   modalOverlay: css({
