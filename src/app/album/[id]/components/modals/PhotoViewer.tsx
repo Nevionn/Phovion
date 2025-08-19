@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
+import React from "react";
 import { Photo } from "../../types/photoTypes";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 import { TbSeparator } from "react-icons/tb";
@@ -8,14 +9,14 @@ import MovePhotoModal from "./MovePhotoModal";
 import { AiOutlineClose } from "react-icons/ai";
 import { colorConst } from "@/app/shared/theme/colorConstant";
 
-type PhotoViewerProps = {
+interface PhotoViewerProps {
   photo: Photo | null;
   photos: Photo[];
   albumId: number;
   onClose: () => void;
   onSyncAfterPhotoDelete: (photoId: number) => void;
   onSyncAfterPhotoMove: (photoId: number) => void;
-};
+}
 
 /**
  * Компонент для просмотра, навигации и удаления фотографий
@@ -24,14 +25,14 @@ type PhotoViewerProps = {
  * @returns {JSX.Element}
  */
 
-export default function PhotoViewer({
+const PhotoViewer: React.FC<PhotoViewerProps> = ({
   photo,
   photos,
   albumId,
   onClose,
   onSyncAfterPhotoDelete,
   onSyncAfterPhotoMove,
-}: PhotoViewerProps) {
+}) => {
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
@@ -243,7 +244,9 @@ export default function PhotoViewer({
       )}
     </>
   );
-}
+};
+
+export default PhotoViewer;
 
 const style = {
   overlay: css({

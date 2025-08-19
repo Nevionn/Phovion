@@ -3,6 +3,7 @@ import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
 import { Album } from "@/app/types/albumTypes";
 import { AiOutlineClose } from "react-icons/ai";
+import { IoClose } from "react-icons/io5";
 
 type MovePhotoModalProps = {
   photoId: number;
@@ -26,6 +27,7 @@ export default function MovePhotoModal({
   const [albums, setAlbums] = useState<Album[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchAlbums = async () => {
@@ -95,6 +97,14 @@ export default function MovePhotoModal({
     }
   };
 
+  const filteredAlbums = albums.filter((album) =>
+    album.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleClearSearch = () => {
+    setSearchTerm("");
+  };
+
   if (isLoading) return <p css={styles.loading}>Загрузка альбомов...</p>;
   if (error) return <p css={styles.error}>Ошибка: {error}</p>;
 
@@ -105,9 +115,23 @@ export default function MovePhotoModal({
           <AiOutlineClose />
         </span>
         <h2 css={styles.modalTitle}>Выберите альбом для переноса</h2>
+        <div css={styles.searchContainer}>
+          <input
+            css={styles.searchInput}
+            type="text"
+            placeholder="Поиск альбома..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm && (
+            <span css={styles.clearIcon} onClick={handleClearSearch}>
+              <IoClose />
+            </span>
+          )}
+        </div>
         <div css={styles.grid}>
-          {albums.length > 0 ? (
-            albums.map((album) => (
+          {filteredAlbums.length > 0 ? (
+            filteredAlbums.map((album) => (
               <div
                 key={album.id}
                 css={styles.albumCard}
@@ -129,7 +153,9 @@ export default function MovePhotoModal({
             ))
           ) : (
             <div css={styles.noAlbumsContainer}>
-              <p css={styles.noAlbums}>Нет доступных альбомов</p>
+              <p css={styles.noAlbums}>
+                {searchTerm ? "Альбомы не найдены" : "Нет доступных альбомов"}
+              </p>
             </div>
           )}
         </div>
@@ -156,7 +182,7 @@ const styles = {
     border: "2px solid #00ffea",
     borderRadius: "12px",
     padding: "1.5rem",
-    maxHeight: "80vh",
+    height: "80vh",
     overflowY: "auto",
     width: "80%",
     maxWidth: "1200px",
@@ -175,6 +201,38 @@ const styles = {
     top: "1rem",
     right: "1rem",
     fontSize: "1.5rem",
+    color: "#00ffea",
+    cursor: "pointer",
+    "&:hover": {
+      color: "#00d1ea",
+    },
+  }),
+  searchContainer: css({
+    position: "relative",
+    marginBottom: "1rem",
+    width: "100%",
+  }),
+  searchInput: css({
+    width: "100%",
+    padding: "0.5rem 0 0.5rem 0.5rem",
+    marginBottom: "0",
+    border: "1px solid #00ffea",
+    borderRadius: "4px",
+    background: "#2a2a3e",
+    color: "#00ffea",
+    fontFamily: "'Orbitron', sans-serif",
+    "&:focus": {
+      outline: "none",
+      borderColor: "#00d1ea",
+      boxShadow: "0 0 5px #00d1ea",
+    },
+  }),
+  clearIcon: css({
+    position: "absolute",
+    top: "55%",
+    right: "0",
+    transform: "translateY(-50%)",
+    fontSize: "1.2rem",
     color: "#00ffea",
     cursor: "pointer",
     "&:hover": {
@@ -257,7 +315,7 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     gridColumn: "1 / -1",
-    height: "300px",
+    height: "600px",
   }),
   noAlbums: css({
     textAlign: "center",
