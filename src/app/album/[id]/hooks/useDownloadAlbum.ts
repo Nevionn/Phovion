@@ -2,19 +2,34 @@ import { useCallback } from "react";
 import { Photo } from "../types/photoTypes";
 
 /**
+ * Интерфейс для параметров хука useDownloadAlbum
+ */
+interface DownloadAlbumParams {
+  photos: Photo[]; // Массив фотографий альбома
+  albumName?: string;
+  albumId?: string | string[] | undefined;
+}
+
+/**
+ * Интерфейс для возвращаемого значения хука useDownloadAlbum
+ */
+interface DownloadAlbumReturn {
+  downloadAlbum: () => Promise<void>;
+  isFsaSupported: boolean; // Флаг поддержки File System Access API
+}
+
+/**
  * Хук для скачивания изображений выбранного альбома
  * Цепочка передачи и вызова: page -> HeaderItems -> DownloadAlbumModal
  *
- * @param photos Все изображения альбома
- * @param albumName
- * @param albumId
+ * @param params Параметры хука
  * @returns { downloadAlbum: () => void, isFsaSupported: boolean } - Колбек функция для скачивания и флаг поддержки FSA API
  */
-export const useDownloadAlbum = (
-  photos: Photo[],
-  albumName?: string,
-  albumId?: string | string[] | undefined
-) => {
+export const useDownloadAlbum = ({
+  photos,
+  albumName,
+  albumId,
+}: DownloadAlbumParams): DownloadAlbumReturn => {
   const isFsaSupported = "showDirectoryPicker" in window;
 
   const downloadAlbum = useCallback(async () => {

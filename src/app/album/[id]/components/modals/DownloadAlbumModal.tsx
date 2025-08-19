@@ -1,27 +1,26 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { useState } from "react";
+import React from "react";
+
+interface DownloadAlbumModalProps {
+  onAccept: () => void;
+  onCancel: () => void;
+  album: string | undefined;
+  photoCount: number;
+  isFsaSupported: boolean; // Флаг поддержки File System Access API
+}
 
 /**
  * Компонент модального окна для подтверждения скачивания альбома.
  * Отображает количество фотографий и предоставляет кнопки для принятия или отмены.
- *
- * @param {() => void} props.onAccept - Функция, вызываемая при нажатии кнопки "Принять".
- * @param {() => void} props.onCancel - Функция, вызываемая при нажатии кнопки "Отказаться".
- * @param {number} props.photoCount - Количество фотографий в альбоме.
  */
-const DownloadAlbumModal = ({
+const DownloadAlbumModal: React.FC<DownloadAlbumModalProps> = ({
   onAccept,
   onCancel,
   album,
   photoCount,
   isFsaSupported,
-}: {
-  onAccept: () => void;
-  onCancel: () => void;
-  album: string | undefined;
-  photoCount: number;
-  isFsaSupported: boolean;
 }) => {
   const [isHelpVisible, setIsHelpVisible] = useState(false);
 
