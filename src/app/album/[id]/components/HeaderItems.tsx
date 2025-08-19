@@ -5,8 +5,9 @@ import CyberButton from "@/app/shared/buttons/CyberButton";
 import { AlbumForViewPhotos } from "@/app/types/albumTypes";
 import { useState } from "react";
 import DownloadAlbumModal from "./modals/DownloadAlbumModal";
+import React from "react";
 
-type HeaderItemsProps = {
+interface HeaderItemsProps {
   album: AlbumForViewPhotos | null;
   onEditClick: () => void;
   onDangerClick: () => void;
@@ -16,15 +17,14 @@ type HeaderItemsProps = {
   showDanger: boolean;
   photoCount: number;
   isFsaSupported: boolean;
-};
+}
 
 /**
  * Компонент, хедера, отображающий навигацию текущего альбома: альбомы > album[название], и предоставляющий набор кнопок и функций для редактирования, удаления и скачивания
  * @component
  * @returns {JSX.Element}
  */
-
-function HeaderItems({
+const HeaderItems: React.FC<HeaderItemsProps> = ({
   album,
   onEditClick,
   onDangerClick,
@@ -34,7 +34,7 @@ function HeaderItems({
   showDanger,
   photoCount,
   isFsaSupported,
-}: HeaderItemsProps) {
+}) => {
   const [visibleDownloadAlbumModal, setVisibleDownloadAlbumModal] =
     useState(false);
 
@@ -97,7 +97,7 @@ function HeaderItems({
       )}
     </div>
   );
-}
+};
 
 export default HeaderItems;
 

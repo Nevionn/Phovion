@@ -6,6 +6,7 @@ import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 import { TbSeparator } from "react-icons/tb";
 import MovePhotoModal from "./MovePhotoModal";
 import { AiOutlineClose } from "react-icons/ai";
+import { colorConst } from "@/app/shared/theme/colorConstant";
 
 type PhotoViewerProps = {
   photo: Photo | null;
@@ -262,10 +263,10 @@ const style = {
     maxWidth: "90%",
     maxHeight: "90vh",
     background: "#1a1a2e",
-    border: "2px solid #00ffea",
+    border: colorConst.photoPicker.border,
     borderRadius: "12px",
     padding: "2rem",
-    boxShadow: "0 0 20px rgba(0, 255, 234, 0.5)",
+    boxShadow: colorConst.photoPicker.boxShadow,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -277,14 +278,14 @@ const style = {
     right: "10px",
     background: "none",
     border: "none",
-    color: "#00ffea",
+    color: colorConst.photoPicker.closeIcon.bright,
     fontSize: "24px",
     cursor: "pointer",
     padding: "0",
     lineHeight: "1",
     zIndex: 1001,
     "&:hover": {
-      color: "#00d1ea",
+      color: colorConst.photoPicker.closeIcon.dim,
     },
   }),
   switchAreaLeft: css({
@@ -301,8 +302,10 @@ const style = {
     justifyContent: "flex-start",
     borderRadius: "8px 0 0 8px",
     transition: "background 0.3s",
-    // "&:hover": { background: "rgba(0, 255, 234, 0.1)" },
     "&:disabled": { cursor: "not-allowed", opacity: 0.5 },
+    "&:hover > *": {
+      color: colorConst.photoPicker.arrowIcon.bright,
+    },
     zIndex: 2010,
   }),
   switchAreaRight: css({
@@ -319,11 +322,16 @@ const style = {
     justifyContent: "flex-end",
     borderRadius: "0 8px 8px 0",
     transition: "background 0.3s",
-    // "&:hover": { background: "rgba(0, 255, 234, 0.1)" },
     "&:disabled": { cursor: "not-allowed", opacity: 0.5 },
+    "&:hover > *": {
+      color: colorConst.photoPicker.arrowIcon.bright,
+    },
     zIndex: 2010,
   }),
-  arrowIcon: css({ color: "#00ffea", fontSize: "30px" }),
+  arrowIcon: css({
+    color: colorConst.photoPicker.arrowIcon.dim,
+    fontSize: "30px",
+  }),
   image: css({ maxWidth: "100%", maxHeight: "91vh", objectFit: "contain" }),
   captionContainer: css({
     width: "100%",
@@ -337,13 +345,13 @@ const style = {
     borderRadius: "8px",
   }),
   actionButton: css({
-    color: "#00ffea",
+    color: colorConst.photoPicker.actionButton.bright,
     cursor: "pointer",
     fontFamily: "'Orbitron', sans-serif",
     padding: "0.1rem 0.5rem",
     borderRadius: "4px",
     transition: "background 0.3s",
-    "&:hover": { background: "rgba(0, 255, 234, 0.2)" },
+    "&:hover": { background: colorConst.photoPicker.actionButton.dim },
   }),
   disabledButton: css({
     cursor: "not-allowed",
@@ -351,7 +359,7 @@ const style = {
     "&:hover": { background: "none" },
   }),
   photoPosition: css({
-    color: "#00ffea",
+    color: colorConst.photoPicker.photoPosition,
     fontFamily: "'Orbitron', sans-serif",
     fontSize: "14px",
     padding: "0.1rem 0.5rem",

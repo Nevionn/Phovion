@@ -60,11 +60,11 @@ const AlbumPage = () => {
     fileInputRef
   );
 
-  const { downloadAlbum, isFsaSupported } = useDownloadAlbum(
+  const { downloadAlbum, isFsaSupported } = useDownloadAlbum({
     photos,
-    album?.name,
-    id
-  );
+    albumName: album?.name,
+    albumId: id,
+  });
 
   useThemeManager();
 
