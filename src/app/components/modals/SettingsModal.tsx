@@ -104,7 +104,8 @@ const SettingsModal: FC<SettingsModalProps> = ({
           </h3>
           <div css={styles.settingsContainer}>
             <p css={styles.infoItem}>
-              <PiMemoryFill /> Вес папки uploads (кеш): {uploadFolderSize}
+              <PiMemoryFill /> Вес папки uploads (кеш):{" "}
+              {uploadFolderSize ? uploadFolderSize : "подсчёт.."}
             </p>
           </div>
         </Separator>
