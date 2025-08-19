@@ -60,7 +60,11 @@ const AlbumPage = () => {
     fileInputRef
   );
 
-  const downloadAlbum = useDownloadAlbum(photos, album?.name, id);
+  const { downloadAlbum, isFsaSupported } = useDownloadAlbum(
+    photos,
+    album?.name,
+    id
+  );
 
   useThemeManager();
 
@@ -309,6 +313,7 @@ const AlbumPage = () => {
                     clearAlbum={clearAlbum}
                     showDanger={showDanger}
                     photoCount={album?.photoCount || 0}
+                    isFsaSupported={isFsaSupported}
                   />
                   <Description description={album.description} />
                   <UploadSection

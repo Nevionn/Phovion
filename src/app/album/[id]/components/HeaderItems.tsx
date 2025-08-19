@@ -15,6 +15,7 @@ type HeaderItemsProps = {
   onDownloadClick: () => void;
   showDanger: boolean;
   photoCount: number;
+  isFsaSupported: boolean;
 };
 
 /**
@@ -32,6 +33,7 @@ function HeaderItems({
   clearAlbum,
   showDanger,
   photoCount,
+  isFsaSupported,
 }: HeaderItemsProps) {
   const [visibleDownloadAlbumModal, setVisibleDownloadAlbumModal] =
     useState(false);
@@ -90,6 +92,7 @@ function HeaderItems({
           }}
           album={album?.name}
           photoCount={photoCount}
+          isFsaSupported={isFsaSupported}
         />
       )}
     </div>
