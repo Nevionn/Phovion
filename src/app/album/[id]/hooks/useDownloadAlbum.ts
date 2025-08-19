@@ -3,18 +3,20 @@ import { Photo } from "../types/photoTypes";
 
 /**
  * Хук для скачивания изображений выбранного альбома
+ * Цепочка передачи и вызова: page -> HeaderItems -> DownloadAlbumModal
  *
  * @param photos Все изображения альбома
  * @param albumName
  * @param albumId
- * @returns колбек функция downloadAlbum, цепочка передачи и вызова: page -> HeaderItems -> DownloadAlbumModal
+ * @returns { downloadAlbum: () => void, isFsaSupported: boolean } - Колбек функция для скачивания и флаг поддержки FSA API
  */
-
 export const useDownloadAlbum = (
   photos: Photo[],
   albumName?: string,
   albumId?: string | string[] | undefined
 ) => {
+  const isFsaSupported = "showDirectoryPicker" in window;
+
   const downloadAlbum = useCallback(async () => {
     console.log("Скачивание альбома, начало загрузки", {
       photos,
@@ -47,7 +49,7 @@ export const useDownloadAlbum = (
     };
 
     // Проверка поддержки API
-    if (!("showDirectoryPicker" in window)) {
+    if (!isFsaSupported) {
       console.log(
         "File System Access API не поддерживается, переключение на запасную логику"
       );
@@ -81,7 +83,7 @@ export const useDownloadAlbum = (
     } catch (error) {
       console.error("Ошибка скачивания:", error);
     }
-  }, [photos, albumName, albumId]);
+  }, [photos, albumName, albumId, isFsaSupported]);
 
-  return downloadAlbum;
+  return { downloadAlbum, isFsaSupported };
 };

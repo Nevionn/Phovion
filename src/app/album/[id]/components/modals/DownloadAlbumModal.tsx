@@ -15,11 +15,13 @@ const DownloadAlbumModal = ({
   onCancel,
   album,
   photoCount,
+  isFsaSupported,
 }: {
   onAccept: () => void;
   onCancel: () => void;
   album: string | undefined;
   photoCount: number;
+  isFsaSupported: boolean;
 }) => {
   const [isHelpVisible, setIsHelpVisible] = useState(false);
 
@@ -29,12 +31,14 @@ const DownloadAlbumModal = ({
         <h2 css={styles.title}>Скачивание альбома - {album}</h2>
         <p css={styles.text}>Будет скачано фотографий: {photoCount}</p>
         <div css={styles.helpSection}>
-          <button
-            css={styles.helpButton}
-            onClick={() => setIsHelpVisible(!isHelpVisible)}
-          >
-            Справка
-          </button>
+          {!isFsaSupported && (
+            <button
+              css={styles.helpButton}
+              onClick={() => setIsHelpVisible(!isHelpVisible)}
+            >
+              Справка
+            </button>
+          )}
           {isHelpVisible && (
             <p css={styles.helpText}>
               FSA API в данном браузере не поддерживается.
@@ -43,7 +47,7 @@ const DownloadAlbumModal = ({
               <br />
               <br /> Для отключения окна подтверждения при скачивании
               изображений в браузерах семейства Firefox выполните следующие
-              настройки:
+              настройки в самом браузере:
               <br />
               <br /> Файлы и приложения: Загрузки → Всегда выдавать запрос на
               сохранение файлов (отключить)
@@ -120,7 +124,7 @@ const styles = {
     fontSize: 17,
     fontFamily: "monospace",
     marginBottom: 0,
-    color: "#888",
+    color: "#5c5b5b",
     padding: "10px",
     backgroundColor: "#f0e7c4ff",
     borderRadius: 4,
