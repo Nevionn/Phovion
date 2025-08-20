@@ -15,27 +15,66 @@
  * @property {string} boxShadow - Стиль тени
  */
 
+const mainColorInterface = "#00ffea";
+
+const colorIcon = {
+  bright: mainColorInterface,
+  dim: "#00d1ea",
+};
+
 /**
  * Константа с неизменяемыми цветовыми значениями
- * @type {PhotoPickerColors}
+ * @type {colorConst}
  */
 
 export const colorConst = {
   photoPicker: {
     arrowIcon: {
-      bright: "#00ffea",
+      bright: colorIcon.bright,
       dim: "#0a9186ad",
     },
     closeIcon: {
-      bright: "#00ffea",
-      dim: "#00d1ea",
+      bright: colorIcon.bright,
+      dim: colorIcon.dim,
     },
     actionButton: {
-      bright: "#00ffea",
+      bright: mainColorInterface,
       dim: "rgba(0, 255, 234, 0.2)",
     },
-    photoPosition: "#00ffea",
-    border: "2px solid #00ffea",
+    photoPosition: mainColorInterface,
+    border: `1px solid ${mainColorInterface}`,
     boxShadow: "0 0 20px rgba(0, 255, 234, 0.5)",
+  },
+
+  movePhotoModal: {
+    modalTitle: mainColorInterface,
+    border: `1px solid ${mainColorInterface}`,
+    icon: {
+      closeIcon: {
+        bright: colorIcon.bright,
+        dim: colorIcon.dim,
+      },
+      clearIcon: {
+        bright: colorIcon.bright,
+        dim: colorIcon.dim,
+      },
+    },
+
+    searchInput: {
+      border: `1px solid ${mainColorInterface}`,
+      color: mainColorInterface,
+      focus: {
+        borderColor: "#00d1ea",
+        boxShadow: "0 0 5px #00d1ea",
+      },
+    },
+  },
+
+  headerItems: {
+    currentAlbumName: mainColorInterface,
+    albumNavigationText: {
+      textShadow: "0 0 10px rgba(0, 255, 234, 0.8)",
+      color: mainColorInterface,
+    },
   },
 };

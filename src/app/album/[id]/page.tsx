@@ -27,6 +27,7 @@ import { useClearAlbum } from "./hooks/useClearAlbum";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 import { useUploadPhotos } from "./hooks/useUploadPhotos";
 import { useDownloadAlbum } from "./hooks/useDownloadAlbum";
+import { customFonts } from "@/app/shared/theme/customFonts";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
@@ -428,6 +429,7 @@ const style = {
   }),
   loadingText: css({
     color: "white",
+    fontFamily: customFonts.fonts.ru,
     fontSize: 20,
     position: "fixed",
     top: "50%",

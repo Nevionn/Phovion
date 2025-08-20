@@ -12,6 +12,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
 import { Album } from "../types/albumTypes";
+import { customFonts } from "../shared/theme/customFonts";
 
 interface SortableAlbumProps {
   album: Album;
@@ -208,6 +209,7 @@ const styles = {
     backgroundColor: "rgba(0, 0, 0, 0.3)",
     color: "white",
     fontSize: "1.2rem",
+    fontFamily: customFonts.fonts.ru,
     borderBottomLeftRadius: "10px",
     borderBottomRightRadius: "10px",
     "& > span:first-of-type": {
@@ -222,6 +224,7 @@ const styles = {
     },
   }),
   placeholderTextStyle: css({
+    fontFamily: customFonts.fonts.ru,
     fontSize: "0.9rem",
     color: "#666",
     marginTop: "0.5rem",

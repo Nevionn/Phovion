@@ -6,6 +6,7 @@ import { AlbumNaming } from "../types/albumTypes";
 import { FaMicrochip } from "react-icons/fa6";
 import Separator from "../shared/separator/Separator";
 import SettingsModal from "./modals/SettingsModal";
+import { customFonts } from "../shared/theme/customFonts";
 
 interface AlbumControlsProps {
   loading: boolean;
@@ -42,7 +43,7 @@ const AlbumsControls = ({
             onClick={() => setIsCreateAlbumModalOpen(true)}
             disabled={loading}
           >
-            Создать альбом
+            <p css={styles.textButon}>Создать альбом</p>
           </button>
           <button
             css={styles.openSettingsModalButton}
@@ -84,9 +85,14 @@ const styles = {
     backgroundColor: "transparent",
   }),
   titleStyle: css({
+    fontFamily: customFonts.fonts.ru,
     fontSize: "2rem",
     color: "white",
     margin: "0",
+  }),
+  textButon: css({
+    fontFamily: customFonts.fonts.ru,
+    margin: 0,
   }),
   mergeButtonsItem: css({
     display: "flex",

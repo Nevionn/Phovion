@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 import { FC } from "react";
 import { Theme, themeColors } from "@/app/shared/theme/themePalette";
+import { customFonts } from "../shared/theme/customFonts";
 
 interface ThemeBoxProps {
   themeName: Theme;
@@ -40,7 +41,7 @@ export const ThemeBox: FC<ThemeBoxProps> = ({
       `}
       onClick={() => onSelect(themeName)}
     >
-      {themeName}
+      <p css={styles.text}>{themeName}</p>
     </div>
   );
 };
@@ -54,5 +55,9 @@ const styles = {
     "&:hover": {
       backgroundColor: "#3e3e4a",
     },
+  }),
+  text: css({
+    fontFamily: customFonts.fonts.eu,
+    margin: 0,
   }),
 };

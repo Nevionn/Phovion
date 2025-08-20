@@ -10,6 +10,7 @@ import Separator from "@/app/shared/separator/Separator";
 import { ThemeBox } from "../ThemeBox";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 import { Theme } from "@/app/shared/theme/themePalette";
+import { customFonts } from "@/app/shared/theme/customFonts";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -73,7 +74,7 @@ const SettingsModal: FC<SettingsModalProps> = ({
         {/* Секция 1: Оформление */}
         <Separator css={styles.section}>
           <h3 css={styles.sectionTitle}>
-            <FaPalette /> &nbsp; Оформление
+            <FaPalette /> &nbsp; <p css={styles.sectionTitleText}>Оформление</p>
           </h3>
           <div css={styles.settingsContainer}>
             <div css={styles.themesContainer}>
@@ -92,7 +93,9 @@ const SettingsModal: FC<SettingsModalProps> = ({
                 checked={enableAlbumBorder}
                 onChange={(e) => setEnableAlbumBorder(e.target.checked)}
               />
-              <span>Включить обводку для панели альбомов</span>
+              <span css={styles.sectionTitleText}>
+                Включить обводку для панели альбомов
+              </span>
             </label>
           </div>
         </Separator>
@@ -100,11 +103,13 @@ const SettingsModal: FC<SettingsModalProps> = ({
         {/* Секция 2: Системная информация */}
         <Separator css={styles.section}>
           <h3 css={styles.sectionTitle}>
-            <GiTechnoHeart /> &nbsp; Системная информация
+            <GiTechnoHeart /> &nbsp;
+            <p css={styles.sectionTitleText}>Системная информация</p>
           </h3>
           <div css={styles.settingsContainer}>
             <p css={styles.infoItem}>
-              <PiMemoryFill /> Вес папки uploads (кеш): {uploadFolderSize}
+              <PiMemoryFill /> Вес папки uploads (кеш):&nbsp;&nbsp;
+              {uploadFolderSize ? uploadFolderSize : "подсчёт.."}
             </p>
           </div>
         </Separator>
@@ -112,7 +117,8 @@ const SettingsModal: FC<SettingsModalProps> = ({
         {/* Секция 3: Опасная зона */}
         <Separator css={styles.section}>
           <h3 css={styles.sectionTitle}>
-            <TbAlertOctagonFilled /> &nbsp; Опасная зона
+            <TbAlertOctagonFilled /> &nbsp;
+            <p css={styles.sectionTitleText}>Опасная зона</p>
           </h3>
           <div css={styles.settingsContainer}>
             <button
@@ -120,7 +126,9 @@ const SettingsModal: FC<SettingsModalProps> = ({
               onClick={() => deleteAllAlbums()}
               disabled={loading || albumCount === 0}
             >
-              {loading ? "Удаление..." : "Удалить все"}
+              <p css={styles.buttonText}>
+                {loading ? "Удаление..." : "Удалить все"}
+              </p>
             </button>
           </div>
         </Separator>
@@ -160,6 +168,7 @@ const styles = {
   }),
   modalTitle: css({
     fontSize: "1.5rem",
+    fontFamily: customFonts.fonts.ru,
     marginBottom: "1.5rem",
     textAlign: "center",
     color: "white",
@@ -177,6 +186,16 @@ const styles = {
     color: "var(--modal-text-color, #00ffea)",
     marginBottom: "0.5rem",
   }),
+  sectionTitleText: css({
+    fontFamily: customFonts.fonts.ru,
+    margin: 0,
+  }),
+  buttonText: css({
+    fontFamily: customFonts.fonts.ru,
+    fontSize: customFonts.fonts.size.md,
+    color: "#212121ff",
+    margin: 0,
+  }),
   settingsContainer: css({
     display: "flex",
     flexDirection: "column",
@@ -188,6 +207,7 @@ const styles = {
     alignItems: "center",
     gap: 10,
     fontSize: "1rem",
+    fontFamily: customFonts.fonts.ru,
     color: "#ccc",
   }),
   themesContainer: css({
