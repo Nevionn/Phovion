@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 import { useState } from "react";
 import React from "react";
+import { customFonts } from "@/app/shared/theme/customFonts";
 
 interface DownloadAlbumModalProps {
   onAccept: () => void;
@@ -95,12 +96,14 @@ const styles = {
     alignItems: "stretch",
   }),
   title: css({
+    fontFamily: customFonts.fonts.ru,
     fontSize: "1.5rem",
     margin: "0 0 0 0",
     color: "white",
   }),
   text: css({
-    fontSize: "1rem",
+    fontFamily: customFonts.fonts.ru,
+    fontSize: customFonts.fonts.size.md,
     color: "var(--modal-text-color)",
   }),
   helpSection: css({
@@ -108,7 +111,8 @@ const styles = {
     marginBottom: 15,
   }),
   helpButton: css({
-    fontSize: "0.9rem",
+    fontSize: 16,
+    fontFamily: customFonts.fonts.ru,
     border: "none",
     borderRadius: 4,
     cursor: "pointer",
@@ -139,7 +143,8 @@ const styles = {
   }),
   button: css({
     padding: "8px 16px",
-    fontSize: "1rem",
+    fontFamily: customFonts.fonts.ru,
+    fontSize: 18,
     border: "none",
     borderRadius: 4,
     cursor: "pointer",

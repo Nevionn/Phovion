@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 import { useState } from "react";
 import { AlbumNaming } from "@/app/types/albumTypes";
+import { customFonts } from "@/app/shared/theme/customFonts";
 
 interface CreateAlbumModalProps {
   isOpen: boolean;
@@ -98,6 +99,7 @@ const styles = {
   modalTitle: css({
     color: "white",
     fontSize: "1.5rem",
+    fontFamily: customFonts.fonts.ru,
     margin: 0,
   }),
   inputStyle: css({
@@ -145,6 +147,7 @@ const styles = {
     cursor: "pointer",
     transition: "filter 0.2s, box-shadow 0.2s",
     fontSize: "1rem",
+    fontFamily: customFonts.fonts.ru,
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
     "&:hover": {
       filter: "brightness(1.15)",
@@ -159,6 +162,8 @@ const styles = {
   closeButton: css({
     padding: "0.5rem 1rem",
     backgroundColor: "rgba(80, 84, 99, 0.84)",
+    fontFamily: customFonts.fonts.ru,
+    fontSize: "1rem",
     color: "white",
     border: "none",
     borderRadius: "8px",

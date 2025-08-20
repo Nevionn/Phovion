@@ -6,6 +6,8 @@ import { AlbumForViewPhotos } from "@/app/types/albumTypes";
 import { useState } from "react";
 import DownloadAlbumModal from "./modals/DownloadAlbumModal";
 import React from "react";
+import { customFonts } from "@/app/shared/theme/customFonts";
+import { colorConst } from "@/app/shared/theme/colorConstant";
 
 interface HeaderItemsProps {
   album: AlbumForViewPhotos | null;
@@ -24,6 +26,7 @@ interface HeaderItemsProps {
  * @component
  * @returns {JSX.Element}
  */
+
 const HeaderItems: React.FC<HeaderItemsProps> = ({
   album,
   onEditClick,
@@ -42,6 +45,23 @@ const HeaderItems: React.FC<HeaderItemsProps> = ({
     setVisibleDownloadAlbumModal(true);
   };
 
+  const getLanguage = (text: string | undefined) => {
+    if (!text) return "unknown";
+    const russianPattern = /[а-яА-ЯЁё]/;
+    return russianPattern.test(text) ? "ru" : "en";
+  };
+
+  // Динамические стили для имени альбома
+  const albumNameStyle = css({
+    fontFamily:
+      getLanguage(album?.name) === "ru"
+        ? customFonts.fonts.ru
+        : "'Orbitron', sans-serif",
+    fontSize: "inherit",
+    color: colorConst.headerItems.currentAlbumName,
+    display: "inline",
+  });
+
   return (
     <div css={style.navigationItem}>
       <div>
@@ -51,7 +71,7 @@ const HeaderItems: React.FC<HeaderItemsProps> = ({
           </Link>
           <span>&nbsp;&gt;&nbsp;</span>
           <span css={style.albumNameNavItem}>
-            {album?.name}
+            <span css={albumNameStyle}>{album?.name}</span>
             <span css={style.photoCount}>&nbsp;{album?.photoCount}</span>
           </span>
         </p>
@@ -149,6 +169,7 @@ const style = {
   photoCount: css({
     color: "#99D6D1",
     fontWeight: "lighter",
+    fontFamily: customFonts.fonts.ru,
     fontSize: 22,
 
     "@media (max-width: 768px)": {
@@ -156,12 +177,13 @@ const style = {
     },
   }),
   link: css({
+    fontFamily: customFonts.fonts.ru,
     color: "white",
     textDecoration: "none",
     transition: "all 0.3s",
     "&:hover": {
-      color: "#00ffea",
-      textShadow: "0 0 10px rgba(0, 255, 234, 0.8)",
+      color: colorConst.headerItems.albumNavigationText.color,
+      textShadow: colorConst.headerItems.albumNavigationText.textShadow,
     },
   }),
   gridButtons: css({
@@ -192,11 +214,14 @@ const style = {
     zIndex: 10,
   }),
   deleteButton: css({
+    fontFamily: customFonts.fonts.ru,
+    fontSize: 15,
     color: "white",
     backgroundColor: "#2385B7",
     border: "thick doublergb(255, 255, 255)",
     width: "100%",
     cursor: "pointer",
+    height: 40,
     marginBottom: "0.5rem",
 
     "&:last-child": {

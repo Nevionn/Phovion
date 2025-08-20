@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { useRef } from "react";
+import { customFonts } from "@/app/shared/theme/customFonts";
 
 type UploadSectionProps = {
   files: File[];
@@ -77,6 +78,7 @@ const style = {
     padding: "0.5rem 1rem",
     border: "none",
     borderRadius: "8px",
+    fontFamily: customFonts.fonts.ru,
     fontSize: "1rem",
     cursor: "pointer",
     transition: "all 0.3s",

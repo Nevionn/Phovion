@@ -4,6 +4,8 @@ import { useState, useEffect, FC } from "react";
 import { Album } from "@/app/types/albumTypes";
 import { AiOutlineClose } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
+import { customFonts } from "@/app/shared/theme/customFonts";
+import { colorConst } from "@/app/shared/theme/colorConstant";
 
 interface MovePhotoModalProps {
   photoId: number;
@@ -180,7 +182,7 @@ const styles = {
   }),
   modalContent: css({
     background: "#1a1a2e",
-    border: "2px solid #00ffea",
+    border: colorConst.movePhotoModal.border,
     borderRadius: "12px",
     padding: "1.5rem",
     height: "80vh",
@@ -191,21 +193,21 @@ const styles = {
     position: "relative",
   }),
   modalTitle: css({
+    fontFamily: customFonts.fonts.ru,
     fontSize: "1.5rem",
     marginBottom: "1rem",
     textAlign: "center",
-    color: "#00ffea",
-    fontFamily: "'Orbitron', sans-serif",
+    color: colorConst.movePhotoModal.modalTitle,
   }),
   closeIcon: css({
     position: "absolute",
     top: "1rem",
     right: "1rem",
     fontSize: "1.5rem",
-    color: "#00ffea",
+    color: colorConst.movePhotoModal.icon.closeIcon.bright,
     cursor: "pointer",
     "&:hover": {
-      color: "#00d1ea",
+      color: colorConst.movePhotoModal.icon.closeIcon.dim,
     },
   }),
   searchContainer: css({
@@ -217,15 +219,15 @@ const styles = {
     width: "100%",
     padding: "0.5rem 0 0.5rem 0.5rem",
     marginBottom: "0",
-    border: "1px solid #00ffea",
+    border: colorConst.movePhotoModal.searchInput.border,
     borderRadius: "4px",
     background: "#2a2a3e",
-    color: "#00ffea",
+    color: colorConst.movePhotoModal.searchInput.color,
     fontFamily: "'Orbitron', sans-serif",
     "&:focus": {
       outline: "none",
-      borderColor: "#00d1ea",
-      boxShadow: "0 0 5px #00d1ea",
+      borderColor: colorConst.movePhotoModal.searchInput.focus.borderColor,
+      boxShadow: colorConst.movePhotoModal.searchInput.focus.boxShadow,
     },
   }),
   clearIcon: css({
@@ -234,10 +236,10 @@ const styles = {
     right: "0",
     transform: "translateY(-50%)",
     fontSize: "1.2rem",
-    color: "#00ffea",
+    color: colorConst.movePhotoModal.icon.clearIcon.bright,
     cursor: "pointer",
     "&:hover": {
-      color: "#00d1ea",
+      color: colorConst.movePhotoModal.icon.clearIcon.dim,
     },
   }),
   grid: css({
@@ -282,6 +284,7 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     color: "#888",
+    fontFamily: customFonts.fonts.ru,
     fontSize: "0.9rem",
   }),
   albumName: css({
@@ -295,6 +298,7 @@ const styles = {
     padding: "0.5rem",
     textAlign: "center",
     margin: 0,
+    fontFamily: customFonts.fonts.ru,
     fontSize: "1rem",
     background: "rgba(0, 0, 0, 0.5)",
     color: "#fff",

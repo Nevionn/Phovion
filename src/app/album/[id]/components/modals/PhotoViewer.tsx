@@ -8,6 +8,7 @@ import { TbSeparator } from "react-icons/tb";
 import MovePhotoModal from "./MovePhotoModal";
 import { AiOutlineClose } from "react-icons/ai";
 import { colorConst } from "@/app/shared/theme/colorConstant";
+import { customFonts } from "@/app/shared/theme/customFonts";
 
 interface PhotoViewerProps {
   photo: Photo | null;
@@ -350,7 +351,7 @@ const style = {
   actionButton: css({
     color: colorConst.photoPicker.actionButton.bright,
     cursor: "pointer",
-    fontFamily: "'Orbitron', sans-serif",
+    fontFamily: customFonts.fonts.ru,
     padding: "0.1rem 0.5rem",
     borderRadius: "4px",
     transition: "background 0.3s",

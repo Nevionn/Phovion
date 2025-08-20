@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
+import { customFonts } from "@/app/shared/theme/customFonts";
 
 type DescriptionProps = {
   description: string | null;
@@ -35,6 +36,7 @@ const style = {
   }),
   descriptionText: css({
     color: "white",
+    fontFamily: customFonts.fonts.ru,
     fontSize: "17px",
     lineHeight: "1.5",
     opacity: 0.9,

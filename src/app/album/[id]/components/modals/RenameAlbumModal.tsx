@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
 import { AlbumNaming } from "@/app/types/albumTypes";
+import { customFonts } from "@/app/shared/theme/customFonts";
 
 interface RenameAlbumModalProps {
   isOpen: boolean;
@@ -130,6 +131,7 @@ const styles = {
   }),
   modalTitle: css({
     color: "white",
+    fontFamily: customFonts.fonts.ru,
     fontSize: "1.5rem",
     textAlign: "left",
     margin: 0,
@@ -178,7 +180,8 @@ const styles = {
     borderRadius: "8px",
     cursor: "pointer",
     transition: "filter 0.2s, box-shadow 0.2s",
-    fontSize: "1rem",
+    fontFamily: customFonts.fonts.ru,
+    fontSize: 16,
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
     "&:hover": {
       filter: "brightness(1.15)",
@@ -195,6 +198,8 @@ const styles = {
     backgroundColor: "rgba(80, 84, 99, 0.84)",
     color: "white",
     border: "none",
+    fontFamily: customFonts.fonts.ru,
+    fontSize: 16,
     borderRadius: "8px",
     cursor: "pointer",
     transition: "background-color 0.2s",
