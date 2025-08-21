@@ -3,9 +3,9 @@ import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
 import React from "react";
 import { Photo } from "../../types/photoTypes";
+import MovePhotoModal from "./MovePhotoModal";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 import { TbSeparator } from "react-icons/tb";
-import MovePhotoModal from "./MovePhotoModal";
 import { AiOutlineClose } from "react-icons/ai";
 import { colorConst } from "@/app/shared/theme/colorConstant";
 import { customFonts } from "@/app/shared/theme/customFonts";
@@ -40,7 +40,6 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
 
   useEffect(() => {
     console.log("пикер открыт с фото:", photo);
-    console.log("текущий photos:", photos);
     if (photo && photos.length > 0) {
       const initialPhoto = photos.find((p) => p.id === photo.id) || photos[0];
       setCurrentPhoto(initialPhoto);
@@ -79,7 +78,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
         const newIndex = (currentIndex + 1) % photos.length;
         setCurrentPhoto(photos[newIndex]);
       } else if (event.key === "Escape") {
-        onClose();
+        handleClose();
       } else if (event.key === "Delete") {
         handleDelete();
       }
@@ -109,7 +108,9 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
     setCurrentPhoto(photos[newIndex]);
   };
 
-  const handleClose = () => onClose();
+  const handleClose = () => {
+    onClose(), setCurrentPhoto(null);
+  };
 
   const handleDelete = async () => {
     if (!currentPhoto) return;
@@ -364,7 +365,7 @@ const style = {
   }),
   photoPosition: css({
     color: colorConst.photoPicker.photoPosition,
-    fontFamily: "'Orbitron', sans-serif",
+    fontFamily: customFonts.fonts.ru,
     fontSize: "14px",
     padding: "0.1rem 0.5rem",
     borderRadius: "4px",
