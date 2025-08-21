@@ -16,4 +16,5 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
   color: white;
+  scroll-behavior: smooth;
 }
