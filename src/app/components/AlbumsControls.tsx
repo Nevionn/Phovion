@@ -90,12 +90,14 @@ const styles = {
   }),
   titleStyle: css({
     fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
     fontSize: "2rem",
     color: "white",
     margin: "0",
   }),
   textButon: css({
     fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
     margin: 0,
   }),
   mergeButtonsItem: css({

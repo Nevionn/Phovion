@@ -100,6 +100,7 @@ const styles = {
     color: "white",
     fontSize: "1.5rem",
     fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
     margin: 0,
   }),
   inputStyle: css({
@@ -109,7 +110,7 @@ const styles = {
     fontSize: "1rem",
     height: "34px",
     width: "100%",
-    backgroundColor: "var(--create-album-modal-input-fields-color)", // #2a2a2a"
+    backgroundColor: "var(--create-album-modal-input-fields-color)",
     color: "white",
     outline: "none",
     "&:focus": {
@@ -148,6 +149,7 @@ const styles = {
     transition: "filter 0.2s, box-shadow 0.2s",
     fontSize: "1rem",
     fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
     "&:hover": {
       filter: "brightness(1.15)",
@@ -163,6 +165,7 @@ const styles = {
     padding: "0.5rem 1rem",
     backgroundColor: "rgba(80, 84, 99, 0.84)",
     fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
     fontSize: "1rem",
     color: "white",
     border: "none",

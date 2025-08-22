@@ -232,6 +232,7 @@ const styles = {
   modalTitle: css({
     fontSize: "1.5rem",
     fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
     marginBottom: "1.5rem",
     textAlign: "center",
     color: "white",
@@ -251,6 +252,7 @@ const styles = {
   }),
   sectionTitleText: css({
     fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
     margin: 0,
   }),
   buttonText: css({
@@ -276,7 +278,7 @@ const styles = {
     gap: 10,
     fontSize: "1rem",
     fontFamily: customFonts.fonts.ru,
-    letterSpacing: "1px",
+    letterSpacing: customFonts.fonts.size.ls,
     color: "#ccc",
   }),
   themesContainer: css({
