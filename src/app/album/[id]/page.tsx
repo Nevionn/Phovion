@@ -198,22 +198,46 @@ const AlbumPage = () => {
 
       if (url && (url.startsWith("http") || url.startsWith("https"))) {
         console.log("Найден URL из другой вкладки:", url);
-        try {
-          const filename =
-            url.split("/").pop() || `image_from_${Date.now()}.jpg`;
-          const file = await proxyToFile(url, filename);
-          if (file.type.startsWith("image/")) {
-            droppedFiles.add(file);
-            console.log("Успешно загружен файл через прокси:", file);
+        // фильтр: игнорируем текст из интерфейса
+        const baseUrl = url.split("?")[0];
+        if (
+          url.length > 20 &&
+          !url.includes("album") && // Исключаем навигацию
+          /\.(jpg|jpeg|png|gif|webp)$/i.test(baseUrl)
+        ) {
+          try {
+            const filename =
+              baseUrl.split("/").pop() || `image_from_${Date.now()}.jpg`;
+            const file = await proxyToFile(url, filename);
+            if (file.type.startsWith("image/")) {
+              droppedFiles.add(file);
+              console.log("Успешно загружен файл через прокси:", file);
+            } else {
+              console.log("URL не указывает на изображение, игнорируем:", url);
+            }
+          } catch (error: unknown) {
+            const errorMessage =
+              error instanceof Error ? error.message : String(error);
+            console.error(
+              "Ошибка загрузки изображения через прокси:",
+              errorMessage
+            );
+            if (
+              errorMessage.includes("Failed to fetch") ||
+              errorMessage.includes("NetworkError")
+            ) {
+              console.log(
+                "Скорее всего, это не валидный URL изображения, игнорируем."
+              );
+            } else {
+              alert(`Не удалось загрузить изображение по URL: ${errorMessage}`);
+            }
           }
-        } catch (error: unknown) {
-          const errorMessage =
-            error instanceof Error ? error.message : String(error);
-          console.error(
-            "Ошибка загрузки изображения через прокси:",
-            errorMessage
+        } else {
+          console.log(
+            "URL выглядит как текст из интерфейса или невалиден, игнорируем:",
+            url
           );
-          alert(`Не удалось загрузить изображение по URL: ${errorMessage}`);
         }
       }
 

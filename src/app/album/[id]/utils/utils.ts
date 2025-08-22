@@ -17,7 +17,8 @@ export function dataURLtoFile(dataurl: string, filename: string): File {
 }
 
 /**
- * Метод для загрузки файла через прокси (межвкладочный трансфер)
+ * Метод для загрузки файла с внешнего сайта (межвкладочный трансфер)
+ * Вызывается из handleDrop
  * @function
  * @returns {function}
  */
@@ -30,17 +31,44 @@ export async function proxyToFile(
   const timeout = setTimeout(() => controller.abort(), 10000);
   try {
     console.log("Запрос прокси для URL:", url);
+    // Проверка: URL должен содержать домен и не быть слишком коротким
+    if (url.length < 20 || !url.includes(".")) {
+      throw new Error("Невалидный URL, игнорируем");
+    }
+
     const response = await fetch(`/api/proxy?url=${encodeURIComponent(url)}`, {
       signal: controller.signal,
+      method: "GET",
+      headers: {
+        Accept: "image/*", // Запрашиваем только изображения
+      },
     });
+
     if (!response.ok) {
-      throw new Error(`Ошибка прокси: ${response.statusText}`);
+      throw new Error(
+        `Ошибка прокси: ${response.status} - ${response.statusText}`
+      );
     }
+
+    const contentType = response.headers.get("Content-Type");
+    console.log("Получен Content-Type:", contentType);
+    if (!contentType || !contentType.startsWith("image/")) {
+      throw new Error(
+        "URL не указывает на изображение (неверный Content-Type)"
+      );
+    }
+
     const blob = await response.blob();
     if (blob.size === 0) {
       throw new Error("Получен пустой Blob");
     }
+
+    console.log("Успешно получен Blob, размер:", blob.size);
     return new File([blob], filename, { type: blob.type });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Ошибка в proxyToFile:", errorMessage);
+    throw error; // Прокидываем ошибку дальше для обработки в handleDrop
   } finally {
     clearTimeout(timeout);
   }
