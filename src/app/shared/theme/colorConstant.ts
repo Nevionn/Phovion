@@ -72,6 +72,9 @@ export const colorConst = {
 
   headerItems: {
     currentAlbumName: mainColorInterface,
+    headerContainer: {
+      border: `2px solid ${mainColorInterface}`,
+    },
     albumNavigationText: {
       textShadow: "0 0 10px rgba(0, 255, 234, 0.8)",
       color: mainColorInterface,

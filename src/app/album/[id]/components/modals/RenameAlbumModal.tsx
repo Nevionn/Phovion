@@ -132,6 +132,7 @@ const styles = {
   modalTitle: css({
     color: "white",
     fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
     fontSize: "1.5rem",
     textAlign: "left",
     margin: 0,
@@ -181,6 +182,7 @@ const styles = {
     cursor: "pointer",
     transition: "filter 0.2s, box-shadow 0.2s",
     fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
     fontSize: 16,
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
     "&:hover": {
@@ -199,6 +201,7 @@ const styles = {
     color: "white",
     border: "none",
     fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
     fontSize: 16,
     borderRadius: "8px",
     cursor: "pointer",

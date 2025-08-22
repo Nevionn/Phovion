@@ -58,6 +58,7 @@ const styles = {
   }),
   text: css({
     fontFamily: customFonts.fonts.eu,
+    letterSpacing: customFonts.fonts.size.ls,
     margin: 0,
   }),
 };
