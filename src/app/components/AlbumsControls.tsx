@@ -2,10 +2,11 @@
 import { css } from "@emotion/react";
 import { useState } from "react";
 import CreateAlbumModal from "./modals/CreateAlbumModal";
-import { AlbumNaming } from "../types/albumTypes";
-import { FaMicrochip } from "react-icons/fa6";
-import Separator from "../shared/separator/Separator";
 import SettingsModal from "./modals/SettingsModal";
+import { AlbumNaming } from "../types/albumTypes";
+import { FaMicrochip, FaSpinner } from "react-icons/fa6";
+import Separator from "../shared/separator/Separator";
+import { colorIcon } from "../shared/theme/colorConstant";
 import { customFonts } from "../shared/theme/customFonts";
 
 interface AlbumControlsProps {
@@ -36,6 +37,9 @@ const AlbumsControls = ({
       <div css={styles.headerStyle}>
         <p css={styles.titleStyle}>
           Альбомов: {albumCount}; Фотографий: {photoCount}
+          {loading && (
+            <FaSpinner css={styles.loadingIcon} style={{ fontSize: 20 }} />
+          )}
         </p>
         <div css={styles.mergeButtonsItem}>
           <button
@@ -131,5 +135,14 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
+  }),
+  loadingIcon: css({
+    marginLeft: 10,
+    animation: "spin 1s linear infinite",
+    color: colorIcon.bright,
+    "@keyframes spin": {
+      from: { transform: "rotate(0deg)" },
+      to: { transform: "rotate(360deg)" },
+    },
   }),
 };

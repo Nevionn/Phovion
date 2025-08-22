@@ -17,7 +17,7 @@
 
 const mainColorInterface = "#00ffea";
 
-const colorIcon = {
+export const colorIcon = {
   bright: mainColorInterface,
   dim: "#00d1ea",
 };
