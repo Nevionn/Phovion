@@ -6,6 +6,7 @@ import { GiTechnoHeart } from "react-icons/gi";
 import { TbAlertOctagonFilled } from "react-icons/tb";
 import { AiFillCloseSquare } from "react-icons/ai";
 import { PiMemoryFill } from "react-icons/pi";
+import { PiTreeStructureBold } from "react-icons/pi";
 import Separator from "@/app/shared/separator/Separator";
 import { ThemeBox } from "../ThemeBox";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
@@ -36,6 +37,12 @@ const SettingsModal: FC<SettingsModalProps> = ({
   const { theme, setTheme, enableAlbumBorder, setEnableAlbumBorder } =
     useThemeManager();
   const [uploadFolderSize, setUploadFolderSize] = useState("");
+  const [imageFitMode, setImageFitMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("imageFitMode") || "contain";
+    }
+    return "contain"; // Значение по умолчанию на сервере
+  });
 
   const themes: Theme[] = [
     "SpaceBlue",
@@ -77,6 +84,13 @@ const SettingsModal: FC<SettingsModalProps> = ({
       window.removeEventListener("keydown", handleEsc);
     };
   }, [isOpen, onClose]);
+
+  const handleImageFitChange = (mode: string) => {
+    setImageFitMode(mode);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("imageFitMode", mode);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -128,7 +142,42 @@ const SettingsModal: FC<SettingsModalProps> = ({
           </div>
         </Separator>
 
-        {/* Секция 3: Опасная зона */}
+        {/* Секция 3: Поведение */}
+        <Separator css={styles.section}>
+          <h3 css={styles.sectionTitle}>
+            <PiTreeStructureBold /> &nbsp;
+            <p css={styles.sectionTitleText}>Поведение</p>
+          </h3>
+          <div css={styles.settingsContainer}>
+            <div css={styles.behaviorRow}>
+              <p css={styles.infoItem}>Режим отображения изображения:</p>
+              <div css={styles.radioCardContainer}>
+                <label css={styles.radioCard}>
+                  <input
+                    type="radio"
+                    value="contain"
+                    checked={imageFitMode === "contain"}
+                    onChange={() => handleImageFitChange("contain")}
+                    css={styles.radioInput}
+                  />
+                  <span css={styles.radioLabel}>Contain</span>
+                </label>
+                <label css={styles.radioCard}>
+                  <input
+                    type="radio"
+                    value="fill"
+                    checked={imageFitMode === "fill"}
+                    onChange={() => handleImageFitChange("fill")}
+                    css={styles.radioInput}
+                  />
+                  <span css={styles.radioLabel}>Fill</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </Separator>
+
+        {/* Секция 4: Опасная зона */}
         <Separator css={styles.section}>
           <h3 css={styles.sectionTitle}>
             <TbAlertOctagonFilled /> &nbsp;
@@ -215,6 +264,11 @@ const styles = {
     flexDirection: "column",
     gap: "1rem",
   }),
+  behaviorRow: css({
+    display: "flex",
+    alignItems: "center",
+    gap: "1rem",
+  }),
   infoItem: css({
     display: "flex",
     justifyContent: "flex-start",
@@ -222,6 +276,7 @@ const styles = {
     gap: 10,
     fontSize: "1rem",
     fontFamily: customFonts.fonts.ru,
+    letterSpacing: "1px",
     color: "#ccc",
   }),
   themesContainer: css({
@@ -281,5 +336,40 @@ const styles = {
       backgroundColor: "#ccc",
       cursor: "not-allowed",
     },
+  }),
+  radioCardContainer: css({
+    display: "flex",
+    gap: "1rem",
+    marginLeft: "1rem",
+  }),
+  radioCard: css({
+    display: "flex",
+    alignItems: "center",
+    padding: "0.5rem 1rem",
+    backgroundColor: "#2a2a3e",
+    border: "2px solid transparent",
+    borderRadius: "4px",
+    cursor: "pointer",
+    transition: "all 0.3s",
+    "&:hover": {
+      backgroundColor: "#3a3a4e",
+    },
+    "& input:checked + span": {
+      fontWeight: "bold",
+      color: "#00ffea",
+    },
+    "& input:focus + span": {
+      outline: "none",
+      borderColor: "#00ffea",
+    },
+  }),
+  radioInput: css({
+    display: "none", // Скрываем нативный радио-кнопку
+  }),
+  radioLabel: css({
+    fontFamily: customFonts.fonts.ru,
+    color: "#fff",
+    margin: 0,
+    userSelect: "none",
   }),
 };

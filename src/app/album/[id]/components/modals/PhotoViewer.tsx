@@ -9,6 +9,7 @@ import { TbSeparator } from "react-icons/tb";
 import { AiOutlineClose } from "react-icons/ai";
 import { colorConst } from "@/app/shared/theme/colorConstant";
 import { customFonts } from "@/app/shared/theme/customFonts";
+import { handleExpand } from "../../utils/expandPhotoUtils";
 
 interface PhotoViewerProps {
   photo: Photo | null;
@@ -21,7 +22,8 @@ interface PhotoViewerProps {
 
 /**
  * Компонент для просмотра, навигации и удаления фотографий
- * Компонент отображает фотографии в оверлее, поддерживает переключение с помощью клавиатуры и удаление через API-запросы, а также синхронизируется с родительским компонентом после удаления
+ * Компонент отображает фотографии в оверлее, поддерживает переключение с помощью клавиатуры и удаление через API-запросы,
+ * а также синхронизируется с родительским компонентом после удаления. Добавлена возможность открытия фотографии в новой вкладке во весь экран с динамическим режимом отображения.
  * @component
  * @returns {JSX.Element}
  */
@@ -37,6 +39,10 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
+  const imageFitMode =
+    typeof window !== "undefined"
+      ? localStorage.getItem("imageFitMode") || "contain"
+      : "contain";
 
   useEffect(() => {
     console.log("пикер открыт с фото:", photo);
@@ -81,6 +87,11 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
         handleClose();
       } else if (event.key === "Delete") {
         handleDelete();
+      } else if (
+        event.key.toLowerCase() === "i" ||
+        event.key.toLowerCase() === "ш"
+      ) {
+        handleExpand(currentPhoto);
       }
     };
 
@@ -202,7 +213,10 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
           <img
             src={currentPhoto.path}
             alt={`Photo ${currentPhoto.id}`}
-            css={style.image}
+            css={css`
+              ${style.image}
+              object-fit: ${imageFitMode};
+            `}
           />
           <button
             css={style.switchAreaRight}
@@ -226,6 +240,13 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
               <TbSeparator />
               <span css={style.actionButton} onClick={handleSetCover}>
                 Сделать обложкой
+              </span>
+              <TbSeparator />
+              <span
+                css={style.actionButton}
+                onClick={() => handleExpand(currentPhoto)}
+              >
+                Увеличить размер
               </span>
             </div>
             <div>
