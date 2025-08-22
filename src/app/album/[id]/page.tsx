@@ -19,7 +19,6 @@ import UploadSection from "./components/UploadSection";
 import PhotoGrid from "./components/PhotoGrid";
 import DropZoneDragging from "./components/DropZoneDragging";
 import SkeletonLoader from "./components/SkeletonLoader";
-import { dataURLtoFile, proxyToFile } from "./utils/utils";
 import { useAlbumData } from "./hooks/useAlbumData";
 import { useRenameAlbum } from "./hooks/useRenameAlbum";
 import { useDeleteAlbum } from "./hooks/useDeleteAlbum";
@@ -27,6 +26,7 @@ import { useClearAlbum } from "./hooks/useClearAlbum";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 import { useUploadPhotos } from "./hooks/useUploadPhotos";
 import { useDownloadAlbum } from "./hooks/useDownloadAlbum";
+import { useDropHandler } from "./hooks/useDropHandler";
 import { customFonts } from "@/app/shared/theme/customFonts";
 
 const emotionCache = createCache({ key: "css", prepend: true });
@@ -36,7 +36,6 @@ const AlbumPage = () => {
 
   const [files, setFiles] = useState<File[]>([]);
   const [triggerUpload, setTriggerUpload] = useState(false);
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   const [showEdit, setShowEdit] = useState(false);
@@ -66,6 +65,14 @@ const AlbumPage = () => {
     albumName: album?.name,
     albumId: id,
   });
+
+  const {
+    handleDrop,
+    handleDragOver,
+    handleDragEnter,
+    handleDragLeave,
+    isDraggingOver,
+  } = useDropHandler(isLoading, setFiles, setTriggerUpload);
 
   useThemeManager();
 
@@ -155,133 +162,6 @@ const AlbumPage = () => {
     }
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (!isLoading) setIsDraggingOver(true);
-  };
-
-  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (!isLoading) setIsDraggingOver(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (!isLoading) setIsDraggingOver(false);
-  };
-
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (!isLoading) {
-      setIsDraggingOver(false);
-      const droppedFiles: Set<File> = new Set();
-
-      // Логируем все типы данных в DataTransfer для отладки
-      console.log("DataTransfer types:", e.dataTransfer.types);
-      for (const type of e.dataTransfer.types) {
-        console.log(`Data for ${type}:`, e.dataTransfer.getData(type));
-      }
-
-      // 1. Проверяем локальные файлы (перетаскивание из проводника)
-      const localFiles = Array.from(e.dataTransfer.files).filter((file) =>
-        file.type.startsWith("image/")
-      );
-      if (localFiles.length > 0) {
-        console.log("Найдены локальные файлы:", localFiles);
-        localFiles.forEach((file) => droppedFiles.add(file));
-      }
-
-      // 2. Проверяем URL (перетаскивание из другой вкладки/сайта)
-      const uriList = e.dataTransfer.getData("text/uri-list");
-      const plainText = e.dataTransfer.getData("text/plain");
-      const url = uriList || plainText;
-
-      if (url && (url.startsWith("http") || url.startsWith("https"))) {
-        console.log("Найден URL из другой вкладки:", url);
-        // фильтр: игнорируем текст из интерфейса
-        const baseUrl = url.split("?")[0];
-        if (
-          url.length > 20 &&
-          !url.includes("album") && // Исключаем навигацию
-          /\.(jpg|jpeg|png|gif|webp)$/i.test(baseUrl)
-        ) {
-          try {
-            const filename =
-              baseUrl.split("/").pop() || `image_from_${Date.now()}.jpg`;
-            const file = await proxyToFile(url, filename);
-            if (file.type.startsWith("image/")) {
-              droppedFiles.add(file);
-              console.log("Успешно загружен файл через прокси:", file);
-            } else {
-              console.log("URL не указывает на изображение, игнорируем:", url);
-            }
-          } catch (error: unknown) {
-            const errorMessage =
-              error instanceof Error ? error.message : String(error);
-            console.error(
-              "Ошибка загрузки изображения через прокси:",
-              errorMessage
-            );
-            if (
-              errorMessage.includes("Failed to fetch") ||
-              errorMessage.includes("NetworkError")
-            ) {
-              console.log(
-                "Скорее всего, это не валидный URL изображения, игнорируем."
-              );
-            } else {
-              alert(`Не удалось загрузить изображение по URL: ${errorMessage}`);
-            }
-          }
-        } else {
-          console.log(
-            "URL выглядит как текст из интерфейса или невалиден, игнорируем:",
-            url
-          );
-        }
-      }
-
-      // 3. Проверяем Data URL (перетаскивание закодированного изображения)
-      if (plainText && plainText.startsWith("data:image/")) {
-        console.log("Найден Data URL:", plainText);
-        try {
-          const file = dataURLtoFile(
-            plainText,
-            `image_from_data_${Date.now()}.jpg`
-          );
-          droppedFiles.add(file);
-          console.log("Успешно преобразован Data URL в файл:", file);
-        } catch (error: unknown) {
-          const errorMessage =
-            error instanceof Error ? error.message : String(error);
-          console.error("Ошибка преобразования Data URL:", errorMessage);
-          alert(`Не удалось обработать Data URL изображения: ${errorMessage}`);
-        }
-      }
-
-      // Преобразуем Set в массив
-      const finalFiles: File[] = Array.from(droppedFiles);
-      console.log("Итоговый список файлов для загрузки:", finalFiles);
-
-      // Очищаем и устанавливаем новые файлы только если есть валидные данные
-      if (finalFiles.length > 0) {
-        setFiles(finalFiles);
-        setTriggerUpload(true);
-      } else {
-        console.log("Нет валидных файлов для загрузки, игнорируем.");
-      }
-    }
-  };
-
-  // Вызов uploadPhotos после обновления состояния
-  useEffect(() => {
-    if (triggerUpload && files.length > 0) {
-      console.log("Запускаем uploadPhotos с файлами:", files);
-      uploadPhotos();
-      setTriggerUpload(false);
-    }
-  }, [triggerUpload, files]);
-
   const handlePhotoClick = (photo: Photo) => {
     setSelectedPhoto(photo);
   };
@@ -312,6 +192,15 @@ const AlbumPage = () => {
   const syncAfterPhotoMove = async (photoId: number) => {
     await syncAfterPhotoChange(photoId);
   };
+
+  // Вызов uploadPhotos после обновления состояния
+  useEffect(() => {
+    if (triggerUpload && files.length > 0) {
+      console.log("Запускаем uploadPhotos с файлами:", files);
+      uploadPhotos();
+      setTriggerUpload(false);
+    }
+  }, [triggerUpload, files]);
 
   return (
     <CacheProvider value={emotionCache}>
