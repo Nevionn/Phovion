@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { dataURLtoFile, proxyToFile } from "../utils/utils";
+import { dataURLtoFile, proxyToFile } from "../utils/convertingDataTransfer";
 
 /**
  * Хук для обработки перетаскивания (Drag-and-Drop) файлов и URL изображений в компонент.

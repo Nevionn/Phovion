@@ -28,6 +28,7 @@ import { useUploadPhotos } from "./hooks/useUploadPhotos";
 import { useDownloadAlbum } from "./hooks/useDownloadAlbum";
 import { useDropHandler } from "./hooks/useDropHandler";
 import { customFonts } from "@/app/shared/theme/customFonts";
+import { colorConst } from "@/app/shared/theme/colorConstant";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
@@ -322,7 +323,7 @@ const style = {
   }),
   headerContainer: css({
     position: "relative",
-    border: "2px solid #00ffea",
+    border: colorConst.headerItems.headerContainer.border,
     borderRadius: "12px",
     padding: "1.5rem",
     boxShadow:

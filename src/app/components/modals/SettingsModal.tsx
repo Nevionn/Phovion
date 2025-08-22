@@ -41,7 +41,7 @@ const SettingsModal: FC<SettingsModalProps> = ({
     if (typeof window !== "undefined") {
       return localStorage.getItem("imageFitMode") || "contain";
     }
-    return "contain"; // Значение по умолчанию на сервере
+    return "contain";
   });
 
   const themes: Theme[] = [
