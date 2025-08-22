@@ -64,6 +64,20 @@ const SettingsModal: FC<SettingsModalProps> = ({
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleEsc);
+    }
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
