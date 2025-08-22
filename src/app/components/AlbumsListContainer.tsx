@@ -7,9 +7,6 @@ import AlbumsControls from "./AlbumsControls";
 import AlbumsGrid from "./AlbumsGrid";
 import BackToTopButton from "../shared/buttons/BackToTopButton";
 import BackToBottomButton from "../shared/buttons/BackToBottomButton";
-import loadingImage from "../../../assets/loading.webp";
-
-const LoadingPlaceholder = () => <div css={styles.loadingPlaceholder} />;
 
 const AlbumsListContainer = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -100,20 +97,16 @@ const AlbumsListContainer = () => {
   return (
     <>
       <div css={styles.containerStyle}>
-        {loading ? (
-          <LoadingPlaceholder />
-        ) : (
-          <>
-            <AlbumsControls
-              loading={loading}
-              albumCount={albumCount}
-              photoCount={photoCount}
-              createAlbum={createAlbum}
-              deleteAllAlbums={deleteAllAlbums}
-            />
-            <AlbumsGrid albums={albums} setAlbums={setAlbums} />
-          </>
-        )}
+        <>
+          <AlbumsControls
+            loading={loading}
+            albumCount={albumCount}
+            photoCount={photoCount}
+            createAlbum={createAlbum}
+            deleteAllAlbums={deleteAllAlbums}
+          />
+          <AlbumsGrid albums={albums} setAlbums={setAlbums} />
+        </>
       </div>
       <BackToTopButton />
       <BackToBottomButton />
@@ -133,7 +126,8 @@ const styles = {
     alignItems: "center",
     flexDirection: "column",
     minHeight: "90vh",
-    maxWidth: 876,
+    maxWidth: "90%",
+    width: "100%",
     overflowX: "auto",
     padding: "2rem",
     borderRadius: "1rem",
@@ -142,20 +136,18 @@ const styles = {
     boxShadow: "0 0 30px rgba(0, 0, 0, 0.6)",
     border: "var(--list-container-border-color)",
     color: "white",
-  }),
-  loadingPlaceholder: css({
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "90vh",
-    width: "100%",
-    minWidth: "876px",
-    color: "#00ffea",
-    fontSize: "1.5rem",
-    fontFamily: "var(--font-geist-sans)",
-    backgroundImage: `url(${loadingImage.src})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
+
+    "@media (min-width: 1200px)": {
+      maxWidth: 876,
+    },
+    "@media (max-width: 768px)": {
+      maxWidth: "85%",
+      padding: "1.5rem",
+    },
+    "@media (max-width: 480px)": {
+      maxWidth: "90%",
+      padding: "1rem",
+      borderRadius: "0.5rem",
+    },
   }),
 };
