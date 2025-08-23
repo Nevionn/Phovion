@@ -3,7 +3,7 @@
 import { css, CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import "../../shared/buttons/cyber-button.css";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Photo } from "./types/photoTypes";
