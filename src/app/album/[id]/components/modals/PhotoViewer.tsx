@@ -39,10 +39,6 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
-  const imageFitMode =
-    typeof window !== "undefined"
-      ? localStorage.getItem("imageFitMode") || "contain"
-      : "contain";
 
   useEffect(() => {
     console.log("пикер открыт с фото:", photo);
@@ -97,7 +93,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [photos, currentPhoto, onClose]);
+  }, [photos, currentPhoto]);
 
   const handlePrev = () => {
     if (!currentPhoto || photos.length <= 1) return;
@@ -213,10 +209,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
           <img
             src={currentPhoto.path}
             alt={`Photo ${currentPhoto.id}`}
-            css={css`
-              ${style.image}
-              object-fit: ${imageFitMode};
-            `}
+            css={style.image}
           />
           <button
             css={style.switchAreaRight}
