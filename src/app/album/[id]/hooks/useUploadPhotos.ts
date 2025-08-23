@@ -67,7 +67,7 @@ export const useUploadPhotos = (
       if (res.ok) {
         const newPhotos: Photo[] = await res.json();
         console.log("Успешно загружено:", newPhotos);
-        setFiles([]); // Очищаем буфер после успешной загрузки
+        setFiles([]); // Чистка буфера
         setPhotos((prev) => [...prev, ...newPhotos]); // Обновляем список фотографий
 
         // Сбрасываем значение инпута
@@ -76,16 +76,31 @@ export const useUploadPhotos = (
           console.log("ИНПУТ СБРОШЕН");
         }
 
-        // Запрашиваем полные данные альбома после загрузки
-        const albumRes = await fetch(`/api/albums/${id}`, {
+        // Получаем актуальный photoCount
+        const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
           cache: "no-store",
         });
-        if (albumRes.ok) {
-          const updatedAlbum: AlbumForViewPhotos = await albumRes.json();
-          setAlbum(updatedAlbum);
+        if (countRes.ok) {
+          const { photoCount } = await countRes.json();
+          console.log("Получен актуальный photoCount:", photoCount);
+          // Обновляем album с новым photoCount
+          setAlbum((prev: AlbumForViewPhotos | null) => {
+            if (prev) {
+              return { ...prev, photoCount };
+            }
+            // Возвращаем полный объект или null
+            return {
+              id: id ? Number(id) : 0,
+              name: "Unknown",
+              description: null,
+              photoCount: photoCount ?? 0,
+              coverPhotoId: null,
+            };
+          });
         } else {
-          throw new Error(
-            `Ошибка обновления данных альбома: ${albumRes.statusText}`
+          console.error(
+            "Ошибка при запросе countByAlbum:",
+            countRes.statusText
           );
         }
       } else {
