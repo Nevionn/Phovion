@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "sort",
+  title: "Phovion",
   description: "",
   icons: {
     icon: "/favicon.ico",
