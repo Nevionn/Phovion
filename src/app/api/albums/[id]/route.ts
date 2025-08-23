@@ -91,7 +91,6 @@ export async function PUT(
   request: Request,
   context: { params: Promise<{ id: string }> | { id: string } }
 ) {
-  // Ждём разрешения params, если это промис
   const params = await (context.params as Promise<{ id: string }>);
 
   if (!params || !params.id) {
