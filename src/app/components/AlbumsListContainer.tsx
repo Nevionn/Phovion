@@ -7,12 +7,20 @@ import AlbumsControls from "./AlbumsControls";
 import AlbumsGrid from "./AlbumsGrid";
 import BackToTopButton from "../shared/buttons/BackToTopButton";
 import BackToBottomButton from "../shared/buttons/BackToBottomButton";
+import CreateAlbumModal from "./modals/CreateAlbumModal";
+import SettingsModal from "./modals/SettingsModal";
+
+/**
+ * Компонент основной панели главной страницы, на которой располагаются все альбомы
+ */
 
 const AlbumsListContainer = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(true);
   const [albumCount, setAlbumCount] = useState(0);
   const [photoCount, setPhotoCount] = useState(0);
+  const [isCreateAlbumModalOpen, setIsCreateAlbumModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -104,10 +112,29 @@ const AlbumsListContainer = () => {
             photoCount={photoCount}
             createAlbum={createAlbum}
             deleteAllAlbums={deleteAllAlbums}
+            onOpenCreateAlbum={() => setIsCreateAlbumModalOpen(true)}
+            onOpenSettings={() => setIsSettingsModalOpen(true)}
           />
           <AlbumsGrid albums={albums} setAlbums={setAlbums} />
         </>
       </div>
+      {isCreateAlbumModalOpen && (
+        <CreateAlbumModal
+          isOpen={isCreateAlbumModalOpen}
+          onClose={() => setIsCreateAlbumModalOpen(false)}
+          createAlbum={createAlbum}
+          loading={loading}
+        />
+      )}
+      {isSettingsModalOpen && (
+        <SettingsModal
+          isOpen={isSettingsModalOpen}
+          onClose={() => setIsSettingsModalOpen(false)}
+          deleteAllAlbums={deleteAllAlbums}
+          albumCount={albumCount}
+          loading={loading}
+        />
+      )}
       <BackToTopButton />
       <BackToBottomButton />
     </>
