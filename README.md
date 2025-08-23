@@ -68,7 +68,7 @@ npx prisma db push
 
 npx prisma generate
 
-npx run dev
+npm run dev
 
 ctrl + http://localhost:3000
 ```
