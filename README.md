@@ -7,6 +7,14 @@
 
 # Скриншоты
 
+<div align="center" style="display: flex; align-items: center;">
+  <img src="./preview/handle-drop.webp" alt="1" width="200" height="200">
+  <img src="./preview/settings-modal.webp" alt="2" width="200" height="200">
+  <img src="./preview/page-pick-album.webp" alt="3" width="200" height="200">
+  <img src="./preview/photo-picker.webp" alt="4" width="200" height="200">
+</div>
+
+
 # Особенности
 
 - Создание альбомов: Легко создавайте и управляйте альбомами для организации ваших фотографий.
