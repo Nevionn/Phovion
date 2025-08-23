@@ -194,15 +194,6 @@ const AlbumPage = () => {
     await syncAfterPhotoChange(photoId);
   };
 
-  // Вызов uploadPhotos после обновления состояния
-  useEffect(() => {
-    if (triggerUpload && files.length > 0) {
-      console.log("Запускаем uploadPhotos с файлами:", files);
-      uploadPhotos();
-      setTriggerUpload(false);
-    }
-  }, [triggerUpload, files]);
-
   return (
     <CacheProvider value={emotionCache}>
       <main
