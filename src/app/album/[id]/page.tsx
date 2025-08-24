@@ -73,7 +73,7 @@ const AlbumPage = () => {
     handleDragEnter,
     handleDragLeave,
     isDraggingOver,
-  } = useDropHandler(isLoading, setFiles, setTriggerUpload);
+  } = useDropHandler(isLoading, setFiles, setTriggerUpload, uploadPhotos);
 
   useThemeManager();
 
