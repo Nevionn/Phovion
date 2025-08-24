@@ -22,11 +22,10 @@ interface SettingsModalProps {
 }
 
 /**
- * Модальное окно настроек с разделами для оформления, системной информации и опасной зоны.
+ * Модальное окно настроек с таб-режимом для разделов: Оформление, Системная информация, Поведение, Опасная зона.
  * @component
- * @returns {JSX.Element} Рендер модального окна с настройками.
+ * @returns {JSX.Element} Рендер модального окна с настройками в таб-режиме.
  */
-
 const SettingsModal: FC<SettingsModalProps> = ({
   isOpen,
   onClose,
@@ -43,6 +42,7 @@ const SettingsModal: FC<SettingsModalProps> = ({
     }
     return "contain";
   });
+  const [activeTab, setActiveTab] = useState("Оформление");
 
   const themes: Theme[] = [
     "SpaceBlue",
@@ -99,102 +99,121 @@ const SettingsModal: FC<SettingsModalProps> = ({
       <div css={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <h2 css={styles.modalTitle}>Настройки</h2>
 
-        {/* Секция 1: Оформление */}
-        <Separator css={styles.section}>
-          <h3 css={styles.sectionTitle}>
-            <FaPalette /> &nbsp; <p css={styles.sectionTitleText}>Оформление</p>
-          </h3>
-          <div css={styles.settingsContainer}>
-            <div css={styles.themesContainer}>
-              {themes.map((themeName) => (
-                <ThemeBox
-                  key={themeName}
-                  themeName={themeName}
-                  currentTheme={theme}
-                  onSelect={setTheme}
-                />
-              ))}
-            </div>
-            <label css={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={enableAlbumBorder}
-                onChange={(e) => setEnableAlbumBorder(e.target.checked)}
-              />
-              <span css={styles.sectionTitleText}>
-                Включить обводку для панели альбомов
-              </span>
-            </label>
+        <div css={styles.tabContainer}>
+          {/* Левая часть: Список табов */}
+          <div css={styles.tabSidebar}>
+            {[
+              { name: "Оформление", icon: <FaPalette /> },
+              { name: "Системная информация", icon: <GiTechnoHeart /> },
+              { name: "Поведение", icon: <PiTreeStructureBold /> },
+              { name: "Опасная зона", icon: <TbAlertOctagonFilled /> },
+            ].map((tab) => (
+              <button
+                key={tab.name}
+                css={css(
+                  styles.tabButton,
+                  activeTab === tab.name && styles.activeTabButton
+                )}
+                onClick={() => setActiveTab(tab.name)}
+              >
+                {tab.icon} &nbsp; <span css={styles.tabText}>{tab.name}</span>
+              </button>
+            ))}
           </div>
-        </Separator>
 
-        {/* Секция 2: Системная информация */}
-        <Separator css={styles.section}>
-          <h3 css={styles.sectionTitle}>
-            <GiTechnoHeart /> &nbsp;
-            <p css={styles.sectionTitleText}>Системная информация</p>
-          </h3>
-          <div css={styles.settingsContainer}>
-            <p css={styles.infoItem}>
-              <PiMemoryFill /> Вес папки uploads (кеш):&nbsp;&nbsp;
-              {uploadFolderSize ? uploadFolderSize : "подсчёт.."}
-            </p>
-          </div>
-        </Separator>
-
-        {/* Секция 3: Поведение */}
-        <Separator css={styles.section}>
-          <h3 css={styles.sectionTitle}>
-            <PiTreeStructureBold /> &nbsp;
-            <p css={styles.sectionTitleText}>Поведение</p>
-          </h3>
-          <div css={styles.settingsContainer}>
-            <div css={styles.behaviorRow}>
-              <p css={styles.infoItem}>Режим отображения изображения:</p>
-              <div css={styles.radioCardContainer}>
-                <label css={styles.radioCard}>
-                  <input
-                    type="radio"
-                    value="contain"
-                    checked={imageFitMode === "contain"}
-                    onChange={() => handleImageFitChange("contain")}
-                    css={styles.radioInput}
-                  />
-                  <span css={styles.radioLabel}>Contain</span>
-                </label>
-                <label css={styles.radioCard}>
-                  <input
-                    type="radio"
-                    value="fill"
-                    checked={imageFitMode === "fill"}
-                    onChange={() => handleImageFitChange("fill")}
-                    css={styles.radioInput}
-                  />
-                  <span css={styles.radioLabel}>Fill</span>
-                </label>
+          {/* Правая часть: Контент таба */}
+          <div css={styles.tabContent}>
+            {activeTab === "Оформление" && (
+              <div css={styles.tabSection}>
+                <h3 css={styles.sectionTitle}>Оформление</h3>
+                <div css={styles.settingsContainer}>
+                  <div css={styles.themesContainer}>
+                    {themes.map((themeName) => (
+                      <ThemeBox
+                        key={themeName}
+                        themeName={themeName}
+                        currentTheme={theme}
+                        onSelect={setTheme}
+                      />
+                    ))}
+                  </div>
+                  <label css={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={enableAlbumBorder}
+                      onChange={(e) => setEnableAlbumBorder(e.target.checked)}
+                    />
+                    <span css={styles.sectionTitleText}>
+                      Включить обводку для панели альбомов
+                    </span>
+                  </label>
+                </div>
               </div>
-            </div>
+            )}
+            {activeTab === "Системная информация" && (
+              <div css={styles.tabSection}>
+                <h3 css={styles.sectionTitle}>Системная информация</h3>
+                <div css={styles.settingsContainer}>
+                  <p css={styles.infoItem}>
+                    <PiMemoryFill /> Вес папки uploads (кеш):&nbsp;&nbsp;
+                    {uploadFolderSize ? uploadFolderSize : "подсчёт.."}
+                  </p>
+                </div>
+              </div>
+            )}
+            {activeTab === "Поведение" && (
+              <div css={styles.tabSection}>
+                <h3 css={styles.sectionTitle}>Поведение</h3>
+                <div css={styles.settingsContainer}>
+                  <div css={styles.behaviorRow}>
+                    <p css={styles.infoItem}>Режим отображения изображения:</p>
+                    <div css={styles.radioCardContainer}>
+                      <label css={styles.radioCard}>
+                        <input
+                          type="radio"
+                          value="contain"
+                          checked={imageFitMode === "contain"}
+                          onChange={() => handleImageFitChange("contain")}
+                          css={styles.radioInput}
+                        />
+                        <span css={styles.radioLabel}>Contain</span>
+                      </label>
+                      <label css={styles.radioCard}>
+                        <input
+                          type="radio"
+                          value="fill"
+                          checked={imageFitMode === "fill"}
+                          onChange={() => handleImageFitChange("fill")}
+                          css={styles.radioInput}
+                        />
+                        <span css={styles.radioLabel}>Fill</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {activeTab === "Опасная зона" && (
+              <div css={styles.tabSection}>
+                <h3 css={styles.sectionTitle}>Опасная зона</h3>
+                <p css={styles.infoItem}>
+                  Удалить все существующие альбомы и фотографии
+                </p>
+                <div css={styles.settingsContainer}>
+                  <button
+                    css={styles.deleteButtonStyle}
+                    onClick={() => deleteAllAlbums()}
+                    disabled={loading || albumCount === 0}
+                  >
+                    <p css={styles.buttonText}>
+                      {loading ? "Удаление..." : "Удалить все"}
+                    </p>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        </Separator>
-
-        {/* Секция 4: Опасная зона */}
-        <Separator css={styles.section}>
-          <h3 css={styles.sectionTitle}>
-            <TbAlertOctagonFilled /> &nbsp;
-            <p css={styles.sectionTitleText}>Опасная зона</p>
-          </h3>
-          <div css={styles.settingsContainer}>
-            <button
-              css={styles.deleteButtonStyle}
-              onClick={() => deleteAllAlbums()}
-              disabled={loading || albumCount === 0}
-            >
-              <p css={styles.buttonText}>
-                {loading ? "Удаление..." : "Удалить все"}
-              </p>
-            </button>
-          </div>
-        </Separator>
+        </div>
 
         <button css={styles.closeButton} onClick={onClose} disabled={loading}>
           <AiFillCloseSquare css={styles.closeIcon} />
@@ -224,7 +243,7 @@ const styles = {
     padding: "2rem",
     borderRadius: "8px",
     width: "90%",
-    maxWidth: "500px",
+    maxWidth: "900px",
     color: "var(--modal-text-color, white)",
     position: "relative",
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
@@ -237,10 +256,57 @@ const styles = {
     textAlign: "center",
     color: "white",
   }),
-  section: css({
+  tabContainer: css({
+    display: "flex",
+    gap: "1rem",
+    height: "60vh",
+    overflow: "hidden",
+  }),
+  tabSidebar: css({
+    width: "30%", // 1/3 ширины
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.5rem",
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    padding: "1rem",
+    borderRadius: "4px",
+    overflowY: "auto",
+  }),
+  tabButton: css({
+    display: "flex",
+    alignItems: "center",
+    padding: "0.5rem 1rem",
+    backgroundColor: "transparent",
+    color: "var(--modal-text-color, #ccc)",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    transition: "background-color 0.2s, color 0.2s",
+    "&:hover": {
+      backgroundColor: "rgba(255, 255, 255, 0.1)",
+      color: "var(--modal-text-color, #00ffea)",
+    },
+  }),
+  activeTabButton: css({
+    backgroundColor: "rgba(0, 255, 234, 0.2)",
+    color: "var(--modal-text-color, #00ffea)",
+    fontWeight: "bold",
+  }),
+  tabText: css({
+    fontFamily: customFonts.fonts.ru,
+    fontSize: 17,
+    letterSpacing: customFonts.fonts.size.ls,
+    marginLeft: "0.5rem",
+  }),
+  tabContent: css({
+    width: "70%", // 2/3 ширины
+    padding: "1rem",
+    overflowY: "auto",
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
+    borderRadius: "4px",
+  }),
+  tabSection: css({
     marginBottom: "1.5rem",
-    borderBottom: "1px solid var(--modal-text-color, #333)",
-    paddingBottom: "1rem",
   }),
   sectionTitle: css({
     display: "flex",
@@ -323,6 +389,7 @@ const styles = {
   deleteButtonStyle: css({
     padding: "0.5rem 1rem",
     marginTop: 10,
+    width: "30%",
     backgroundColor: "#ED7095",
     color: "black",
     fontSize: "16px",
@@ -366,7 +433,7 @@ const styles = {
     },
   }),
   radioInput: css({
-    display: "none", // Скрываем нативный радио-кнопку
+    display: "none",
   }),
   radioLabel: css({
     fontFamily: customFonts.fonts.ru,
