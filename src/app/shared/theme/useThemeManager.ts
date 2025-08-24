@@ -73,6 +73,10 @@ export function useThemeManager() {
         "--create-album-button-color",
         currentTheme.globalButtons.openCreateAlbumModalButton.bgColor
       );
+      document.documentElement.style.setProperty(
+        "--settings-modal-activeTab-button",
+        currentTheme.modals.settingsModal.activeTabButtonColor
+      );
       localStorage.setItem("appTheme", theme);
       localStorage.setItem(
         "enableAlbumBorder",

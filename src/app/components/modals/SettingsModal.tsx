@@ -325,7 +325,7 @@ const styles = {
     },
   }),
   activeTabButton: css({
-    backgroundColor: "rgba(0, 255, 234, 0.2)",
+    backgroundColor: "var(--settings-modal-activeTab-button)",
     color: "var(--modal-text-color, #00ffea)",
     fontWeight: "bold",
   }),

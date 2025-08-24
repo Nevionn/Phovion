@@ -23,6 +23,7 @@ export const themeColors: Record<
         settingBoxBorder: string; // Обводка themeBox
         modalBackground: string; // Фон модального окна
         modalTextColor: string; // Цвет текста в модальном окне
+        activeTabButtonColor: string; // Цвет активной кнопки
       };
       createAlbumModal: {
         // работает и для RenameAlbumModal
@@ -56,6 +57,7 @@ export const themeColors: Record<
         settingBoxBorder: "#00ffea",
         modalBackground: "#142b5c",
         modalTextColor: "#00ffea",
+        activeTabButtonColor: "#00ffea39",
       },
       createAlbumModal: {
         inputFieldBg: "rgba(52, 93, 139, 0.4)",
@@ -90,6 +92,7 @@ export const themeColors: Record<
         settingBoxBorder: "#ff69b4",
         modalBackground: "#1a1a2e",
         modalTextColor: "white",
+        activeTabButtonColor: "#282847ff",
       },
       createAlbumModal: {
         inputFieldBg: "#35355e",
@@ -120,6 +123,7 @@ export const themeColors: Record<
         settingBoxBorder: "#93a1a1",
         modalBackground: "#002b36",
         modalTextColor: "white",
+        activeTabButtonColor: "#00ffea39",
       },
       createAlbumModal: {
         inputFieldBg: "#024e63",
@@ -150,6 +154,7 @@ export const themeColors: Record<
         settingBoxBorder: "#bd93f9",
         modalBackground: "#1e1f29",
         modalTextColor: "#bd93f9",
+        activeTabButtonColor: "#282847ff",
       },
       createAlbumModal: {
         inputFieldBg: "#323344ff",
@@ -180,6 +185,7 @@ export const themeColors: Record<
         settingBoxBorder: "#81a1c1",
         modalBackground: "#242931",
         modalTextColor: "#81a1c1",
+        activeTabButtonColor: "#47474f7b",
       },
       createAlbumModal: {
         inputFieldBg: "#3c4350ff",
