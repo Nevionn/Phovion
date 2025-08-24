@@ -7,7 +7,7 @@ import { TbAlertOctagonFilled } from "react-icons/tb";
 import { AiFillCloseSquare } from "react-icons/ai";
 import { PiMemoryFill } from "react-icons/pi";
 import { PiTreeStructureBold } from "react-icons/pi";
-import Separator from "@/app/shared/separator/Separator";
+import { FaKeyboard } from "react-icons/fa";
 import { ThemeBox } from "../ThemeBox";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 import { Theme } from "@/app/shared/theme/themePalette";
@@ -22,7 +22,7 @@ interface SettingsModalProps {
 }
 
 /**
- * Модальное окно настроек с таб-режимом для разделов: Оформление, Системная информация, Поведение, Опасная зона.
+ * Модальное окно настроек с таб-режимом для разделов: Оформление, Системная информация, Поведение, Опасная зона, Горячие клавиши.
  * @component
  * @returns {JSX.Element} Рендер модального окна с настройками в таб-режиме.
  */
@@ -106,6 +106,7 @@ const SettingsModal: FC<SettingsModalProps> = ({
               { name: "Оформление", icon: <FaPalette /> },
               { name: "Системная информация", icon: <GiTechnoHeart /> },
               { name: "Поведение", icon: <PiTreeStructureBold /> },
+              { name: "Горячие клавиши", icon: <FaKeyboard /> },
               { name: "Опасная зона", icon: <TbAlertOctagonFilled /> },
             ].map((tab) => (
               <button
@@ -209,6 +210,42 @@ const SettingsModal: FC<SettingsModalProps> = ({
                       {loading ? "Удаление..." : "Удалить все"}
                     </p>
                   </button>
+                </div>
+              </div>
+            )}
+            {activeTab === "Горячие клавиши" && (
+              <div css={styles.tabSection}>
+                <h3 css={styles.sectionTitle}>Горячие клавиши</h3>
+                <div css={styles.settingsContainer}>
+                  <p css={styles.infoItem}>
+                    Используйте следующие комбинации для управления:
+                  </p>
+                  <div css={styles.keyShortcutsContainer}>
+                    <div css={styles.keyShortcut}>
+                      <span css={styles.keyButton}>←</span>
+                      <span css={styles.keyDescription}>
+                        Переключение на предыдущую фотографию
+                      </span>
+                    </div>
+                    <div css={styles.keyShortcut}>
+                      <span css={styles.keyButton}>→</span>
+                      <span css={styles.keyDescription}>
+                        Переключение на следующую фотографию
+                      </span>
+                    </div>
+                    <div css={styles.keyShortcut}>
+                      <span css={styles.keyButton}>Esc</span>
+                      <span css={styles.keyDescription}>Закрыть окно</span>
+                    </div>
+                    <div css={styles.keyShortcut}>
+                      <span css={styles.keyButton}>Del</span>
+                      <span css={styles.keyDescription}>Удалить фото</span>
+                    </div>
+                    <div css={styles.keyShortcut}>
+                      <span css={styles.keyButton}>I</span>
+                      <span css={styles.keyDescription}>Развернуть фото</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -440,5 +477,38 @@ const styles = {
     color: "#fff",
     margin: 0,
     userSelect: "none",
+  }),
+  keyShortcutsContainer: css({
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.5rem",
+  }),
+  keyShortcut: css({
+    display: "flex",
+    alignItems: "center",
+    gap: "1rem",
+  }),
+  keyButton: css({
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "0.4rem 1rem",
+    backgroundColor: "#2a2a3e",
+    border: "2px solid #444",
+    borderRadius: "4px",
+    fontFamily: customFonts.fonts.ru,
+    fontSize: "1rem",
+    color: "#fff",
+    boxShadow:
+      "inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.3)",
+    transition: "background-color 0.2s",
+    "&:hover": {
+      backgroundColor: "#3a3a4e",
+    },
+  }),
+  keyDescription: css({
+    fontFamily: customFonts.fonts.ru,
+    fontSize: "1rem",
+    color: "#ccc",
   }),
 };
