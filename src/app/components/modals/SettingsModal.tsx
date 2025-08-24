@@ -424,9 +424,9 @@ const styles = {
     },
   }),
   deleteButtonStyle: css({
-    padding: "0.5rem 1rem",
-    marginTop: 10,
+    height: "35px",
     width: "30%",
+    marginTop: 10,
     backgroundColor: "#ED7095",
     color: "black",
     fontSize: "16px",
