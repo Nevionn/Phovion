@@ -284,6 +284,17 @@ const styles = {
     color: "var(--modal-text-color, white)",
     position: "relative",
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+    "@media (max-width: 768px)": {
+      width: "95%",
+      maxWidth: "600px",
+      padding: "1.5rem",
+    },
+    "@media (max-width: 480px)": {
+      width: "100%",
+      maxWidth: "100%",
+      padding: "1rem",
+      borderRadius: "0",
+    },
   }),
   modalTitle: css({
     fontSize: "1.5rem",
@@ -292,12 +303,20 @@ const styles = {
     marginBottom: "1.5rem",
     textAlign: "center",
     color: "white",
+    "@media (max-width: 480px)": {
+      fontSize: "1.2rem",
+      marginBottom: "1rem",
+    },
   }),
   tabContainer: css({
     display: "flex",
     gap: "1rem",
     height: "60vh",
     overflow: "hidden",
+    "@media (max-width: 768px)": {
+      flexDirection: "column",
+      height: "auto",
+    },
   }),
   tabSidebar: css({
     width: "30%", // 1/3 ширины
@@ -308,6 +327,10 @@ const styles = {
     padding: "1rem",
     borderRadius: "4px",
     overflowY: "auto",
+    "@media (max-width: 768px)": {
+      width: "100%",
+      padding: "0.8rem",
+    },
   }),
   tabButton: css({
     display: "flex",
@@ -323,6 +346,10 @@ const styles = {
       backgroundColor: "rgba(255, 255, 255, 0.1)",
       color: "var(--modal-text-color, #00ffea)",
     },
+    "@media (max-width: 480px)": {
+      padding: "0.3rem 0.8rem",
+      fontSize: "0.9rem",
+    },
   }),
   activeTabButton: css({
     backgroundColor: "var(--settings-modal-activeTab-button)",
@@ -334,6 +361,9 @@ const styles = {
     fontSize: 17,
     letterSpacing: customFonts.fonts.size.ls,
     marginLeft: "0.5rem",
+    "@media (max-width: 480px)": {
+      fontSize: "14px",
+    },
   }),
   tabContent: css({
     width: "70%", // 2/3 ширины
@@ -341,9 +371,16 @@ const styles = {
     overflowY: "auto",
     backgroundColor: "rgba(0, 0, 0, 0.1)",
     borderRadius: "4px",
+    "@media (max-width: 768px)": {
+      width: "100%",
+      padding: "0.8rem",
+    },
   }),
   tabSection: css({
     marginBottom: "1.5rem",
+    "@media (max-width: 480px)": {
+      marginBottom: "1rem",
+    },
   }),
   sectionTitle: css({
     display: "flex",
@@ -352,6 +389,9 @@ const styles = {
     fontSize: "1.2rem",
     color: "var(--modal-text-color, #00ffea)",
     marginBottom: "0.5rem",
+    "@media (max-width: 480px)": {
+      fontSize: "1rem",
+    },
   }),
   sectionTitleText: css({
     fontFamily: customFonts.fonts.ru,
@@ -363,16 +403,27 @@ const styles = {
     fontSize: customFonts.fonts.size.md,
     color: "#212121ff",
     margin: 0,
+    "@media (max-width: 480px)": {
+      fontSize: "14px",
+    },
   }),
   settingsContainer: css({
     display: "flex",
     flexDirection: "column",
     gap: "1rem",
+    "@media (max-width: 480px)": {
+      gap: "0.8rem",
+    },
   }),
   behaviorRow: css({
     display: "flex",
     alignItems: "center",
     gap: "1rem",
+    "@media (max-width: 480px)": {
+      flexDirection: "column",
+      alignItems: "flex-start",
+      gap: "0.5rem",
+    },
   }),
   infoItem: css({
     display: "flex",
@@ -383,6 +434,10 @@ const styles = {
     fontFamily: customFonts.fonts.ru,
     letterSpacing: customFonts.fonts.size.ls,
     color: "#ccc",
+    "@media (max-width: 480px)": {
+      fontSize: "0.9rem",
+      gap: 5,
+    },
   }),
   themesContainer: css({
     display: "flex",
@@ -390,6 +445,10 @@ const styles = {
     gap: "6px",
     marginTop: 10,
     backgroundColor: "transparent",
+    "@media (max-width: 480px)": {
+      gap: "4px",
+      marginTop: 5,
+    },
   }),
   checkboxLabel: css({
     display: "flex",
@@ -397,10 +456,17 @@ const styles = {
     gap: "0.5rem",
     color: "var(--modal-text-color, white)",
     fontSize: "1rem",
+    "@media (max-width: 480px)": {
+      fontSize: "0.9rem",
+      gap: "0.3rem",
+    },
   }),
   closeIcon: css({
     fontSize: 30,
     color: "var(--modal-text-color, #00ffea)",
+    "@media (max-width: 480px)": {
+      fontSize: 25,
+    },
   }),
   closeButton: css({
     display: "flex",
@@ -422,6 +488,10 @@ const styles = {
       backgroundColor: "#ccc",
       cursor: "not-allowed",
     },
+    "@media (max-width: 480px)": {
+      top: "0.5rem",
+      right: "0.5rem",
+    },
   }),
   deleteButtonStyle: css({
     height: "35px",
@@ -442,11 +512,23 @@ const styles = {
       backgroundColor: "#ccc",
       cursor: "not-allowed",
     },
+    "@media (max-width: 768px)": {
+      width: "40%",
+    },
+    "@media (max-width: 480px)": {
+      width: "50%",
+      fontSize: "14px",
+    },
   }),
   radioCardContainer: css({
     display: "flex",
     gap: "1rem",
     marginLeft: "1rem",
+    "@media (max-width: 480px)": {
+      flexDirection: "column",
+      gap: "0.5rem",
+      marginLeft: "0",
+    },
   }),
   radioCard: css({
     display: "flex",
@@ -468,6 +550,9 @@ const styles = {
       outline: "none",
       borderColor: "#00ffea",
     },
+    "@media (max-width: 480px)": {
+      padding: "0.3rem 0.8rem",
+    },
   }),
   radioInput: css({
     display: "none",
@@ -477,16 +562,27 @@ const styles = {
     color: "#fff",
     margin: 0,
     userSelect: "none",
+    "@media (max-width: 480px)": {
+      fontSize: "0.9rem",
+    },
   }),
   keyShortcutsContainer: css({
     display: "flex",
     flexDirection: "column",
     gap: "0.5rem",
+    "@media (max-width: 480px)": {
+      gap: "0.3rem",
+    },
   }),
   keyShortcut: css({
     display: "flex",
     alignItems: "center",
     gap: "1rem",
+    "@media (max-width: 480px)": {
+      flexDirection: "column",
+      alignItems: "flex-start",
+      gap: "0.5rem",
+    },
   }),
   keyButton: css({
     display: "inline-flex",
@@ -505,10 +601,17 @@ const styles = {
     "&:hover": {
       backgroundColor: "#3a3a4e",
     },
+    "@media (max-width: 480px)": {
+      padding: "0.3rem 0.8rem",
+      fontSize: "0.9rem",
+    },
   }),
   keyDescription: css({
     fontFamily: customFonts.fonts.ru,
     fontSize: "1rem",
     color: "#ccc",
+    "@media (max-width: 480px)": {
+      fontSize: "0.9rem",
+    },
   }),
 };
