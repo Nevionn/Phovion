@@ -105,7 +105,7 @@ const AlbumsListContainer = () => {
   return (
     <>
       <div css={styles.containerStyle}>
-        <>
+        <div css={styles.controlsStyle}>
           <AlbumsControls
             loading={loading}
             albumCount={albumCount}
@@ -115,8 +115,8 @@ const AlbumsListContainer = () => {
             onOpenCreateAlbum={() => setIsCreateAlbumModalOpen(true)}
             onOpenSettings={() => setIsSettingsModalOpen(true)}
           />
-          <AlbumsGrid albums={albums} setAlbums={setAlbums} />
-        </>
+        </div>
+        <AlbumsGrid albums={albums} setAlbums={setAlbums} />
       </div>
       {isCreateAlbumModalOpen && (
         <CreateAlbumModal
@@ -146,16 +146,12 @@ export default AlbumsListContainer;
 const styles = {
   containerStyle: css({
     display: "flex",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    alignItems: "center",
     flexDirection: "column",
     minHeight: "90vh",
     maxWidth: "90%",
     width: "100%",
-    overflowX: "auto",
+    margin: "1rem auto",
+    overflowY: "auto",
     padding: "2rem",
     borderRadius: "1rem",
     background:
@@ -170,11 +166,23 @@ const styles = {
     "@media (max-width: 768px)": {
       maxWidth: "85%",
       padding: "1.5rem",
+      margin: "1.5rem auto",
     },
     "@media (max-width: 480px)": {
       maxWidth: "90%",
       padding: "1rem",
+      margin: "1rem auto",
       borderRadius: "0.5rem",
+    },
+  }),
+  controlsStyle: css({
+    position: "sticky",
+    top: 0,
+    zIndex: 10,
+    background: "inherit",
+    paddingBottom: "1rem",
+    "@media (max-width: 480px)": {
+      paddingBottom: "0.5rem",
     },
   }),
 };
