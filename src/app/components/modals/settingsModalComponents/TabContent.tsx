@@ -4,6 +4,7 @@ import { FC, useEffect } from "react";
 import { PiMemoryFill } from "react-icons/pi";
 import { FaGitlab } from "react-icons/fa6";
 import { ThemeBox } from "./ThemeBox";
+import { DecryptedText } from "@/app/shared/DecryptedText";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 import { Theme } from "@/app/shared/theme/themePalette";
 import { customFonts } from "@/app/shared/theme/customFonts";
@@ -97,7 +98,10 @@ export const TabContent: FC<TabContentProps> = ({
           <div css={styles.settingsContainer}>
             <p css={styles.infoItem}>
               <PiMemoryFill /> Вес папки uploads (кеш):&nbsp;&nbsp;
-              {uploadFolderSize ? uploadFolderSize : "подсчёт.."}
+              <DecryptedText
+                text={uploadFolderSize ? uploadFolderSize : "подсчёт.."}
+                speed={30}
+              />
             </p>
           </div>
         </div>
