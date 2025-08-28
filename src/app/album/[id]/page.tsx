@@ -36,7 +36,6 @@ const AlbumPage = () => {
   const { id } = useParams();
 
   const [files, setFiles] = useState<File[]>([]);
-  const [triggerUpload, setTriggerUpload] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   const [showEdit, setShowEdit] = useState(false);
@@ -73,7 +72,7 @@ const AlbumPage = () => {
     handleDragEnter,
     handleDragLeave,
     isDraggingOver,
-  } = useDropHandler(isLoading, setFiles, setTriggerUpload, uploadPhotos);
+  } = useDropHandler(isLoading, setFiles, uploadPhotos);
 
   useThemeManager();
 

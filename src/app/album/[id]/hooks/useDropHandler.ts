@@ -31,7 +31,6 @@ import { dataURLtoFile, proxyToFile } from "../utils/convertingDataTransfer";
 export const useDropHandler = (
   isLoading: boolean,
   setFiles: (files: File[]) => void,
-  setTriggerUpload: (trigger: boolean) => void,
   uploadPhotos: () => void
 ) => {
   const handleDrop = useCallback(
