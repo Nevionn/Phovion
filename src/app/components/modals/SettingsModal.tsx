@@ -8,6 +8,8 @@ import { AiFillCloseSquare } from "react-icons/ai";
 import { PiMemoryFill } from "react-icons/pi";
 import { PiTreeStructureBold } from "react-icons/pi";
 import { FaKeyboard } from "react-icons/fa";
+import { BsInfoSquare } from "react-icons/bs";
+import { FaGitlab } from "react-icons/fa6";
 import { ThemeBox } from "../ThemeBox";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 import { Theme } from "@/app/shared/theme/themePalette";
@@ -107,6 +109,7 @@ const SettingsModal: FC<SettingsModalProps> = ({
               { name: "Системная информация", icon: <GiTechnoHeart /> },
               { name: "Поведение", icon: <PiTreeStructureBold /> },
               { name: "Горячие клавиши", icon: <FaKeyboard /> },
+              { name: "О программе", icon: <BsInfoSquare /> },
               { name: "Опасная зона", icon: <TbAlertOctagonFilled /> },
             ].map((tab) => (
               <button
@@ -194,25 +197,6 @@ const SettingsModal: FC<SettingsModalProps> = ({
                 </div>
               </div>
             )}
-            {activeTab === "Опасная зона" && (
-              <div css={styles.tabSection}>
-                <h3 css={styles.sectionTitle}>Опасная зона</h3>
-                <p css={styles.infoItem}>
-                  Удалить все существующие альбомы и фотографии
-                </p>
-                <div css={styles.settingsContainer}>
-                  <button
-                    css={styles.deleteButtonStyle}
-                    onClick={() => deleteAllAlbums()}
-                    disabled={loading || albumCount === 0}
-                  >
-                    <p css={styles.buttonText}>
-                      {loading ? "Удаление..." : "Удалить все"}
-                    </p>
-                  </button>
-                </div>
-              </div>
-            )}
             {activeTab === "Горячие клавиши" && (
               <div css={styles.tabSection}>
                 <h3 css={styles.sectionTitle}>Горячие клавиши</h3>
@@ -246,6 +230,58 @@ const SettingsModal: FC<SettingsModalProps> = ({
                       <span css={styles.keyDescription}>Развернуть фото</span>
                     </div>
                   </div>
+                </div>
+              </div>
+            )}
+            {activeTab === "О программе" && (
+              <div css={styles.tabSection}>
+                <h3 css={styles.sectionTitle}>О программе</h3>
+                <h1 css={styles.lableText}>
+                  <span css={styles.metallicText}>Phovion</span>
+                </h1>
+                <div css={styles.settingsContainer}>
+                  <p css={styles.infoItem}>
+                    Локальное веб-приложение для создания и управления альбомами
+                    с фотографиями. Работает прямо в браузере, не требуя
+                    серверной инфраструктуры.
+                  </p>
+                  <p css={styles.infoItem}>
+                    Разработано Nevionn для удобного хранения и просмотра ваших
+                    изображений.
+                  </p>
+                  <p css={styles.infoItem}>Версия: 1.0.0</p>
+                  <div css={styles.contactsContainer}>
+                    <p css={styles.infoItem}>
+                      <FaGitlab color="orange" />
+                      <a
+                        href="https://gitlab.com/web4450122/phovion"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        css={styles.link}
+                      >
+                        Репозиторий на GitLab
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {activeTab === "Опасная зона" && (
+              <div css={styles.tabSection}>
+                <h3 css={styles.sectionTitle}>Опасная зона</h3>
+                <p css={styles.infoItem}>
+                  Удалить все существующие альбомы и фотографии
+                </p>
+                <div css={styles.settingsContainer}>
+                  <button
+                    css={styles.deleteButtonStyle}
+                    onClick={() => deleteAllAlbums()}
+                    disabled={loading || albumCount === 0}
+                  >
+                    <p css={styles.buttonText}>
+                      {loading ? "Удаление..." : "Удалить все"}
+                    </p>
+                  </button>
                 </div>
               </div>
             )}
@@ -425,6 +461,52 @@ const styles = {
       gap: "0.5rem",
     },
   }),
+  lableText: css({
+    fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
+    fontSize: 36,
+  }),
+  metallicText: css({
+    background:
+      "linear-gradient(45deg, #1da8eeff, #4a657a, #d1d9ddff, #4a657a, #0f9af1ff)",
+    backgroundSize: "200% 200%",
+    WebkitBackgroundClip: "text",
+    backgroundClip: "text",
+    color: "transparent",
+    animation: "shine 5s ease-in-out infinite",
+    "@media (max-width: 480px)": {
+      fontSize: 20,
+    },
+
+    "@keyframes shine": {
+      "0%": { backgroundPosition: "0% 0%" },
+      "25%": { backgroundPosition: "100% 0%" },
+      "50%": { backgroundPosition: "100% 100%" },
+      "75%": { backgroundPosition: "0% 100%" },
+      "100%": { backgroundPosition: "0% 0%" },
+    },
+  }),
+
+  contactsContainer: css({
+    marginTop: "1rem",
+    "@media (max-width: 480px)": {
+      marginTop: "0.5rem",
+    },
+  }),
+  link: css({
+    color: "#00ffea",
+    textDecoration: "none",
+    fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
+    "&:hover": {
+      textDecoration: "underline",
+      color: "#00ccaa",
+    },
+    "@media (max-width: 480px)": {
+      fontSize: "0.9rem",
+    },
+  }),
+
   infoItem: css({
     display: "flex",
     justifyContent: "flex-start",
