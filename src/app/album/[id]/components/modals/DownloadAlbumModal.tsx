@@ -8,7 +8,7 @@ interface DownloadAlbumModalProps {
   onAccept: () => void;
   onCancel: () => void;
   album: string | undefined;
-  photoCount: number;
+  photoCount: number | null;
   isFsaSupported: boolean; // Флаг поддержки File System Access API
 }
 
@@ -25,17 +25,16 @@ const DownloadAlbumModal: React.FC<DownloadAlbumModalProps> = ({
 }) => {
   const [isHelpVisible, setIsHelpVisible] = useState(false);
 
+  const isDownloadDisabled = !photoCount || photoCount === 0;
+
   return (
     <div css={styles.modalOverlay} onClick={onCancel}>
       <div css={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <h2 css={styles.title}>Скачивание альбома - {album}</h2>
-        <p css={styles.text}>Будет скачано фотографий: {photoCount}</p>
+        <p css={styles.text}> {isDownloadDisabled ? "Альбом пуст" : `Будет скачано фотографий: ${photoCount ?? 0}`}</p>
         <div css={styles.helpSection}>
           {!isFsaSupported && (
-            <button
-              css={styles.helpButton}
-              onClick={() => setIsHelpVisible(!isHelpVisible)}
-            >
+            <button css={styles.helpButton} onClick={() => setIsHelpVisible(!isHelpVisible)}>
               Справка
             </button>
           )}
@@ -45,20 +44,17 @@ const DownloadAlbumModal: React.FC<DownloadAlbumModalProps> = ({
               <br /> Список поддерживаемых браузеров: Edge, Chrome.
               <br /> <span>На скачивание фотографий это никак не влияет.</span>
               <br />
-              <br /> Для отключения окна подтверждения при скачивании
-              изображений в браузерах семейства Firefox выполните следующие
-              настройки в самом браузере:
+              <br /> Для отключения окна подтверждения при скачивании изображений в браузерах семейства Firefox
+              выполните следующие настройки в самом браузере:
               <br />
-              <br /> Файлы и приложения: Загрузки → Всегда выдавать запрос на
-              сохранение файлов (отключить)
+              <br /> Файлы и приложения: Загрузки → Всегда выдавать запрос на сохранение файлов (отключить)
               <br />
-              <br /> Приложения: Что Firefox должен делать с другими файлами? →
-              Сохранять файлы (включить)
+              <br /> Приложения: Что Firefox должен делать с другими файлами? → Сохранять файлы (включить)
             </p>
           )}
         </div>
         <div css={styles.buttonContainer}>
-          <button css={styles.button} onClick={onAccept}>
+          <button css={styles.button} onClick={onAccept} disabled={isDownloadDisabled}>
             Скачать
           </button>
           <button css={[styles.button, styles.cancelButton]} onClick={onCancel}>
@@ -152,6 +148,13 @@ const styles = {
     backgroundColor: "#5cccb4ff",
     "&:hover": {
       backgroundColor: "#439987ff",
+    },
+    "&:disabled": {
+      backgroundColor: "#a0a0a0",
+      cursor: "not-allowed",
+      "&:hover": {
+        backgroundColor: "#a0a0a0",
+      },
     },
   }),
   cancelButton: css({
