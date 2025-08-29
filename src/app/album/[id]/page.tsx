@@ -2,7 +2,6 @@
 "use client";
 import { css, CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import "../../shared/buttons/cyber-button.css";
 import { useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -36,7 +35,6 @@ const AlbumPage = () => {
   const { id } = useParams();
 
   const [files, setFiles] = useState<File[]>([]);
-  const [triggerUpload, setTriggerUpload] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   const [showEdit, setShowEdit] = useState(false);
@@ -47,19 +45,9 @@ const AlbumPage = () => {
   const { album, photos, isLoading, setAlbum, setPhotos } = useAlbumData(id);
   const { deleteAlbum } = useDeleteAlbum(id);
   const { clearAlbum } = useClearAlbum(id);
-  const { renameAlbum, renameLoading } = useRenameAlbum(
-    album,
-    setAlbum,
-    setShowEdit
-  );
+  const { renameAlbum, renameLoading } = useRenameAlbum(album, setAlbum, setShowEdit);
 
-  const { uploadPhotos, uploading } = useUploadPhotos(
-    id,
-    setFiles,
-    setPhotos,
-    setAlbum,
-    fileInputRef
-  );
+  const { uploadPhotos, uploading } = useUploadPhotos(id, setFiles, setPhotos, setAlbum, fileInputRef);
 
   const { downloadAlbum, isFsaSupported } = useDownloadAlbum({
     photos,
@@ -67,13 +55,11 @@ const AlbumPage = () => {
     albumId: id,
   });
 
-  const {
-    handleDrop,
-    handleDragOver,
-    handleDragEnter,
-    handleDragLeave,
-    isDraggingOver,
-  } = useDropHandler(isLoading, setFiles, setTriggerUpload);
+  const { handleDrop, handleDragOver, handleDragEnter, handleDragLeave, isDraggingOver } = useDropHandler(
+    isLoading,
+    setFiles,
+    uploadPhotos
+  );
 
   useThemeManager();
 
@@ -86,9 +72,7 @@ const AlbumPage = () => {
 
     const newPhotos = await new Promise<Photo[]>((resolve) => {
       setPhotos((prevPhotos) => {
-        const oldIndex = prevPhotos.findIndex(
-          (photo) => photo.id === active.id
-        );
+        const oldIndex = prevPhotos.findIndex((photo) => photo.id === active.id);
         const newIndex = prevPhotos.findIndex((photo) => photo.id === over.id);
 
         if (oldIndex === -1 || newIndex === -1) {
@@ -127,8 +111,7 @@ const AlbumPage = () => {
         cache: "no-store",
       });
       if (updatedRes.ok) {
-        const { photos: updatedPhotos, ...updatedAlbum } =
-          await updatedRes.json();
+        const { photos: updatedPhotos, ...updatedAlbum } = await updatedRes.json();
         // Обновляем photoCount
         const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
           cache: "no-store",
@@ -143,8 +126,7 @@ const AlbumPage = () => {
         throw new Error("Не удалось обновить данные после сортировки");
       }
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
       console.error("Ошибка сохранения порядка:", errorMessage);
       alert(`Не удалось сохранить порядок фотографий: ${errorMessage}`);
       const res = await fetch(`/api/albums/${id}`, { cache: "no-store" });
@@ -173,9 +155,7 @@ const AlbumPage = () => {
 
   // Вспомогательная функция для общей логики
   const syncAfterPhotoChange = async (photoId: number) => {
-    setPhotos((prevPhotos) =>
-      prevPhotos.filter((photo) => photo.id !== photoId)
-    );
+    setPhotos((prevPhotos) => prevPhotos.filter((photo) => photo.id !== photoId));
     handleClosePhotoViewer();
     const countRes = await fetch(`/api/photos/countByAlbum?albumId=${id}`, {
       cache: "no-store",
@@ -222,18 +202,11 @@ const AlbumPage = () => {
                     isFsaSupported={isFsaSupported}
                   />
                   <Description description={album.description} />
-                  <UploadSection
-                    files={files}
-                    uploading={uploading}
-                    uploadPhotos={uploadPhotos}
-                    setFiles={setFiles}
-                  />
+                  <UploadSection files={files} uploading={uploading} uploadPhotos={uploadPhotos} setFiles={setFiles} />
                 </div>
               </div>
               {photos.length === 0 ? (
-                <p css={style.loadingText}>
-                  Перетащите изображения сюда или выберите файлы
-                </p>
+                <p css={style.loadingText}>Перетащите изображения сюда или выберите файлы</p>
               ) : (
                 <PhotoGrid
                   photos={photos}
@@ -247,10 +220,7 @@ const AlbumPage = () => {
           ) : (
             <p css={style.loadingText}>Ошибка загрузки альбома</p>
           )}
-          <DropZoneDragging
-            isDraggingOver={isDraggingOver}
-            isLoading={isLoading}
-          />
+          <DropZoneDragging isDraggingOver={isDraggingOver} isLoading={isLoading} />
         </div>
         <RenameAlbumModal
           isOpen={showEdit}
@@ -317,8 +287,7 @@ const style = {
     border: colorConst.headerItems.headerContainer.border,
     borderRadius: "12px",
     padding: "1.5rem",
-    boxShadow:
-      "0 0 20px rgba(0, 255, 234, 0.5), inset 0 0 10px rgba(0, 255, 234, 0.3)",
+    boxShadow: "0 0 20px rgba(0, 255, 234, 0.5), inset 0 0 10px rgba(0, 255, 234, 0.3)",
     backdropFilter: "blur(5px)",
     "&:before": {
       content: '""',

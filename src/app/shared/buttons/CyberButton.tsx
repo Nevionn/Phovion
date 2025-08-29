@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
+import "../../shared/buttons/cyber-button.css";
 import { customFonts } from "../theme/customFonts";
 
 type CyberButtonProps = {
@@ -18,12 +19,7 @@ export default function CyberButton({
   } as React.CSSProperties;
 
   return (
-    <button
-      className="cybr-btn"
-      style={style}
-      css={externalStyles.text}
-      onClick={onClick}
-    >
+    <button className="cybr-btn" style={style} css={externalStyles.text} onClick={onClick}>
       {label}
       <span aria-hidden className="cybr-btn__glitch">
         {label}

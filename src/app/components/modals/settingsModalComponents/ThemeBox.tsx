@@ -2,7 +2,7 @@
 import { css } from "@emotion/react";
 import { FC } from "react";
 import { Theme, themeColors } from "@/app/shared/theme/themePalette";
-import { customFonts } from "../shared/theme/customFonts";
+import { customFonts } from "@/app/shared/theme/customFonts";
 
 interface ThemeBoxProps {
   themeName: Theme;

@@ -1,8 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useState } from "react";
-import CreateAlbumModal from "./modals/CreateAlbumModal";
-import SettingsModal from "./modals/SettingsModal";
 import { AlbumNaming } from "../types/albumTypes";
 import { FaMicrochip, FaSpinner } from "react-icons/fa6";
 import Separator from "../shared/separator/Separator";
@@ -15,6 +12,8 @@ interface AlbumControlsProps {
   photoCount: number;
   createAlbum: (data: AlbumNaming) => Promise<void>;
   deleteAllAlbums: () => Promise<void>;
+  onOpenCreateAlbum: () => void;
+  onOpenSettings: () => void;
 }
 
 /**
@@ -26,12 +25,9 @@ const AlbumsControls = ({
   loading,
   albumCount,
   photoCount,
-  createAlbum,
-  deleteAllAlbums,
+  onOpenCreateAlbum,
+  onOpenSettings,
 }: AlbumControlsProps) => {
-  const [isCreateAlbumModalOpen, setIsCreateAlbumModalOpen] = useState(false);
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-
   return (
     <>
       <div css={styles.headerStyle}>
@@ -44,35 +40,17 @@ const AlbumsControls = ({
         <div css={styles.mergeButtonsItem}>
           <button
             css={styles.openCreateAlbumModalButton}
-            onClick={() => setIsCreateAlbumModalOpen(true)}
+            onClick={onOpenCreateAlbum}
             disabled={loading}
           >
             <p css={styles.textButon}>Создать альбом</p>
           </button>
-          <button
-            css={styles.openSettingsModalButton}
-            onClick={() => setIsSettingsModalOpen(true)}
-          >
+          <button css={styles.openSettingsModalButton} onClick={onOpenSettings}>
             <FaMicrochip style={{ fontSize: 20 }} />
           </button>
         </div>
       </div>
-
       <Separator css={styles.horizontalSeparator} />
-
-      <CreateAlbumModal
-        isOpen={isCreateAlbumModalOpen}
-        onClose={() => setIsCreateAlbumModalOpen(false)}
-        createAlbum={createAlbum}
-        loading={loading}
-      />
-      <SettingsModal
-        isOpen={isSettingsModalOpen}
-        onClose={() => setIsSettingsModalOpen(false)}
-        deleteAllAlbums={deleteAllAlbums}
-        albumCount={albumCount}
-        loading={loading}
-      />
     </>
   );
 };
@@ -93,7 +71,7 @@ const styles = {
     letterSpacing: customFonts.fonts.size.ls,
     fontSize: "2rem",
     color: "white",
-    margin: "0",
+    margin: 0,
   }),
   textButon: css({
     fontFamily: customFonts.fonts.ru,

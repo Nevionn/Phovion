@@ -21,6 +21,7 @@ interface DownloadAlbumReturn {
 /**
  * Хук для скачивания изображений выбранного альбома
  * Цепочка передачи и вызова: page -> HeaderItems -> DownloadAlbumModal
+ * Выходной файл будет иметь формат ${index + 1}_${albumName}_${randomSuffix}.${extension}
  *
  * @param params Параметры хука
  * @returns { downloadAlbum: () => void, isFsaSupported: boolean } - Колбек функция для скачивания и флаг поддержки FSA API
@@ -45,14 +46,20 @@ export const useDownloadAlbum = ({
 
     // Функция для запасной логики без FSA API
     const fallbackDownload = () => {
-      photos.forEach((photo: any, index: number) => {
+      photos.forEach((photo: Photo, index: number) => {
         try {
           const link = document.createElement("a");
           const fullPath = `${window.location.origin}${photo.path}`;
           link.href = fullPath;
-          link.download = `${index + 1}_${
-            photo.path.split("/").pop() || `photo${index + 1}.jpg`
-          }`;
+
+          const extension = photo.path.split(".").pop()?.toLowerCase() || "jpg";
+          const suffix = crypto.randomUUID().slice(0, 6);
+
+          const fileName = `${index + 1}_${
+            albumName || `album_${albumId}`
+          }_${suffix}.${extension}`;
+          link.download = fileName;
+
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -85,9 +92,13 @@ export const useDownloadAlbum = ({
         const response = await fetch(`${window.location.origin}${photo.path}`);
         if (!response.ok) throw new Error(`Ошибка загрузки фото ${photo.path}`);
         const blob = await response.blob();
+
+        const extension = photo.path.split(".").pop()?.toLowerCase() || "jpg";
+        const suffix = crypto.randomUUID().slice(0, 6);
+
         const fileName = `${index + 1}_${
-          photo.path.split("/").pop() || `photo${index + 1}.jpg`
-        }`;
+          albumName || `album_${albumId}`
+        }_${suffix}.${extension}`;
         const fileHandle = await albumFolderHandle.getFileHandle(fileName, {
           create: true,
         });

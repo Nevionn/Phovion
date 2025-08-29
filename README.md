@@ -1,25 +1,25 @@
 # Phovion
 
 <div align="center"> <img src="./preview/phovion-preview.webp"> </div>
-<br>   
+<br>
 
 Локальное веб-приложение, разработанное для создания и управления альбомами с фотографиями. Phovion работает прямо в браузере, не требуя серверной инфраструктуры.
 
 # Скриншоты
 
-<div align="center" style="display: flex; align-items: center;">
+<!-- <div align="center" style="display: flex; align-items: center;">
   <img src="./preview/handle-drop.webp" alt="1" width="200" height="200">
   <img src="./preview/settings-modal.webp" alt="2" width="200" height="200">
   <img src="./preview/page-pick-album.webp" alt="3" width="200" height="200">
   <img src="./preview/photo-picker.webp" alt="4" width="200" height="200">
-</div>
-
+</div> -->
 
 # Особенности
 
 - Создание альбомов: Легко создавайте и управляйте альбомами для организации ваших фотографий.
 - Загрузка фотографий: Добавляйте изображения, включая GIF, прямо через интерфейс или перетаскиванием из других вкладок.
 - Сортировка Drag-and-Drop: Интуитивная сортировка альбомов и фотографий с помощью перетаскивания (DND).
+- Управляйте интерфейсом клавишами.
 - Поддержка GIF: Полная совместимость с анимированными изображениями.
 - Кастомизация: Выберите цветовую тему, чтобы настроить внешний вид под свои предпочтения.
 - Скачивание: Экспортируйте фотографии из альбома на свой компьютер.
@@ -57,6 +57,7 @@
 ## Зависимости
 
 - Node.js: v18.x или выше ([Установить](https://nodejs.org/en))
+- Git ([Установить](https://git-scm.com/downloads/win))
 
 ```bash
 git clone https://gitlab.com/web4450122/phovion.git
@@ -69,7 +70,7 @@ npx prisma db push
 
 npx prisma generate
 
-npx run dev
+npm run dev
 
 ctrl + http://localhost:3000
 ```

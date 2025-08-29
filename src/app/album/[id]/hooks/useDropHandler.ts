@@ -3,6 +3,7 @@ import { dataURLtoFile, proxyToFile } from "../utils/convertingDataTransfer";
 
 /**
  * Хук для обработки перетаскивания (Drag-and-Drop) файлов и URL изображений в компонент.
+ * Если фотография получена из файловой системы или вкладки браузера через dnd, загрузка произойдет автоматически.
  * Предоставляет функции и состояние для управления перетаскиванием файлов из локальной файловой системы,
  * межвкладочных URL и закодированных Data URL. Фильтрует данные, игнорируя текст из интерфейса (например, навигацию),
  * и обрабатывает ошибки загрузки через прокси.
@@ -10,6 +11,7 @@ import { dataURLtoFile, proxyToFile } from "../utils/convertingDataTransfer";
  * @param {boolean} isLoading - Флаг состояния загрузки, определяющий, доступна ли зона перетаскивания.
  * @param {function} setFiles - Функция для установки массива файлов (File[]) в родительском состоянии.
  * @param {function} setTriggerUpload - Функция для установки триггера загрузки (boolean), запускающего процесс upload.
+ * @param {function} uploadPhotos - Функция загрузки фотографий, которая будет вызвана автоматически при drop.
  *
  * @returns {Object} Объект с методами и состоянием для управления Drag-and-Drop:
  *   - {function} handleDrop - Обработчик события перетаскивания (drop), асинхронно обрабатывает файлы и URL.
@@ -19,7 +21,6 @@ import { dataURLtoFile, proxyToFile } from "../utils/convertingDataTransfer";
  *   - {boolean} isDraggingOver - Состояние, указывающее, находится ли объект над зоной перетаскивания.
  *   - {function} setIsDraggingOver - Функция для программного управления состоянием isDraggingOver.
  *
- *
  * @throws {Error} Ошибка может возникнуть при неудачной загрузке URL через прокси или преобразовании Data URL.
  * Возможные причины: сетевая ошибка, неверный формат данных, проблемы с сервером прокси.
  *
@@ -27,11 +28,10 @@ import { dataURLtoFile, proxyToFile } from "../utils/convertingDataTransfer";
  * - `dataURLtoFile` - Утилита для преобразования Data URL в объект File.
  * - `proxyToFile` - Асинхронная утилита для загрузки изображения по URL через прокси.
  */
-
 export const useDropHandler = (
   isLoading: boolean,
   setFiles: (files: File[]) => void,
-  setTriggerUpload: (trigger: boolean) => void
+  uploadPhotos: () => void
 ) => {
   const handleDrop = useCallback(
     async (e: React.DragEvent<HTMLDivElement>) => {
@@ -130,20 +130,20 @@ export const useDropHandler = (
           }
         }
 
-        // Преобразуем Set в массив
         const finalFiles: File[] = Array.from(droppedFiles);
         console.log("Итоговый список файлов для загрузки:", finalFiles);
 
         // Очищаем и устанавливаем новые файлы только если есть валидные данные
         if (finalFiles.length > 0) {
           setFiles(finalFiles);
-          setTriggerUpload(true);
+          // Автоматически запускаем загрузку
+          uploadPhotos();
         } else {
           console.log("Нет валидных файлов для загрузки, игнорируем.");
         }
       }
     },
-    [isLoading, setFiles, setTriggerUpload]
+    [isLoading, setFiles, uploadPhotos]
   );
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
