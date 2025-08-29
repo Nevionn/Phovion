@@ -2,13 +2,14 @@ import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { DATABASE_URL } from "@/app/shared/dbPath/dbPath";
 import { randomUUID } from "crypto";
 import { Photo } from "@/app/album/[id]/types/photoTypes";
 
 const prisma = new PrismaClient({
   datasources: {
     db: {
-      url: process.env.DATABASE_URL,
+      url: DATABASE_URL.path,
     },
   },
   //log: ["query", "error"],
@@ -21,11 +22,7 @@ const prisma = new PrismaClient({
  * @param {File[]} files - Массив файлов для загрузки.
  * @returns {Promise<NextResponse>} Объект ответа с массивом созданных фотографий или ошибкой.
  */
-async function processPhotoUpload(
-  request: Request,
-  albumId: string,
-  files: File[]
-) {
+async function processPhotoUpload(request: Request, albumId: string, files: File[]) {
   const uploadDir = path.join(process.cwd(), "public", "uploads");
   // Создаём директорию, если она не существует
   await mkdir(uploadDir, { recursive: true });
@@ -47,9 +44,7 @@ async function processPhotoUpload(
     const filePath = path.join(uploadDir, cleanFileName);
     const fileUrl = `/uploads/${cleanFileName}`;
 
-    console.log(
-      `Сохраняем файл: ${cleanFileName}, оригинальное имя: ${originalName}, размер: ${file.size} байт`
-    );
+    console.log(`Сохраняем файл: ${cleanFileName}, оригинальное имя: ${originalName}, размер: ${file.size} байт`);
 
     // Сохраняем файл
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -78,10 +73,7 @@ async function processPhotoUpload(
   }
 
   if (createdPhotos.length === 0) {
-    return NextResponse.json(
-      { error: "Не удалось сохранить ни один файл" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Не удалось сохранить ни один файл" }, { status: 400 });
   }
 
   return NextResponse.json(createdPhotos);
@@ -105,21 +97,11 @@ export async function POST(request: Request) {
     );
 
     if (!albumId) {
-      return NextResponse.json(
-        { error: "albumId обязателен" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "albumId обязателен" }, { status: 400 });
     }
 
-    if (
-      !files ||
-      files.length === 0 ||
-      files.every((file) => file.size === 0)
-    ) {
-      return NextResponse.json(
-        { error: "Файлы не выбраны или пусты" },
-        { status: 400 }
-      );
+    if (!files || files.length === 0 || files.every((file) => file.size === 0)) {
+      return NextResponse.json({ error: "Файлы не выбраны или пусты" }, { status: 400 });
     }
 
     return await processPhotoUpload(request, albumId, files);
