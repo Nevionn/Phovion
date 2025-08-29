@@ -180,7 +180,7 @@ export const TabContent: FC<TabContentProps> = ({
           <h1 css={styles.lableText}>
             <span css={styles.metallicText}>Phovion</span>
           </h1>
-          <div css={styles.settingsContainer}>
+          <div css={[styles.settingsContainer, { gap: 0 }]}>
             <p css={styles.infoItem}>
               Локальное веб-приложение для создания и управления альбомами с
               фотографиями. Работает прямо в браузере, не требуя серверной
