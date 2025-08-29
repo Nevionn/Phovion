@@ -97,7 +97,7 @@ export const TabContent: FC<TabContentProps> = ({
           <h3 css={styles.sectionTitle}>Системная информация</h3>
           <div css={styles.settingsContainer}>
             <p css={styles.infoItem}>
-              <PiMemoryFill /> Вес папки uploads (кеш):&nbsp;&nbsp;
+              <PiMemoryFill /> Вес папки uploads (кеш):
               <DecryptedText
                 text={uploadFolderSize ? uploadFolderSize : "подсчёт.."}
                 speed={30}
