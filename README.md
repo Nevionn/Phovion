@@ -60,7 +60,7 @@
 - Git ([Установить](https://git-scm.com/downloads/win))
 
 ```bash
-git clone https://gitlab.com/web4450122/phovion.git
+git clone https://github.com/Nevionn/Phovion.git
 
 cd phovion
 
