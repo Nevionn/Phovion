@@ -1,13 +1,16 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import Link from "next/link";
-import CyberButton from "@/app/shared/buttons/CyberButton";
-import { AlbumForViewPhotos } from "@/app/types/albumTypes";
 import { useState } from "react";
-import DownloadAlbumModal from "./modals/DownloadAlbumModal";
 import React from "react";
+import Link from "next/link";
+
+import { AlbumForViewPhotos } from "@/app/types/albumTypes";
+
+import CyberButton from "@/app/shared/buttons/CyberButton";
 import { customFonts } from "@/app/shared/theme/customFonts";
 import { colorConst } from "@/app/shared/theme/colorConstant";
+
+import DownloadAlbumModal from "./modals/DownloadAlbumModal";
 
 interface HeaderItemsProps {
   album: AlbumForViewPhotos | null;
@@ -38,8 +41,7 @@ const HeaderItems: React.FC<HeaderItemsProps> = ({
   photoCount,
   isFsaSupported,
 }) => {
-  const [visibleDownloadAlbumModal, setVisibleDownloadAlbumModal] =
-    useState(false);
+  const [visibleDownloadAlbumModal, setVisibleDownloadAlbumModal] = useState(false);
 
   const handleOpenDownloadModal = () => {
     setVisibleDownloadAlbumModal(true);
@@ -53,10 +55,7 @@ const HeaderItems: React.FC<HeaderItemsProps> = ({
 
   // Динамические стили для имени альбома
   const albumNameStyle = css({
-    fontFamily:
-      getLanguage(album?.name) === "ru"
-        ? customFonts.fonts.ru
-        : "'Orbitron', sans-serif",
+    fontFamily: getLanguage(album?.name) === "ru" ? customFonts.fonts.ru : "'Orbitron', sans-serif",
     fontSize: "inherit",
     color: colorConst.headerItems.currentAlbumName,
     display: "inline",
@@ -94,11 +93,7 @@ const HeaderItems: React.FC<HeaderItemsProps> = ({
           )}
         </div>
         <div>
-          <CyberButton
-            label="Скачать альбом"
-            hue={270}
-            onClick={handleOpenDownloadModal}
-          />
+          <CyberButton label="Скачать альбом" hue={270} onClick={handleOpenDownloadModal} />
         </div>
       </div>
       {visibleDownloadAlbumModal && (

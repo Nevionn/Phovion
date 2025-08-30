@@ -3,12 +3,14 @@ import { css } from "@emotion/react";
 import { Album } from "../types/albumTypes";
 import { useState, useEffect } from "react";
 import { AlbumNaming } from "../types/albumTypes";
+
 import AlbumsControls from "./AlbumsControls";
 import AlbumsGrid from "./AlbumsGrid";
-import BackToTopButton from "../shared/buttons/BackToTopButton";
-import BackToBottomButton from "../shared/buttons/BackToBottomButton";
 import CreateAlbumModal from "./modals/CreateAlbumModal";
 import SettingsModal from "./modals/SettingsModal";
+
+import BackToTopButton from "../shared/buttons/BackToTopButton";
+import BackToBottomButton from "../shared/buttons/BackToBottomButton";
 
 /**
  * Компонент основной панели главной страницы, на которой располагаются все альбомы
@@ -43,10 +45,7 @@ const AlbumsListContainer = () => {
   }
 
   async function fetchCounts() {
-    const [albumRes, photoRes] = await Promise.all([
-      fetch("/api/albums/count"),
-      fetch("/api/photos/count"),
-    ]);
+    const [albumRes, photoRes] = await Promise.all([fetch("/api/albums/count"), fetch("/api/photos/count")]);
 
     if (!albumRes.ok) throw new Error("Ошибка получения количества альбомов");
     if (!photoRes.ok) throw new Error("Ошибка получения количества фотографий");
@@ -77,11 +76,7 @@ const AlbumsListContainer = () => {
   }
 
   async function deleteAllAlbums() {
-    if (
-      !window.confirm(
-        "Вы уверены, что хотите удалить все альбомы и их фотографии?"
-      )
-    ) {
+    if (!window.confirm("Вы уверены, что хотите удалить все альбомы и их фотографии?")) {
       return;
     }
     setLoading(true);
@@ -154,8 +149,7 @@ const styles = {
     overflowY: "auto",
     padding: "2rem",
     borderRadius: "1rem",
-    background:
-      "linear-gradient(180deg, rgba(35, 42, 70, 0.4) 0%, rgba(20, 25, 45, 0.4) 100%)",
+    background: "linear-gradient(180deg, rgba(35, 42, 70, 0.4) 0%, rgba(20, 25, 45, 0.4) 100%)",
     boxShadow: "0 0 30px rgba(0, 0, 0, 0.6)",
     border: "var(--list-container-border-color)",
     color: "white",
