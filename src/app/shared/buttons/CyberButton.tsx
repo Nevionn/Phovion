@@ -2,12 +2,12 @@
 import { css } from "@emotion/react";
 import "../../shared/buttons/cyber-button.css";
 import { customFonts } from "../theme/customFonts";
+import { ComponentProps } from "react";
 
-type CyberButtonProps = {
+interface CyberButtonProps extends ComponentProps<"button"> {
   label: string;
-  onClick?: () => void;
   hue?: number; // Только основной hue — всё остальное остаётся из глобального стиля
-};
+}
 
 export default function CyberButton({
   label,

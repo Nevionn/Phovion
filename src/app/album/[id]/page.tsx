@@ -2,32 +2,38 @@
 "use client";
 import { css, CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
+
 import { useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
+
 import { Photo } from "./types/photoTypes";
+
 import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
-import PhotoViewer from "./components/modals/PhotoViewer";
+
 import BackToTopButton from "@/app/shared/buttons/BackToTopButton";
 import BackToBottomButton from "@/app/shared/buttons/BackToBottomButton";
+import { customFonts } from "@/app/shared/theme/customFonts";
+import { colorConst } from "@/app/shared/theme/colorConstant";
+import { useThemeManager } from "@/app/shared/theme/useThemeManager";
+
+import { useAlbumData } from "./hooks/useAlbumData";
+import { useRenameAlbum } from "./hooks/useRenameAlbum";
+import { useDeleteAlbum } from "./hooks/useDeleteAlbum";
+import { useClearAlbum } from "./hooks/useClearAlbum";
+import { useUploadPhotos } from "./hooks/useUploadPhotos";
+import { useDownloadAlbum } from "./hooks/useDownloadAlbum";
+import { useDropHandler } from "./hooks/useDropHandler";
+
+import RenameAlbumModal from "@/app/album/[id]/components/modals/RenameAlbumModal";
+import PhotoViewer from "./components/modals/PhotoViewer";
 import HeaderItems from "./components/HeaderItems";
 import Description from "./components/Description";
 import UploadSection from "./components/UploadSection";
 import PhotoGrid from "./components/PhotoGrid";
 import DropZoneDragging from "./components/DropZoneDragging";
 import SkeletonLoader from "./components/SkeletonLoader";
-import { useAlbumData } from "./hooks/useAlbumData";
-import { useRenameAlbum } from "./hooks/useRenameAlbum";
-import { useDeleteAlbum } from "./hooks/useDeleteAlbum";
-import { useClearAlbum } from "./hooks/useClearAlbum";
-import { useThemeManager } from "@/app/shared/theme/useThemeManager";
-import { useUploadPhotos } from "./hooks/useUploadPhotos";
-import { useDownloadAlbum } from "./hooks/useDownloadAlbum";
-import { useDropHandler } from "./hooks/useDropHandler";
-import { customFonts } from "@/app/shared/theme/customFonts";
-import { colorConst } from "@/app/shared/theme/colorConstant";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 

@@ -3,6 +3,7 @@ import { css } from "@emotion/react";
 import { FC, useEffect } from "react";
 import { PiMemoryFill } from "react-icons/pi";
 import { FaGitlab } from "react-icons/fa6";
+import { VscGithubInverted } from "react-icons/vsc";
 import { ThemeBox } from "./ThemeBox";
 import { DecryptedText } from "@/app/shared/DecryptedText";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
@@ -34,8 +35,7 @@ export const TabContent: FC<TabContentProps> = ({
   setImageFitMode,
   themes,
 }) => {
-  const { theme, setTheme, enableAlbumBorder, setEnableAlbumBorder } =
-    useThemeManager();
+  const { theme, setTheme, enableAlbumBorder, setEnableAlbumBorder } = useThemeManager();
 
   useEffect(() => {
     if (activeTab === "Системная информация") {
@@ -71,12 +71,7 @@ export const TabContent: FC<TabContentProps> = ({
           <div css={styles.settingsContainer}>
             <div css={styles.themesContainer}>
               {themes.map((themeName) => (
-                <ThemeBox
-                  key={themeName}
-                  themeName={themeName}
-                  currentTheme={theme}
-                  onSelect={setTheme}
-                />
+                <ThemeBox key={themeName} themeName={themeName} currentTheme={theme} onSelect={setTheme} />
               ))}
             </div>
             <label css={styles.checkboxLabel}>
@@ -85,9 +80,7 @@ export const TabContent: FC<TabContentProps> = ({
                 checked={enableAlbumBorder}
                 onChange={(e) => setEnableAlbumBorder(e.target.checked)}
               />
-              <span css={styles.sectionTitleText}>
-                Включить обводку для панели альбомов
-              </span>
+              <span css={styles.sectionTitleText}>Включить обводку для панели альбомов</span>
             </label>
           </div>
         </div>
@@ -98,10 +91,7 @@ export const TabContent: FC<TabContentProps> = ({
           <div css={styles.settingsContainer}>
             <p css={styles.infoItem}>
               <PiMemoryFill /> Вес папки uploads (кеш):
-              <DecryptedText
-                text={uploadFolderSize ? uploadFolderSize : "подсчёт.."}
-                speed={30}
-              />
+              <DecryptedText text={uploadFolderSize ? uploadFolderSize : "подсчёт.."} speed={30} />
             </p>
           </div>
         </div>
@@ -142,21 +132,15 @@ export const TabContent: FC<TabContentProps> = ({
         <div css={styles.tabSection}>
           <h3 css={styles.sectionTitle}>Горячие клавиши</h3>
           <div css={styles.settingsContainer}>
-            <p css={styles.infoItem}>
-              Используйте следующие комбинации для управления:
-            </p>
+            <p css={styles.infoItem}>Используйте следующие комбинации для управления:</p>
             <div css={styles.keyShortcutsContainer}>
               <div css={styles.keyShortcut}>
                 <span css={styles.keyButton}>←</span>
-                <span css={styles.keyDescription}>
-                  Переключение на предыдущую фотографию
-                </span>
+                <span css={styles.keyDescription}>Переключение на предыдущую фотографию</span>
               </div>
               <div css={styles.keyShortcut}>
                 <span css={styles.keyButton}>→</span>
-                <span css={styles.keyDescription}>
-                  Переключение на следующую фотографию
-                </span>
+                <span css={styles.keyDescription}>Переключение на следующую фотографию</span>
               </div>
               <div css={styles.keyShortcut}>
                 <span css={styles.keyButton}>Esc</span>
@@ -182,16 +166,23 @@ export const TabContent: FC<TabContentProps> = ({
           </h1>
           <div css={[styles.settingsContainer, { gap: 0 }]}>
             <p css={styles.infoItem}>
-              Локальное веб-приложение для создания и управления альбомами с
-              фотографиями. Работает прямо в браузере, не требуя серверной
-              инфраструктуры.
+              Локальное веб-приложение для создания и управления альбомами с фотографиями. Работает прямо в браузере, не
+              требуя серверной инфраструктуры.
             </p>
-            <p css={styles.infoItem}>
-              Разработано Nevionn для удобного хранения и просмотра ваших
-              изображений.
-            </p>
+            <p css={styles.infoItem}>Разработано Nevionn для удобного хранения и просмотра ваших изображений.</p>
             <p css={styles.infoItem}>Версия: 1.0.0</p>
             <div css={styles.contactsContainer}>
+              <p css={styles.infoItem}>
+                <VscGithubInverted />
+                <a
+                  href="https://github.com/Nevionn/Phovion"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  css={styles.link}
+                >
+                  GitHub
+                </a>
+              </p>
               <p css={styles.infoItem}>
                 <FaGitlab color="orange" />
                 <a
@@ -200,7 +191,7 @@ export const TabContent: FC<TabContentProps> = ({
                   rel="noopener noreferrer"
                   css={styles.link}
                 >
-                  Репозиторий на GitLab
+                  GitLab
                 </a>
               </p>
             </div>
@@ -210,9 +201,7 @@ export const TabContent: FC<TabContentProps> = ({
       {activeTab === "Опасная зона" && (
         <div css={styles.tabSection}>
           <h3 css={styles.sectionTitle}>Опасная зона</h3>
-          <p css={styles.infoItem}>
-            Удалить все существующие альбомы и фотографии
-          </p>
+          <p css={styles.infoItem}>Удалить все существующие альбомы и фотографии</p>
           <div css={styles.settingsContainer}>
             <button
               css={styles.deleteButtonStyle}
@@ -221,9 +210,7 @@ export const TabContent: FC<TabContentProps> = ({
               }}
               disabled={loading || albumCount === 0}
             >
-              <p css={styles.buttonText}>
-                {loading ? "Удаление..." : "Удалить все"}
-              </p>
+              <p css={styles.buttonText}>{loading ? "Удаление..." : "Удалить все"}</p>
             </button>
           </div>
         </div>
@@ -296,11 +283,12 @@ const styles = {
   lableText: css({
     fontFamily: customFonts.fonts.ru,
     letterSpacing: customFonts.fonts.size.ls,
+    textAlign: "start",
     fontSize: 36,
+    margin: 0,
   }),
   metallicText: css({
-    background:
-      "linear-gradient(45deg, #1da8eeff, #4a657a, #d1d9ddff, #4a657a, #0f9af1ff)",
+    background: "linear-gradient(45deg, #1da8eeff, #4a657a, #d1d9ddff, #4a657a, #0f9af1ff)",
     backgroundSize: "200% 200%",
     WebkitBackgroundClip: "text",
     backgroundClip: "text",
@@ -476,8 +464,7 @@ const styles = {
     fontFamily: customFonts.fonts.ru,
     fontSize: "1rem",
     color: "#fff",
-    boxShadow:
-      "inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.3)",
+    boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.3)",
     transition: "background-color 0.2s",
     "&:hover": {
       backgroundColor: "#3a3a4e",
