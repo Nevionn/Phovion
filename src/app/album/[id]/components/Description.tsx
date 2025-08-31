@@ -13,9 +13,10 @@ type DescriptionProps = {
  */
 
 function Description({ description }: DescriptionProps) {
+  console.log(description);
   return (
     <div css={style.descriptionContainer}>
-      <span css={style.descriptionText}>{description || ""}</span>
+      <span css={[style.descriptionText, style.multiLineText]}>{description || ""}</span>
     </div>
   );
 }
@@ -40,5 +41,8 @@ const style = {
     fontSize: "17px",
     lineHeight: "1.5",
     opacity: 0.9,
+  }),
+  multiLineText: css({
+    whiteSpace: "pre-wrap", // Сохраняет \n и оборачивает текст
   }),
 };
