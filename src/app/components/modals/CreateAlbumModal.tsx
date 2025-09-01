@@ -11,12 +11,7 @@ interface CreateAlbumModalProps {
   loading?: boolean;
 }
 
-const CreateAlbumModal = ({
-  isOpen,
-  onClose,
-  createAlbum,
-  loading,
-}: CreateAlbumModalProps) => {
+const CreateAlbumModal = ({ isOpen, onClose, createAlbum, loading }: CreateAlbumModalProps) => {
   const [newAlbumName, setNewAlbumName] = useState("");
   const [newAlbumDescription, setNewAlbumDescription] = useState("");
 
@@ -51,11 +46,7 @@ const CreateAlbumModal = ({
           onChange={(e) => setNewAlbumDescription(e.target.value)}
         />
         <div css={styles.buttonContainer}>
-          <button
-            css={styles.buttonStyle}
-            onClick={handleCreateAlbum}
-            disabled={loading || !newAlbumName.trim()}
-          >
+          <button css={styles.buttonStyle} onClick={handleCreateAlbum} disabled={loading || !newAlbumName.trim()}>
             {loading ? "Создание..." : "Создать"}
           </button>
           <button
@@ -104,8 +95,7 @@ const styles = {
     margin: 0,
   }),
   inputStyle: css({
-    border:
-      "2px solid var(--create-album-modal-input-fields-border-color-non-target)",
+    border: "2px solid var(--create-album-modal-input-fields-border-color-non-target)",
     borderRadius: "8px",
     fontSize: "1rem",
     height: "34px",
@@ -119,8 +109,7 @@ const styles = {
     },
   }),
   textareaStyle: css({
-    border:
-      "2px solid var(--create-album-modal-input-fields-border-color-non-target)",
+    border: "2px solid var(--create-album-modal-input-fields-border-color-non-target)",
     borderRadius: "8px",
     fontSize: "1rem",
     width: "100%",

@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 import { AlbumNaming } from "../types/albumTypes";
 import { FaMicrochip, FaSpinner } from "react-icons/fa6";
+import { FaSearch } from "react-icons/fa";
 import Separator from "../shared/separator/Separator";
 import { colorIcon } from "../shared/theme/colorConstant";
 import { customFonts } from "../shared/theme/customFonts";
@@ -14,6 +15,7 @@ interface AlbumControlsProps {
   deleteAllAlbums: () => Promise<void>;
   onOpenCreateAlbum: () => void;
   onOpenSettings: () => void;
+  onOpenSearch: () => void;
 }
 
 /**
@@ -27,22 +29,20 @@ const AlbumsControls = ({
   photoCount,
   onOpenCreateAlbum,
   onOpenSettings,
+  onOpenSearch,
 }: AlbumControlsProps) => {
   return (
     <>
       <div css={styles.headerStyle}>
         <p css={styles.titleStyle}>
           Альбомов: {albumCount}; Фотографий: {photoCount}
-          {loading && (
-            <FaSpinner css={styles.loadingIcon} style={{ fontSize: 20 }} />
-          )}
+          {loading && <FaSpinner css={styles.loadingIcon} style={{ fontSize: 20 }} />}
         </p>
         <div css={styles.mergeButtonsItem}>
-          <button
-            css={styles.openCreateAlbumModalButton}
-            onClick={onOpenCreateAlbum}
-            disabled={loading}
-          >
+          <button css={styles.openSearchAlbumModalButton} onClick={onOpenSearch}>
+            <FaSearch />
+          </button>
+          <button css={styles.openCreateAlbumModalButton} onClick={onOpenCreateAlbum} disabled={loading}>
             <p css={styles.textButon}>Создать альбом</p>
           </button>
           <button css={styles.openSettingsModalButton} onClick={onOpenSettings}>
@@ -115,6 +115,13 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
+  }),
+  openSearchAlbumModalButton: css({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    cursor: "pointer",
+    fontSize: 20,
   }),
   loadingIcon: css({
     marginLeft: 10,

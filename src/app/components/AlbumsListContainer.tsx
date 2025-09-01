@@ -8,6 +8,7 @@ import AlbumsControls from "./AlbumsControls";
 import AlbumsGrid from "./AlbumsGrid";
 import CreateAlbumModal from "./modals/CreateAlbumModal";
 import SettingsModal from "./modals/SettingsModal";
+import SearchAlbumModal from "./modals/SearchAlbumModal";
 
 import BackToTopButton from "../shared/buttons/BackToTopButton";
 import BackToBottomButton from "../shared/buttons/BackToBottomButton";
@@ -18,11 +19,17 @@ import BackToBottomButton from "../shared/buttons/BackToBottomButton";
 
 const AlbumsListContainer = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
-  const [loading, setLoading] = useState(true);
   const [albumCount, setAlbumCount] = useState(0);
   const [photoCount, setPhotoCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
   const [isCreateAlbumModalOpen, setIsCreateAlbumModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+
+  const [isSearchAlbumModalOpen, setIsSearchAlbumModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [pinnedAlbums, setPinnedAlbums] = useState<Album[]>([]); // Отфильтрованный массив альбомов методом поиска
+  const [isPinned, setIsPinned] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -100,6 +107,9 @@ const AlbumsListContainer = () => {
       setAlbums([]);
       setAlbumCount(0);
       setPhotoCount(0);
+      setPinnedAlbums([]);
+      setIsPinned(false);
+      setSearchTerm("");
     } catch (error) {
       console.error("Ошибка удаления альбомов:", error);
       alert("Ошибка при удалении альбомов");
@@ -107,6 +117,20 @@ const AlbumsListContainer = () => {
       setLoading(false);
     }
   }
+
+  const filteredAlbums = searchTerm
+    ? albums.filter((album) => album.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    : albums;
+
+  const displayedAlbums = isPinned ? pinnedAlbums : filteredAlbums;
+
+  // Обработчик закрепления результатов поиска
+  const handlePinResults = () => {
+    setPinnedAlbums(filteredAlbums);
+    setIsPinned(true);
+    setSearchTerm("");
+    setIsSearchAlbumModalOpen(false);
+  };
 
   return (
     <>
@@ -120,9 +144,10 @@ const AlbumsListContainer = () => {
             deleteAllAlbums={deleteAllAlbums}
             onOpenCreateAlbum={() => setIsCreateAlbumModalOpen(true)}
             onOpenSettings={() => setIsSettingsModalOpen(true)}
+            onOpenSearch={() => setIsSearchAlbumModalOpen(true)}
           />
         </div>
-        <AlbumsGrid albums={albums} setAlbums={setAlbums} />
+        <AlbumsGrid albums={displayedAlbums} setAlbums={setAlbums} />
       </div>
       {isCreateAlbumModalOpen && (
         <CreateAlbumModal
@@ -139,6 +164,18 @@ const AlbumsListContainer = () => {
           deleteAllAlbums={deleteAllAlbums}
           albumCount={albumCount}
           loading={loading}
+        />
+      )}
+      {isSearchAlbumModalOpen && (
+        <SearchAlbumModal
+          isOpen={isSearchAlbumModalOpen}
+          onClose={() => {
+            setSearchTerm("");
+            setIsSearchAlbumModalOpen(false);
+          }}
+          onSearch={setSearchTerm}
+          searchTerm={searchTerm}
+          onPin={handlePinResults}
         />
       )}
       <BackToTopButton />
