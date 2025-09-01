@@ -12,9 +12,10 @@ import { customFonts } from "../shared/theme/customFonts";
 interface SortableAlbumProps {
   album: Album;
   onClick: () => void;
+  onMiddleClick: (e: React.MouseEvent) => void;
 }
 
-const SortableAlbum = ({ album, onClick }: SortableAlbumProps) => {
+const SortableAlbum = ({ album, onClick, onMiddleClick }: SortableAlbumProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: album.id,
     transition: {
@@ -32,7 +33,7 @@ const SortableAlbum = ({ album, onClick }: SortableAlbumProps) => {
   };
 
   return (
-    <div ref={setNodeRef} css={styles.albumCardStyle} style={style} onClick={onClick}>
+    <div ref={setNodeRef} css={styles.albumCardStyle} style={style} onClick={onClick} onMouseDown={onMiddleClick}>
       <div css={styles.dragHandleStyle} {...attributes} {...listeners}>
         <SlSizeFullscreen size={24} />
       </div>
@@ -105,12 +106,24 @@ const AlbumsGrid = ({ albums, setAlbums }: AlbumsGridProps) => {
     router.push(`/album/${albumId}`);
   };
 
+  const handleMiddleClick = (e: React.MouseEvent, albumId: number) => {
+    if (e.button === 1) {
+      e.preventDefault();
+      window.open(`/album/${albumId}`, "_blank");
+    }
+  };
+
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={albumIds} strategy={rectSortingStrategy}>
         <div css={styles.albumListStyle}>
           {albums.map((album: Album) => (
-            <SortableAlbum key={album.id} album={album} onClick={() => handleAlbumClick(album.id)} />
+            <SortableAlbum
+              key={album.id}
+              album={album}
+              onClick={() => handleAlbumClick(album.id)}
+              onMiddleClick={(e) => handleMiddleClick(e, album.id)}
+            />
           ))}
         </div>
       </SortableContext>
