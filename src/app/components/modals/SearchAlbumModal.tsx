@@ -10,6 +10,8 @@ interface SearchAlbumModalProps {
   onSearch: (term: string) => void;
   searchTerm: string;
   onPin: () => void;
+  includeDescription: boolean;
+  onToggleDescription: (value: boolean) => void;
 }
 
 /**
@@ -17,7 +19,15 @@ interface SearchAlbumModalProps {
  * Цепочка передачи и вызова: AlbumsListContainer -> AlbumsControls && SearchAlbumModal
  * @component
  */
-const SearchAlbumModal = ({ isOpen, onClose, onSearch, searchTerm, onPin }: SearchAlbumModalProps) => {
+const SearchAlbumModal = ({
+  isOpen,
+  onClose,
+  onSearch,
+  searchTerm,
+  onPin,
+  includeDescription,
+  onToggleDescription,
+}: SearchAlbumModalProps) => {
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
 
   // Обновление поискового запроса при вводе
@@ -54,6 +64,15 @@ const SearchAlbumModal = ({ isOpen, onClose, onSearch, searchTerm, onPin }: Sear
             css={styles.searchInput}
           />
         </div>
+        <label css={styles.checkboxLabel}>
+          <input
+            type="checkbox"
+            checked={includeDescription}
+            onChange={(e) => onToggleDescription(e.target.checked)}
+            css={styles.checkbox}
+          />
+          Поиск по описанию
+        </label>
         <button css={styles.pinButton} onClick={onPin} disabled={!searchTerm}>
           Сохранить
         </button>
@@ -132,6 +151,18 @@ const styles = {
       outline: "none",
       borderColor: "var(--create-album-modal-input-fields-border-color-target)",
     },
+  }),
+  checkboxLabel: css({
+    display: "flex",
+    alignItems: "center",
+    marginBottom: "15px",
+    color: "white",
+    fontFamily: customFonts.fonts.ru,
+    fontSize: "1rem",
+  }),
+  checkbox: css({
+    marginRight: "8px",
+    cursor: "pointer",
   }),
   pinButton: css({
     padding: "8px 16px",

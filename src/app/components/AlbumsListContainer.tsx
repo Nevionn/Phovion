@@ -30,6 +30,7 @@ const AlbumsListContainer = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [pinnedAlbums, setPinnedAlbums] = useState<Album[]>([]); // Отфильтрованный массив альбомов методом поиска
   const [isPinned, setIsPinned] = useState(false);
+  const [includeDescription, setIncludeDescription] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -109,6 +110,7 @@ const AlbumsListContainer = () => {
       setPhotoCount(0);
       setPinnedAlbums([]);
       setIsPinned(false);
+      setIncludeDescription(false);
       setSearchTerm("");
     } catch (error) {
       console.error("Ошибка удаления альбомов:", error);
@@ -119,7 +121,14 @@ const AlbumsListContainer = () => {
   }
 
   const filteredAlbums = searchTerm
-    ? albums.filter((album) => album.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    ? albums.filter((album) => {
+        const nameMatch = album.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const descMatch =
+          includeDescription && album.description
+            ? album.description.toLowerCase().includes(searchTerm.toLowerCase())
+            : false;
+        return nameMatch || descMatch;
+      })
     : albums;
 
   const displayedAlbums = isPinned ? pinnedAlbums : filteredAlbums;
@@ -176,6 +185,8 @@ const AlbumsListContainer = () => {
           onSearch={setSearchTerm}
           searchTerm={searchTerm}
           onPin={handlePinResults}
+          includeDescription={includeDescription}
+          onToggleDescription={setIncludeDescription}
         />
       )}
       <BackToTopButton />
