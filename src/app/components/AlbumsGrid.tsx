@@ -99,12 +99,18 @@ const AlbumsGrid = ({ albums, setAlbums }: AlbumsGridProps) => {
 
   const albumIds = useMemo(() => albums.map((album: Album) => album.id), [albums]);
 
+  const handleAlbumClick = (albumId: number) => {
+    // Сохраняем позицию прокрутки перед переходом
+    sessionStorage.setItem("scrollPosition", window.scrollY.toString());
+    router.push(`/album/${albumId}`);
+  };
+
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={albumIds} strategy={rectSortingStrategy}>
         <div css={styles.albumListStyle}>
           {albums.map((album: Album) => (
-            <SortableAlbum key={album.id} album={album} onClick={() => router.push(`/album/${album.id}`)} />
+            <SortableAlbum key={album.id} album={album} onClick={() => handleAlbumClick(album.id)} />
           ))}
         </div>
       </SortableContext>
@@ -117,11 +123,9 @@ export default AlbumsGrid;
 const styles = {
   albumListStyle: css({
     display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: "24px",
-    padding: "30px 0",
-    width: "100%",
-    maxWidth: "1200px",
+    gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+    gap: "1rem",
+    padding: "1rem 0",
   }),
   albumCardStyle: css({
     position: "relative",

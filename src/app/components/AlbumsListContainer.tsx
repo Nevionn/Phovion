@@ -32,8 +32,19 @@ const AlbumsListContainer = () => {
         console.error("Ошибка при загрузке данных:", error);
       } finally {
         setLoading(false);
+        // Восстановление позиции прокрутки после возврата со страницы выбранного альбома
+        const savedScrollPosition = sessionStorage.getItem("scrollPosition");
+        if (savedScrollPosition) {
+          const position = parseInt(savedScrollPosition, 10);
+          if (!isNaN(position)) {
+            console.log("Восстанавливаем скролл к:", position);
+            window.scrollTo({ top: position, behavior: "smooth" });
+            sessionStorage.removeItem("scrollPosition");
+          }
+        }
       }
     };
+
     loadData();
   }, []);
 
@@ -140,13 +151,11 @@ export default AlbumsListContainer;
 
 const styles = {
   containerStyle: css({
-    display: "flex",
-    flexDirection: "column",
+    display: "block",
     minHeight: "90vh",
     maxWidth: "90%",
     width: "100%",
     margin: "1rem auto",
-    overflowY: "auto",
     padding: "2rem",
     borderRadius: "1rem",
     background: "linear-gradient(180deg, rgba(35, 42, 70, 0.4) 0%, rgba(20, 25, 45, 0.4) 100%)",
