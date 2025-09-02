@@ -187,6 +187,7 @@ const AlbumsListContainer = () => {
           onPin={handlePinResults}
           includeDescription={includeDescription}
           onToggleDescription={setIncludeDescription}
+          albums={albums}
         />
       )}
       <BackToTopButton />

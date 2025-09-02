@@ -3,6 +3,7 @@ import { css } from "@emotion/react";
 import { useState } from "react";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { customFonts } from "../../shared/theme/customFonts";
+import { Album } from "@/app/types/albumTypes";
 
 interface SearchAlbumModalProps {
   isOpen: boolean;
@@ -12,10 +13,11 @@ interface SearchAlbumModalProps {
   onPin: () => void;
   includeDescription: boolean;
   onToggleDescription: (value: boolean) => void;
+  albums: Album[];
 }
 
 /**
- * Модальное окно для поиска альбомов на стороне клиента
+ * Модальное окно для поиска альбомов на стороне клиента.
  * Цепочка передачи и вызова: AlbumsListContainer -> AlbumsControls && SearchAlbumModal
  * @component
  */
@@ -27,6 +29,7 @@ const SearchAlbumModal = ({
   onPin,
   includeDescription,
   onToggleDescription,
+  albums,
 }: SearchAlbumModalProps) => {
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
 
@@ -44,6 +47,11 @@ const SearchAlbumModal = ({
   };
 
   if (!isOpen) return null;
+
+  // Фильтрация описаний для отображения (все описания, если галочка включена)
+  const descriptions = includeDescription
+    ? albums.map((album) => album.description || "Без описания").filter((desc) => desc)
+    : [];
 
   return (
     <div css={styles.modalOverlay} onClick={handleClose}>
@@ -73,6 +81,22 @@ const SearchAlbumModal = ({
           />
           Поиск по описанию
         </label>
+        {includeDescription && (
+          <div css={styles.descriptionsContainer}>
+            <h3 css={styles.descriptionsTitle}>Список описаний:</h3>
+            {descriptions.length > 0 ? (
+              <ul css={styles.descriptionsList}>
+                {descriptions.map((desc, index) => (
+                  <li key={index} css={styles.descriptionItem}>
+                    {desc}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p css={styles.noDescriptions}>Нет описаний</p>
+            )}
+          </div>
+        )}
         <button css={styles.pinButton} onClick={onPin} disabled={!searchTerm}>
           Сохранить
         </button>
@@ -163,6 +187,33 @@ const styles = {
   checkbox: css({
     marginRight: "8px",
     cursor: "pointer",
+  }),
+  descriptionsContainer: css({
+    marginBottom: "15px",
+    maxHeight: "200px",
+    overflowY: "auto",
+  }),
+  descriptionsTitle: css({
+    fontFamily: customFonts.fonts.ru,
+    fontSize: "1.2rem",
+    margin: "0 0 10px 0",
+  }),
+  descriptionsList: css({
+    listStyle: "none",
+    padding: 0,
+    margin: 0,
+  }),
+  descriptionItem: css({
+    padding: "5px 0",
+    borderBottom: "1px solid #444",
+    "&:last-child": {
+      borderBottom: "none",
+    },
+  }),
+  noDescriptions: css({
+    color: "#aaa",
+    textAlign: "center",
+    padding: "10px 0",
   }),
   pinButton: css({
     padding: "8px 16px",
