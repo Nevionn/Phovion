@@ -97,9 +97,11 @@ const SearchAlbumModal = ({
             )}
           </div>
         )}
-        <button css={styles.pinButton} onClick={onPin} disabled={!searchTerm}>
-          Сохранить
-        </button>
+        <div css={styles.buttonItem}>
+          <button css={styles.pinButton} onClick={onPin} disabled={!searchTerm}>
+            Сохранить
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -215,14 +217,21 @@ const styles = {
     textAlign: "center",
     padding: "10px 0",
   }),
+  buttonItem: css({
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    marginTop: 20,
+  }),
   pinButton: css({
-    padding: "8px 16px",
+    height: 30,
+    width: "30%",
     backgroundImage: "var(--create-album-button-color)",
     color: "white",
     border: "none",
     borderRadius: "5px",
     cursor: "pointer",
-    width: "100%",
+
     "&:hover": {
       backgroundColor: "#4a6a8a",
       filter: "brightness(1.15)",
