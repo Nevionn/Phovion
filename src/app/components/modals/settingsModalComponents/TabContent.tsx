@@ -144,7 +144,7 @@ export const TabContent: FC<TabContentProps> = ({
               </div>
               <div css={styles.keyShortcut}>
                 <span css={styles.keyButton}>Esc</span>
-                <span css={styles.keyDescription}>Закрыть окно</span>
+                <span css={styles.keyDescription}>Закрыть окно (Настройки, просмотр фотографий)</span>
               </div>
               <div css={styles.keyShortcut}>
                 <span css={styles.keyButton}>Del</span>
