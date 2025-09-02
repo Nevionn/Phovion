@@ -214,6 +214,7 @@ const styles = {
   }),
   noDescriptions: css({
     color: "#aaa",
+    fontFamily: customFonts.fonts.ru,
     textAlign: "center",
     padding: "10px 0",
   }),
@@ -224,13 +225,14 @@ const styles = {
     marginTop: 20,
   }),
   pinButton: css({
-    height: 30,
-    width: "30%",
+    padding: "0.5rem 1rem",
     backgroundImage: "var(--create-album-button-color)",
     color: "white",
     border: "none",
     borderRadius: "5px",
     cursor: "pointer",
+    fontFamily: customFonts.fonts.ru,
+    letterSpacing: customFonts.fonts.size.ls,
 
     "&:hover": {
       backgroundColor: "#4a6a8a",
@@ -238,8 +240,9 @@ const styles = {
     },
     "&:disabled": {
       backgroundImage: "none",
-      backgroundColor: "#666",
+      backgroundColor: "rgba(80, 84, 99, 0.84)",
       cursor: "not-allowed",
+      boxShadow: "none",
     },
   }),
 };
