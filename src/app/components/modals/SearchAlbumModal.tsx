@@ -17,7 +17,7 @@ interface SearchAlbumModalProps {
 }
 
 /**
- * Модальное окно для поиска альбомов на стороне клиента.
+ * Модальное окно для поиска альбомов на главной странице на стороне клиента.
  * Цепочка передачи и вызова: AlbumsListContainer -> AlbumsControls && SearchAlbumModal
  * @component
  */

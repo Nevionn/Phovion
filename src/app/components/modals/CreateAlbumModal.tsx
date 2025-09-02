@@ -23,14 +23,15 @@ const CreateAlbumModal = ({ isOpen, onClose, createAlbum, loading }: CreateAlbum
   };
 
   const resetLocaleState = () => {
-    setNewAlbumName(""), setNewAlbumDescription("");
+    setNewAlbumName("");
+    setNewAlbumDescription("");
   };
 
   if (!isOpen) return null;
 
   return (
-    <div css={styles.modalOverlay}>
-      <div css={styles.modalContent}>
+    <div css={styles.modalOverlay} onClick={onClose}>
+      <div css={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <h2 css={styles.modalTitle}>Создать новый альбом</h2>
         <input
           css={styles.inputStyle}
