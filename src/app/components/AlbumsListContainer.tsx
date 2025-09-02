@@ -8,6 +8,7 @@ import AlbumsControls from "./AlbumsControls";
 import AlbumsGrid from "./AlbumsGrid";
 import CreateAlbumModal from "./modals/CreateAlbumModal";
 import SettingsModal from "./modals/SettingsModal";
+import SearchAlbumModal from "./modals/SearchAlbumModal";
 
 import BackToTopButton from "../shared/buttons/BackToTopButton";
 import BackToBottomButton from "../shared/buttons/BackToBottomButton";
@@ -18,11 +19,18 @@ import BackToBottomButton from "../shared/buttons/BackToBottomButton";
 
 const AlbumsListContainer = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
-  const [loading, setLoading] = useState(true);
   const [albumCount, setAlbumCount] = useState(0);
   const [photoCount, setPhotoCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
   const [isCreateAlbumModalOpen, setIsCreateAlbumModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+
+  const [isSearchAlbumModalOpen, setIsSearchAlbumModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [pinnedAlbums, setPinnedAlbums] = useState<Album[]>([]); // Отфильтрованный массив альбомов методом поиска
+  const [isPinned, setIsPinned] = useState(false);
+  const [includeDescription, setIncludeDescription] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -32,8 +40,19 @@ const AlbumsListContainer = () => {
         console.error("Ошибка при загрузке данных:", error);
       } finally {
         setLoading(false);
+        // Восстановление позиции прокрутки после возврата со страницы выбранного альбома
+        const savedScrollPosition = sessionStorage.getItem("scrollPosition");
+        if (savedScrollPosition) {
+          const position = parseInt(savedScrollPosition, 10);
+          if (!isNaN(position)) {
+            console.log("Восстанавливаем скролл к:", position);
+            window.scrollTo({ top: position, behavior: "smooth" });
+            sessionStorage.removeItem("scrollPosition");
+          }
+        }
       }
     };
+
     loadData();
   }, []);
 
@@ -89,6 +108,10 @@ const AlbumsListContainer = () => {
       setAlbums([]);
       setAlbumCount(0);
       setPhotoCount(0);
+      setPinnedAlbums([]);
+      setIsPinned(false);
+      setIncludeDescription(false);
+      setSearchTerm("");
     } catch (error) {
       console.error("Ошибка удаления альбомов:", error);
       alert("Ошибка при удалении альбомов");
@@ -96,6 +119,27 @@ const AlbumsListContainer = () => {
       setLoading(false);
     }
   }
+
+  const filteredAlbums = searchTerm
+    ? albums.filter((album) => {
+        const nameMatch = album.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const descMatch =
+          includeDescription && album.description
+            ? album.description.toLowerCase().includes(searchTerm.toLowerCase())
+            : false;
+        return nameMatch || descMatch;
+      })
+    : albums;
+
+  const displayedAlbums = isPinned ? pinnedAlbums : filteredAlbums;
+
+  // Обработчик закрепления результатов поиска
+  const handlePinResults = () => {
+    setPinnedAlbums(filteredAlbums);
+    setIsPinned(true);
+    setSearchTerm("");
+    setIsSearchAlbumModalOpen(false);
+  };
 
   return (
     <>
@@ -109,9 +153,10 @@ const AlbumsListContainer = () => {
             deleteAllAlbums={deleteAllAlbums}
             onOpenCreateAlbum={() => setIsCreateAlbumModalOpen(true)}
             onOpenSettings={() => setIsSettingsModalOpen(true)}
+            onOpenSearch={() => setIsSearchAlbumModalOpen(true)}
           />
         </div>
-        <AlbumsGrid albums={albums} setAlbums={setAlbums} />
+        <AlbumsGrid albums={displayedAlbums} setAlbums={setAlbums} />
       </div>
       {isCreateAlbumModalOpen && (
         <CreateAlbumModal
@@ -130,6 +175,21 @@ const AlbumsListContainer = () => {
           loading={loading}
         />
       )}
+      {isSearchAlbumModalOpen && (
+        <SearchAlbumModal
+          isOpen={isSearchAlbumModalOpen}
+          onClose={() => {
+            setSearchTerm("");
+            setIsSearchAlbumModalOpen(false);
+          }}
+          onSearch={setSearchTerm}
+          searchTerm={searchTerm}
+          onPin={handlePinResults}
+          includeDescription={includeDescription}
+          onToggleDescription={setIncludeDescription}
+          albums={albums}
+        />
+      )}
       <BackToTopButton />
       <BackToBottomButton />
     </>
@@ -140,13 +200,11 @@ export default AlbumsListContainer;
 
 const styles = {
   containerStyle: css({
-    display: "flex",
-    flexDirection: "column",
+    display: "block",
     minHeight: "90vh",
     maxWidth: "90%",
     width: "100%",
     margin: "1rem auto",
-    overflowY: "auto",
     padding: "2rem",
     borderRadius: "1rem",
     background: "linear-gradient(180deg, rgba(35, 42, 70, 0.4) 0%, rgba(20, 25, 45, 0.4) 100%)",

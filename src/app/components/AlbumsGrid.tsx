@@ -3,12 +3,7 @@ import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
-import {
-  SortableContext,
-  arrayMove,
-  useSortable,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, arrayMove, useSortable, rectSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
 import { Album } from "../types/albumTypes";
@@ -17,17 +12,11 @@ import { customFonts } from "../shared/theme/customFonts";
 interface SortableAlbumProps {
   album: Album;
   onClick: () => void;
+  onMiddleClick: (e: React.MouseEvent) => void;
 }
 
-const SortableAlbum = ({ album, onClick }: SortableAlbumProps) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+const SortableAlbum = ({ album, onClick, onMiddleClick }: SortableAlbumProps) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: album.id,
     transition: {
       duration: 150,
@@ -44,23 +33,13 @@ const SortableAlbum = ({ album, onClick }: SortableAlbumProps) => {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      css={styles.albumCardStyle}
-      style={style}
-      onClick={onClick}
-    >
+    <div ref={setNodeRef} css={styles.albumCardStyle} style={style} onClick={onClick} onMouseDown={onMiddleClick}>
       <div css={styles.dragHandleStyle} {...attributes} {...listeners}>
         <SlSizeFullscreen size={24} />
       </div>
       {album.coverPhotoPath ? (
         <>
-          <img
-            src={album.coverPhotoPath}
-            alt={album.name}
-            css={styles.albumAvatarStyle}
-            loading="lazy"
-          />
+          <img src={album.coverPhotoPath} alt={album.name} css={styles.albumAvatarStyle} loading="lazy" />
           <p css={styles.titleCardAlbumStyle}>
             <span>{album.name}</span>
             <span>{album.photoCount ?? 0}</span>
@@ -84,6 +63,12 @@ interface AlbumsGridProps {
   setAlbums: React.Dispatch<React.SetStateAction<Album[]>>;
 }
 
+/**
+ * Компонент сетка всех альбомов на главной странице, с функцией сортировки dnd
+ *
+ * @returns {jsx.component}
+ */
+
 const AlbumsGrid = ({ albums, setAlbums }: AlbumsGridProps) => {
   const router = useRouter();
 
@@ -92,12 +77,8 @@ const AlbumsGrid = ({ albums, setAlbums }: AlbumsGridProps) => {
 
     if (active.id !== over?.id) {
       setAlbums((prevAlbums: Album[]) => {
-        const oldIndex = prevAlbums.findIndex(
-          (album: Album) => album.id === active.id
-        );
-        const newIndex = prevAlbums.findIndex(
-          (album: Album) => album.id === over?.id
-        );
+        const oldIndex = prevAlbums.findIndex((album: Album) => album.id === active.id);
+        const newIndex = prevAlbums.findIndex((album: Album) => album.id === over?.id);
 
         const newAlbums = arrayMove(prevAlbums, oldIndex, newIndex);
 
@@ -117,10 +98,20 @@ const AlbumsGrid = ({ albums, setAlbums }: AlbumsGridProps) => {
     }
   };
 
-  const albumIds = useMemo(
-    () => albums.map((album: Album) => album.id),
-    [albums]
-  );
+  const albumIds = useMemo(() => albums.map((album: Album) => album.id), [albums]);
+
+  const handleAlbumClick = (albumId: number) => {
+    // Сохраняем позицию прокрутки перед переходом
+    sessionStorage.setItem("scrollPosition", window.scrollY.toString());
+    router.push(`/album/${albumId}`);
+  };
+
+  const handleMiddleClick = (e: React.MouseEvent, albumId: number) => {
+    if (e.button === 1) {
+      e.preventDefault();
+      window.open(`/album/${albumId}`, "_blank");
+    }
+  };
 
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -130,7 +121,8 @@ const AlbumsGrid = ({ albums, setAlbums }: AlbumsGridProps) => {
             <SortableAlbum
               key={album.id}
               album={album}
-              onClick={() => router.push(`/album/${album.id}`)}
+              onClick={() => handleAlbumClick(album.id)}
+              onMiddleClick={(e) => handleMiddleClick(e, album.id)}
             />
           ))}
         </div>
@@ -144,11 +136,9 @@ export default AlbumsGrid;
 const styles = {
   albumListStyle: css({
     display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: "24px",
-    padding: "30px 0",
-    width: "100%",
-    maxWidth: "1200px",
+    gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+    gap: "1rem",
+    padding: "1rem 0",
   }),
   albumCardStyle: css({
     position: "relative",

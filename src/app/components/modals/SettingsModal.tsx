@@ -4,11 +4,11 @@ import { FC, useState, useEffect } from "react";
 import { FaKeyboard, FaPalette } from "react-icons/fa6";
 import { GiTechnoHeart } from "react-icons/gi";
 import { TbAlertOctagonFilled } from "react-icons/tb";
-import { AiFillCloseSquare } from "react-icons/ai";
 import { TabContent } from "./settingsModalComponents/TabContent";
 import { Theme } from "@/app/shared/theme/themePalette";
 import { customFonts } from "@/app/shared/theme/customFonts";
 import { PiTreeStructureBold } from "react-icons/pi";
+import { FaTimes } from "react-icons/fa";
 import { BsInfoSquare } from "react-icons/bs";
 
 interface SettingsModalProps {
@@ -24,13 +24,7 @@ interface SettingsModalProps {
  * @component
  * @returns {JSX.Element} Рендер модального окна с настройками в таб-режиме.
  */
-const SettingsModal: FC<SettingsModalProps> = ({
-  isOpen,
-  onClose,
-  deleteAllAlbums,
-  albumCount,
-  loading = false,
-}) => {
+const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, deleteAllAlbums, albumCount, loading = false }) => {
   const [uploadFolderSize, setUploadFolderSize] = useState("");
   const [imageFitMode, setImageFitMode] = useState(() => {
     if (typeof window !== "undefined") {
@@ -40,13 +34,7 @@ const SettingsModal: FC<SettingsModalProps> = ({
   });
   const [activeTab, setActiveTab] = useState("Оформление");
 
-  const themes: Theme[] = [
-    "SpaceBlue",
-    "RoseMoon",
-    "Solarized",
-    "OnyxStorm",
-    "Nord",
-  ];
+  const themes: Theme[] = ["SpaceBlue", "RoseMoon", "Solarized", "OnyxStorm", "Nord"];
 
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
@@ -82,10 +70,7 @@ const SettingsModal: FC<SettingsModalProps> = ({
             ].map((tab) => (
               <button
                 key={tab.name}
-                css={css(
-                  styles.tabButton,
-                  activeTab === tab.name && styles.activeTabButton
-                )}
+                css={css(styles.tabButton, activeTab === tab.name && styles.activeTabButton)}
                 onClick={() => setActiveTab(tab.name)}
               >
                 {tab.icon} &nbsp; <span css={styles.tabText}>{tab.name}</span>
@@ -109,7 +94,7 @@ const SettingsModal: FC<SettingsModalProps> = ({
         </div>
 
         <button css={styles.closeButton} onClick={onClose} disabled={loading}>
-          <AiFillCloseSquare css={styles.closeIcon} />
+          <FaTimes css={styles.closeIcon} />
         </button>
       </div>
     </div>
