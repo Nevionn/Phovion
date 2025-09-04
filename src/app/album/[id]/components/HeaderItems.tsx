@@ -210,14 +210,23 @@ const style = {
   }),
   deleteButton: css({
     fontFamily: customFonts.fonts.ru,
-    fontSize: 15,
+    fontSize: "0.9375rem",
     color: "white",
     backgroundColor: "#2385B7",
-    border: "thick doublergb(255, 255, 255)",
+    border: "none",
+    borderRadius: "10px",
     width: "100%",
     cursor: "pointer",
     height: 40,
     marginBottom: "0.5rem",
+    position: "relative",
+
+    boxShadow: `
+    0 4px 6px rgba(0, 0, 0, 0.27), 
+    0px 4px 0 0 #124158ff, // Нижний правый угол
+    0px 4px 0 0 #124158ff // Нижний левый угол
+  `,
+    transition: "background-color 0.1s, box-shadow 0.1s",
 
     "&:last-child": {
       marginBottom: 0,
@@ -225,6 +234,20 @@ const style = {
 
     "&:hover": {
       backgroundColor: "#E14B64",
+      boxShadow: `
+      0 4px 6px rgba(0, 0, 0, 0.27), 
+      0px 4px 0 0 #521e27ff, 
+      0px 4px 0 0 #521e27ff 
+    `,
+    },
+
+    "&:active": {
+      boxShadow: `
+      0 4px 6px rgba(0, 0, 0, 0.27), 
+      0px 4px 0 0 #521e27ff, 
+      0px 4px 0 0 #521e27ff 
+    `,
+      transform: "translateY(2px)",
     },
   }),
 };

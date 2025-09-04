@@ -41,8 +41,7 @@ const RenameAlbumModal = ({
 
     const data: AlbumNaming = {
       name: newAlbumName,
-      description:
-        newAlbumDescription.trim() === "" ? null : newAlbumDescription || null,
+      description: newAlbumDescription.trim() === "" ? null : newAlbumDescription || null,
     };
 
     console.log("Новое название и описание:", data);
@@ -133,15 +132,14 @@ const styles = {
     color: "white",
     fontFamily: customFonts.fonts.ru,
     letterSpacing: customFonts.fonts.size.ls,
-    fontSize: "1.5rem",
+    fontSize: customFonts.fonts.size.headerTitle,
     textAlign: "left",
     margin: 0,
   }),
   inputStyle: css({
-    border:
-      "2px solid var(--create-album-modal-input-fields-border-color-non-target)",
+    border: "2px solid var(--create-album-modal-input-fields-border-color-non-target)",
     borderRadius: "8px",
-    fontSize: "1rem",
+    fontSize: customFonts.fonts.size.inputText,
     height: "34px",
     width: "100%",
     backgroundColor: "var(--create-album-modal-input-fields-color)",
@@ -153,10 +151,9 @@ const styles = {
     },
   }),
   textareaStyle: css({
-    border:
-      "2px solid var(--create-album-modal-input-fields-border-color-non-target)",
+    border: "2px solid var(--create-album-modal-input-fields-border-color-non-target)",
     borderRadius: "8px",
-    fontSize: "1rem",
+    fontSize: customFonts.fonts.size.inputText,
     width: "100%",
     minHeight: "100px",
     backgroundColor: "var(--create-album-modal-input-fields-color)",
@@ -183,7 +180,7 @@ const styles = {
     transition: "filter 0.2s, box-shadow 0.2s",
     fontFamily: customFonts.fonts.ru,
     letterSpacing: customFonts.fonts.size.ls,
-    fontSize: 16,
+    fontSize: customFonts.fonts.size.buttonText,
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
     "&:hover": {
       filter: "brightness(1.15)",
@@ -202,7 +199,7 @@ const styles = {
     border: "none",
     fontFamily: customFonts.fonts.ru,
     letterSpacing: customFonts.fonts.size.ls,
-    fontSize: 16,
+    fontSize: customFonts.fonts.size.buttonText,
     borderRadius: "8px",
     cursor: "pointer",
     transition: "background-color 0.2s",
