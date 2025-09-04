@@ -93,7 +93,7 @@ const styles = {
   }),
   title: css({
     fontFamily: customFonts.fonts.ru,
-    fontSize: "1.5rem",
+    fontSize: customFonts.fonts.size.headerTitle,
     margin: "0 0 0 0",
     color: "white",
   }),
@@ -107,7 +107,7 @@ const styles = {
     marginBottom: 15,
   }),
   helpButton: css({
-    fontSize: 16,
+    fontSize: customFonts.fonts.size.buttonText,
     fontFamily: customFonts.fonts.ru,
     border: "none",
     borderRadius: 4,
@@ -120,7 +120,7 @@ const styles = {
     },
   }),
   helpText: css({
-    fontSize: 17,
+    fontSize: customFonts.fonts.size.helpText,
     fontFamily: "monospace",
     marginBottom: 0,
     color: "#5c5b5b",
@@ -138,11 +138,11 @@ const styles = {
     justifyContent: "flex-end",
   }),
   button: css({
-    padding: "8px 16px",
+    padding: "0.5rem 1rem",
     fontFamily: customFonts.fonts.ru,
-    fontSize: 18,
+    fontSize: customFonts.fonts.size.buttonText,
     border: "none",
-    borderRadius: 4,
+    borderRadius: "8px",
     cursor: "pointer",
     color: "white",
     backgroundColor: "#5cccb4ff",

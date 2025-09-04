@@ -124,9 +124,9 @@ const styles = {
   }),
   modalContent: css({
     backgroundColor: "var(--modal-background, #142b5c)",
-    padding: "20px",
+    padding: "25px",
     borderRadius: "10px",
-    width: "400px",
+    width: "500px",
     maxHeight: "80vh",
     overflowY: "auto",
     color: "white",
@@ -140,14 +140,15 @@ const styles = {
   }),
   modalTitle: css({
     fontFamily: customFonts.fonts.ru,
-    fontSize: "1.5rem",
+    fontSize: customFonts.fonts.size.headerTitle,
+    letterSpacing: customFonts.fonts.size.ls,
     margin: 0,
   }),
   closeButton: css({
     background: "none",
     border: "none",
     color: "white",
-    fontSize: "1.5rem",
+    fontSize: "1.4rem",
     cursor: "pointer",
     "&:hover": {
       color: "#ddd",
@@ -172,7 +173,7 @@ const styles = {
     backgroundColor: "var(--create-album-modal-input-fields-color)",
     color: "white",
     cursor: "pointer",
-    fontFamily: customFonts.fonts.ru,
+    fontSize: customFonts.fonts.size.inputText,
     "&:focus": {
       outline: "none",
       borderColor: "var(--create-album-modal-input-fields-border-color-target)",
@@ -184,11 +185,14 @@ const styles = {
     marginBottom: "15px",
     color: "white",
     fontFamily: customFonts.fonts.ru,
-    fontSize: "1rem",
+    fontSize: customFonts.fonts.size.checkBoxText,
+    letterSpacing: customFonts.fonts.size.ls,
   }),
   checkbox: css({
-    marginRight: "8px",
+    marginRight: "10px",
     cursor: "pointer",
+    height: customFonts.fonts.size.checkBoxHeight,
+    width: customFonts.fonts.size.checkBoxWidth,
   }),
   descriptionsContainer: css({
     marginBottom: "15px",
@@ -197,7 +201,8 @@ const styles = {
   }),
   descriptionsTitle: css({
     fontFamily: customFonts.fonts.ru,
-    fontSize: "1.2rem",
+    fontSize: customFonts.fonts.size.subTitle,
+    letterSpacing: customFonts.fonts.size.ls,
     margin: "0 0 10px 0",
   }),
   descriptionsList: css({
@@ -206,8 +211,9 @@ const styles = {
     margin: 0,
   }),
   descriptionItem: css({
-    padding: "5px 0",
+    padding: "6px 0",
     borderBottom: "1px solid #444",
+    fontSize: customFonts.fonts.size.sm,
     "&:last-child": {
       borderBottom: "none",
     },
@@ -215,6 +221,8 @@ const styles = {
   noDescriptions: css({
     color: "#aaa",
     fontFamily: customFonts.fonts.ru,
+    fontSize: 18,
+    letterSpacing: customFonts.fonts.size.ls,
     textAlign: "center",
     padding: "10px 0",
   }),
@@ -229,11 +237,11 @@ const styles = {
     backgroundImage: "var(--create-album-button-color)",
     color: "white",
     border: "none",
-    borderRadius: "5px",
+    borderRadius: "8px",
     cursor: "pointer",
     fontFamily: customFonts.fonts.ru,
     letterSpacing: customFonts.fonts.size.ls,
-
+    fontSize: customFonts.fonts.size.buttonText,
     "&:hover": {
       backgroundColor: "#4a6a8a",
       filter: "brightness(1.15)",
