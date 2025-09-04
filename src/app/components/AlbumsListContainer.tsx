@@ -46,10 +46,10 @@ const AlbumsListContainer = () => {
           const position = parseInt(savedScrollPosition, 10);
           if (!isNaN(position)) {
             console.log("Восстанавливаем скролл к:", position);
-            setTimeout(() => {
+            requestAnimationFrame(() => {
               window.scrollTo({ top: position, behavior: "smooth" });
               sessionStorage.removeItem("scrollPosition");
-            }, 1500);
+            });
           }
         }
       }
