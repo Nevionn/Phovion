@@ -66,7 +66,7 @@ const SearchAlbumModal = ({
           <FaSearch css={styles.searchIcon} />
           <input
             type="text"
-            placeholder="Введите название альбома..."
+            placeholder={includeDescription ? "Введите описание..." : "Введите название альбома..."}
             value={localSearchTerm}
             onChange={handleSearch}
             css={styles.searchInput}
