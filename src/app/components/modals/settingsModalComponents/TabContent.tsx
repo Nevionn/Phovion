@@ -9,6 +9,7 @@ import { DecryptedText } from "@/app/shared/DecryptedText";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 import { Theme } from "@/app/shared/theme/themePalette";
 import { customFonts } from "@/app/shared/theme/customFonts";
+import PhovionImage from "../../../../../preview/Phovion.png";
 
 interface TabContentProps {
   activeTab: string;
@@ -162,7 +163,7 @@ export const TabContent: FC<TabContentProps> = ({
         <div css={styles.tabSection}>
           <h3 css={styles.sectionTitle}>О программе</h3>
           <h1 css={styles.lableText}>
-            <span css={styles.metallicText}>Phovion</span>
+            <img src={PhovionImage.src} alt="Phovion" css={css({ maxWidth: "100%", height: "auto" })} />
           </h1>
           <div css={[styles.settingsContainer, { gap: 0 }]}>
             <p css={styles.infoItem}>
