@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import React from "react";
 import { Photo } from "../../types/photoTypes";
 import MovePhotoModal from "./MovePhotoModal";
@@ -39,6 +39,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
+  const viewerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     console.log("пикер открыт с фото:", photo);
@@ -51,7 +52,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
   // Корректировка после изменения photos (например, после удаления)
   useEffect(() => {
     if (photos.length === 0) {
-      console.log("photos пуст, закрываем пикер");
+      console.log("массив photos пуст, закрываем пикер");
       onClose();
       return;
     }
@@ -59,8 +60,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
     if (currentPhoto && !photos.some((p) => p.id === currentPhoto.id)) {
       console.log("текущая фотография удалена, выбираем новую");
       const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
-      const newIndex =
-        currentIndex >= photos.length ? photos.length - 1 : currentIndex;
+      const newIndex = currentIndex >= photos.length ? photos.length - 1 : currentIndex;
       setCurrentPhoto(photos[newIndex >= 0 ? newIndex : 0] || null);
     }
   }, [photos, currentPhoto, onClose]);
@@ -68,7 +68,9 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
   // Обработчик клавиш
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!currentPhoto || photos.length <= 1) return;
+      const isFocusedInViewer = viewerRef.current?.contains(document.activeElement);
+
+      if (!currentPhoto || photos.length <= 1 || (!isFocusedInViewer && isMoveModalOpen)) return;
 
       const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
       if (currentIndex === -1) return;
@@ -83,17 +85,14 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
         handleClose();
       } else if (event.key === "Delete") {
         handleDelete();
-      } else if (
-        event.key.toLowerCase() === "i" ||
-        event.key.toLowerCase() === "ш"
-      ) {
+      } else if ((event.key.toLowerCase() === "i" || event.key.toLowerCase() === "ш") && !isMoveModalOpen) {
         handleExpand(currentPhoto);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [photos, currentPhoto]);
+  }, [photos, currentPhoto, isMoveModalOpen]);
 
   const handlePrev = () => {
     if (!currentPhoto || photos.length <= 1) return;
@@ -116,7 +115,8 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
   };
 
   const handleClose = () => {
-    onClose(), setCurrentPhoto(null);
+    onClose();
+    setCurrentPhoto(null);
   };
 
   const handleDelete = async () => {
@@ -138,8 +138,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
 
       onSyncAfterPhotoDelete(currentPhoto.id);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
       console.error("Ошибка при удалении:", errorMessage);
       alert(`Не удалось удалить фотографию: ${errorMessage}`);
     } finally {
@@ -168,8 +167,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
         throw new Error(errorData.error || "Ошибка установки обложки");
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
       console.error("Ошибка при установке обложки:", errorMessage);
       alert(`Не удалось установить обложку: ${errorMessage}`);
     }
@@ -189,41 +187,29 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
 
   // Вычисляем текущий индекс для индикации (например, "2 из 8")
   const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
-  const photoPosition =
-    photos.length > 1 ? `${currentIndex + 1} из ${photos.length}` : "";
+  const photoPosition = photos.length > 1 ? `${currentIndex + 1} из ${photos.length}` : "";
 
   return (
     <>
       <div css={style.overlay} onClick={handleClose}>
-        <div css={style.viewer} onClick={(e) => e.stopPropagation()}>
+        <div css={style.viewer} onClick={(e) => e.stopPropagation()} ref={viewerRef}>
           <button css={style.closeIcon} onClick={handleClose}>
             <AiOutlineClose />
           </button>
-          <button
-            css={style.switchAreaLeft}
-            onClick={handlePrev}
-            disabled={photos.length <= 1}
-          >
+
+          <button css={style.switchAreaLeft} onClick={handlePrev} disabled={photos.length <= 1}>
             <SlArrowLeft css={style.arrowIcon} />
           </button>
-          <img
-            src={currentPhoto.path}
-            alt={`Photo ${currentPhoto.id}`}
-            css={style.image}
-          />
-          <button
-            css={style.switchAreaRight}
-            onClick={handleNext}
-            disabled={photos.length <= 1}
-          >
+
+          <img src={currentPhoto.path} alt={`Photo ${currentPhoto.id}`} css={style.image} />
+
+          <button css={style.switchAreaRight} onClick={handleNext} disabled={photos.length <= 1}>
             <SlArrowRight css={style.arrowIcon} />
           </button>
+
           <div css={style.captionContainer}>
             <div style={{ display: "flex", alignItems: "center" }}>
-              <span
-                css={[style.actionButton, isDeleting && style.disabledButton]}
-                onClick={handleDelete}
-              >
+              <span css={[style.actionButton, isDeleting && style.disabledButton]} onClick={handleDelete}>
                 {isDeleting ? "Удаление..." : "Удалить"}
               </span>
               <TbSeparator />
@@ -235,18 +221,11 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
                 Сделать обложкой
               </span>
               <TbSeparator />
-              <span
-                css={style.actionButton}
-                onClick={() => handleExpand(currentPhoto)}
-              >
+              <span css={style.actionButton} onClick={() => handleExpand(currentPhoto)}>
                 Увеличить размер
               </span>
             </div>
-            <div>
-              {photoPosition && (
-                <span css={style.photoPosition}>{photoPosition}</span>
-              )}
-            </div>
+            <div>{photoPosition && <span css={style.photoPosition}>{photoPosition}</span>}</div>
           </div>
         </div>
       </div>
