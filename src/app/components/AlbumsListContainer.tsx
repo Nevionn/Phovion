@@ -3,6 +3,7 @@ import { css } from "@emotion/react";
 import { Album } from "../types/albumTypes";
 import { useState, useEffect } from "react";
 import { AlbumNaming } from "../types/albumTypes";
+import PhovionImage from "../../../preview/Phovion.png";
 
 import AlbumsControls from "./AlbumsControls";
 import AlbumsGrid from "./AlbumsGrid";
@@ -158,7 +159,13 @@ const AlbumsListContainer = () => {
             onOpenSearch={() => setIsSearchAlbumModalOpen(true)}
           />
         </div>
-        <AlbumsGrid albums={displayedAlbums} setAlbums={setAlbums} />
+        {albums.length === 0 ? (
+          <div css={styles.imageContainer}>
+            <img src={PhovionImage.src} alt="Phovion" css={styles.imageStyle} />
+          </div>
+        ) : (
+          <AlbumsGrid albums={displayedAlbums} setAlbums={setAlbums} />
+        )}
       </div>
       {isCreateAlbumModalOpen && (
         <CreateAlbumModal
@@ -238,5 +245,18 @@ const styles = {
     "@media (max-width: 480px)": {
       paddingBottom: "0.5rem",
     },
+  }),
+  imageContainer: css({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "calc(90vh - 6rem)",
+    width: "100%",
+  }),
+  imageStyle: css({
+    maxWidth: "100%",
+    height: "auto",
+    objectFit: "contain",
+    opacity: 0.5,
   }),
 };
