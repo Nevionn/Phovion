@@ -22,21 +22,21 @@ SORT-PHOTOS/
 │   │   │   │   ├── UploadSection.tsx
 │   │   │   │   └── modals/
 │   │   │   │       └── DownloadAlbumModal.tsx
-│   │   │   │       └── PhotoViewer.tsx
-│   │   │   │       └── RenameAlbumModal.tsx
+│   │   │   │       ├── PhotoViewer.tsx
+│   │   │   │       ├── RenameAlbumModal.tsx
 │   │   │   │       └── MovePhotoModal.tsx
 │   │   │   ├── type/
 │   │   │   │   └── photoTypes.ts
 │   │   │   ├── utils/
-│   │   │   │   └── convertingDataTransfer.ts
+│   │   │   │   ├──convertingDataTransfer.ts
 │   │   │   │   └── expandPhotoUtils.ts
 │   │   │   ├── hooks/
-│   │   │   │   └── useAlbumData.ts
-│   │   │   │   └── useClearAlbum.ts
-│   │   │   │   └── useDeleteAlbum.ts
-│   │   │   │   └── useDownloadAlbum.ts
-│   │   │   │   └── useDropHandler.ts
-│   │   │   │   └── useRenameAlbum.ts
+│   │   │   │   ├── useAlbumData.ts
+│   │   │   │   ├── useClearAlbum.ts
+│   │   │   │   ├── useDeleteAlbum.ts
+│   │   │   │   ├── useDownloadAlbum.ts
+│   │   │   │   ├── useDropHandler.ts
+│   │   │   │   ├── useRenameAlbum.ts
 │   │   │   │   └── useUploadPhotos.ts
 │   │   │   └── page.tsx - Страница выбранного альбома (галерея фотографий)
 │   │   ├── api/
