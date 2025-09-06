@@ -9,7 +9,7 @@ import { DecryptedText } from "@/app/shared/DecryptedText";
 import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 import { Theme } from "@/app/shared/theme/themePalette";
 import { customFonts } from "@/app/shared/theme/customFonts";
-import PhovionImage from "../../../../../preview/Phovion.png";
+import PhovionImage from "../../../../../preview/Phovion.webp";
 
 interface TabContentProps {
   activeTab: string;

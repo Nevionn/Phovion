@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import { Album } from "../types/albumTypes";
 import { useState, useEffect } from "react";
 import { AlbumNaming } from "../types/albumTypes";
-import PhovionImage from "../../../preview/Phovion.png";
+import PhovionImage from "../../../preview/Phovion.webp";
 
 import AlbumsControls from "./AlbumsControls";
 import AlbumsGrid from "./AlbumsGrid";
