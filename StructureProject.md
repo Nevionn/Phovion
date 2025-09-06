@@ -21,17 +21,23 @@ SORT-PHOTOS/
 │   │   │   │   ├── SortablePhoto.tsx
 │   │   │   │   ├── UploadSection.tsx
 │   │   │   │   └── modals/
-│   │   │   │       └── PhotoViewer.tsx
-│   │   │   │       └── RenameAlbumModal.tsx
+│   │   │   │       └── DownloadAlbumModal.tsx
+│   │   │   │       ├── PhotoViewer.tsx
+│   │   │   │       ├── RenameAlbumModal.tsx
 │   │   │   │       └── MovePhotoModal.tsx
 │   │   │   ├── type/
 │   │   │   │   └── photoTypes.ts
 │   │   │   ├── utils/
-│   │   │   │   └── utils.ts
+│   │   │   │   ├──convertingDataTransfer.ts
+│   │   │   │   └── expandPhotoUtils.ts
 │   │   │   ├── hooks/
-│   │   │   │   └── useAlbumData.ts
-│   │   │   │   └── useDeleteAlbum.ts
-│   │   │   │   └── useRenameAlbum.ts
+│   │   │   │   ├── useAlbumData.ts
+│   │   │   │   ├── useClearAlbum.ts
+│   │   │   │   ├── useDeleteAlbum.ts
+│   │   │   │   ├── useDownloadAlbum.ts
+│   │   │   │   ├── useDropHandler.ts
+│   │   │   │   ├── useRenameAlbum.ts
+│   │   │   │   └── useUploadPhotos.ts
 │   │   │   └── page.tsx - Страница выбранного альбома (галерея фотографий)
 │   │   ├── api/
 │   │   │   ├── albums/
@@ -45,6 +51,8 @@ SORT-PHOTOS/
 │   │   │   │   │   └── route.ts - Эндпоинт для создания нового альбома, метод POST
 │   │   │   │   ├── deleteAll/
 │   │   │   │   │   └── route.ts - Эндпоинт для удаления всех альбомов и их содержимого, метод DELETE
+│   │   │   │   ├── move/
+│   │   │   │   │   └── route.ts - Эндпоинт для перемещения фотографии из одного альбома в другой, метод PATCH
 │   │   │   │   ├── reorder/
 │   │   │   │   │   └── route.ts - Эндпоинт для сортировки альбомов путём dnd, метод POST
 │   │   │   │   └── take/
@@ -70,8 +78,18 @@ SORT-PHOTOS/
 │   │   │   │   ├── CyberButton.tsx
 │   │   │   │   ├── cyber-button.css
 │   │   │   │   └── BackToTopButton.tsx
-│   │   │   └── separator/
-│   │   │       └── Separator.tsx
+│   │   │   ├── dbPath/
+│   │   │   │   └── dbPath.ts
+│   │   │   ├── separator/
+│   │   │   │   └── Separator.tsx
+│   │   │   ├── theme/
+│   │   │   │   ├── colorConstant.ts
+│   │   │   │   ├── customFonts.ts
+│   │   │   │   ├── themePalette.ts
+│   │   │   │   └── useThemeManager.ts
+│   │   │   └── DecryptedText.tsx
+│   │   ├── globalTypes/
+│   │   │   └── file-system-access.d.ts
 │   │   │
 │   │   └── components/ - Компоненты главной страницы (списка альбомов)
 │   │       ├── AlbumsControls.tsx
@@ -83,6 +101,7 @@ SORT-PHOTOS/
 │   └── albumTypes.ts
 ├── favicon.ico
 ├── globals.css
+├── not-found.tsx
 ├── layout.tsx
 └── page.tsx - Основная страница (список альбомов)
 ```

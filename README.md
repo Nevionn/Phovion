@@ -54,6 +54,10 @@
 
 # Сборка из исходников
 
+## Структура проекта
+
+- [Структура](https://github.com/Nevionn/Phovion/blob/master/StructureProject.md)
+
 ## Зависимости
 
 - Node.js: v18.x или выше ([Установить](https://nodejs.org/en))
