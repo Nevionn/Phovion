@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+const prisma = global.prisma || new PrismaClient();
+if (process.env.NODE_ENV !== "production") global.prisma = prisma;
 
 export async function GET(request: Request) {
   try {
@@ -28,7 +29,5 @@ export async function GET(request: Request) {
       console.error("Стек ошибки:", error.stack);
     }
     return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }
