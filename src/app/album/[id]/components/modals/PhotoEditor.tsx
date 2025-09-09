@@ -19,17 +19,6 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ photo, onClose, onSave }) => 
   const [activeMode, setActiveMode] = useState<string | null>(null);
   const [currentZoom, setCurrentZoom] = useState(100);
 
-  useEffect(() => {
-    if (photo) setIsLoading(false);
-  }, [photo]);
-
-  const handleSave = () => {
-    if (photo) {
-      onSave(photo.path);
-    }
-    onClose();
-  };
-
   const modes = [
     { name: "Обрезка", icon: FiCrop },
     { name: "Фильтры", icon: FiFilter },
@@ -38,6 +27,23 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ photo, onClose, onSave }) => 
     { name: "Размытие", icon: MdBlurOn },
     { name: "Цветокоррекция", icon: FiEdit2 },
   ];
+
+  useEffect(() => {
+    if (photo) {
+      setIsLoading(false);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [photo]);
+
+  const handleSave = () => {
+    if (photo) {
+      onSave(photo.path);
+    }
+    onClose();
+  };
 
   const handleModeClick = (mode: string) => {
     setActiveMode((prev) => (prev === mode ? null : mode));
@@ -48,7 +54,16 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ photo, onClose, onSave }) => 
   };
 
   const handleZoomOut = () => {
-    setCurrentZoom((prev) => Math.max(prev - 10, 10));
+    setCurrentZoom((prev) => Math.max(prev - 10, 80));
+  };
+
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      handleZoomIn();
+    } else if (e.deltaY > 0) {
+      handleZoomOut();
+    }
   };
 
   if (!photo) return null;
@@ -64,7 +79,7 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ photo, onClose, onSave }) => 
         </div>
 
         <div css={styles.content}>
-          <div css={styles.photoArea}>
+          <div css={styles.photoArea} onWheel={handleWheel}>
             <img
               src={photo.path}
               alt={`Edit ${photo.id}`}
@@ -88,11 +103,11 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ photo, onClose, onSave }) => 
 
         <div css={styles.footer}>
           <div css={styles.zoomPanel}>
-            <div onClick={handleZoomIn}>
+            <div css={styles.zoomButton} onClick={handleZoomIn}>
               <FaPlus />
             </div>
             <span css={styles.zoomValue}>{currentZoom}%</span>
-            <div onClick={handleZoomOut}>
+            <div css={styles.zoomButton} onClick={handleZoomOut}>
               <FaMinus />
             </div>
           </div>
@@ -218,6 +233,13 @@ const styles = {
     alignItems: "center",
     justifyContent: "space-between",
     width: "12%",
+  }),
+  zoomButton: css({
+    cursor: "pointer",
+    borderRadius: "4px",
+    "&:hover": {
+      opacity: "0.7",
+    },
   }),
   zoomValue: css({
     margin: "0 0.5rem",
