@@ -1,12 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Photo } from "../../types/photoTypes";
 import { AiOutlineClose } from "react-icons/ai";
 import { FiCrop, FiFilter, FiType, FiEdit2 } from "react-icons/fi";
 import { MdBrush, MdBlurOn } from "react-icons/md";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { colorConst } from "@/app/shared/theme/colorConstant";
+import { useImageZoomPan } from "../../hooks/useImageZoomPan";
 
 interface PhotoEditorProps {
   photo: Photo | null;
@@ -17,16 +18,21 @@ interface PhotoEditorProps {
 const PhotoEditor: React.FC<PhotoEditorProps> = ({ photo, onClose, onSave }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeMode, setActiveMode] = useState<string | null>(null);
-  const [currentZoom, setCurrentZoom] = useState(100);
 
-  const modes = [
-    { name: "Обрезка", icon: FiCrop },
-    { name: "Фильтры", icon: FiFilter },
-    { name: "Текст", icon: FiType },
-    { name: "Кисть", icon: MdBrush },
-    { name: "Размытие", icon: MdBlurOn },
-    { name: "Цветокоррекция", icon: FiEdit2 },
-  ];
+  const {
+    currentZoom,
+    xOffset,
+    yOffset,
+    handleZoomIn,
+    handleZoomOut,
+    handleWheel,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleMouseLeave,
+    handleContextMenu,
+    onDragStart,
+  } = useImageZoomPan();
 
   useEffect(() => {
     if (photo) {
@@ -49,22 +55,14 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ photo, onClose, onSave }) => 
     setActiveMode((prev) => (prev === mode ? null : mode));
   };
 
-  const handleZoomIn = () => {
-    setCurrentZoom((prev) => Math.min(prev + 10, 200));
-  };
-
-  const handleZoomOut = () => {
-    setCurrentZoom((prev) => Math.max(prev - 10, 80));
-  };
-
-  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (e.deltaY < 0) {
-      handleZoomIn();
-    } else if (e.deltaY > 0) {
-      handleZoomOut();
-    }
-  };
+  const modes = [
+    { name: "Обрезка", icon: FiCrop },
+    { name: "Фильтры", icon: FiFilter },
+    { name: "Текст", icon: FiType },
+    { name: "Кисть", icon: MdBrush },
+    { name: "Размытие", icon: MdBlurOn },
+    { name: "Цветокоррекция", icon: FiEdit2 },
+  ];
 
   if (!photo) return null;
 
@@ -79,11 +77,24 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ photo, onClose, onSave }) => 
         </div>
 
         <div css={styles.content}>
-          <div css={styles.photoArea} onWheel={handleWheel}>
+          <div
+            css={styles.photoArea}
+            onWheel={handleWheel}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            onContextMenu={handleContextMenu}
+            onDragStart={onDragStart}
+          >
             <img
               src={photo.path}
               alt={`Edit ${photo.id}`}
-              css={css(styles.image, { transform: `scale(${currentZoom / 100})` })}
+              css={css(styles.image, {
+                transform: `scale(${currentZoom / 100}) translate(${xOffset}px, ${yOffset}px)`,
+                userSelect: "none",
+                draggable: false,
+              })}
             />
           </div>
 
@@ -176,6 +187,7 @@ const styles = {
     alignItems: "center",
     background: "#0f0f1a",
     overflow: "hidden",
+    position: "relative",
   }),
   image: css({
     width: "100%",
