@@ -36,6 +36,7 @@ SORT-PHOTOS/
 │   │   │   │   ├── useDeleteAlbum.ts
 │   │   │   │   ├── useDownloadAlbum.ts
 │   │   │   │   ├── useDropHandler.ts
+│   │   │   │   ├── useImageZoomPan.ts
 │   │   │   │   ├── useRenameAlbum.ts
 │   │   │   │   └── useUploadPhotos.ts
 │   │   │   └── page.tsx - Страница выбранного альбома (галерея фотографий)

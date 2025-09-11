@@ -150,8 +150,8 @@ const styles = {
   editor: css({
     display: "grid",
     gridTemplateRows: "auto 1fr auto",
-    width: "90%", // Адаптивная ширина по умолчанию
-    height: "90vh", // Адаптивная высота по умолчанию
+    width: "90%",
+    height: "90vh",
     background: "var(--modal-background)",
     borderRadius: "12px",
     padding: "1rem",
@@ -239,10 +239,10 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: "0.5rem",
-    maxHeight: "100%", // Ограничение высоты
-    overflowY: "auto", // Прокрутка при переполнении
+    maxHeight: "100%",
+    overflowY: "auto",
     "@media (max-width: 768px)": {
-      order: 2, // Перемещаем панель ниже на мобильных
+      order: 2,
       maxHeight: "40vh",
     },
     "@media (max-width: 576px)": {
