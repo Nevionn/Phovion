@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import React from "react";
 import { Photo } from "../../types/photoTypes";
 import MovePhotoModal from "./MovePhotoModal";
+import PhotoEditor from "./PhotoEditor";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 import { TbSeparator } from "react-icons/tb";
 import { AiOutlineClose } from "react-icons/ai";
@@ -39,6 +40,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const viewerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -117,6 +119,8 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
   const handleClose = () => {
     onClose();
     setCurrentPhoto(null);
+    setIsEditModalOpen(false);
+    setIsMoveModalOpen(false);
   };
 
   const handleDelete = async () => {
@@ -221,8 +225,12 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
                 Сделать обложкой
               </span>
               <TbSeparator />
+              <span css={style.actionButton} onClick={() => setIsEditModalOpen(true)}>
+                Редактировать
+              </span>
+              <TbSeparator />
               <span css={style.actionButton} onClick={() => handleExpand(currentPhoto)}>
-                Увеличить размер
+                Открыть оригинал
               </span>
             </div>
             <div>{photoPosition && <span css={style.photoPosition}>{photoPosition}</span>}</div>
@@ -235,6 +243,17 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
           currentAlbumId={albumId}
           onClose={() => setIsMoveModalOpen(false)}
           onMove={handleMove}
+        />
+      )}
+      {isEditModalOpen && (
+        <PhotoEditor
+          photo={currentPhoto}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={(editedPhoto) => {
+            // Логика сохранения отредактированного фото (пока лог)
+            console.log("Отредактированное фото:", editedPhoto);
+            setIsEditModalOpen(false);
+          }}
         />
       )}
     </>
@@ -260,7 +279,7 @@ const style = {
     position: "relative",
     maxWidth: "90%",
     maxHeight: "90vh",
-    background: "#1a1a2e",
+    background: "var(--modal-background)",
     border: colorConst.photoPicker.border,
     borderRadius: "12px",
     padding: "2rem",
