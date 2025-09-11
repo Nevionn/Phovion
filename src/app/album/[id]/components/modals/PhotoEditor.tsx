@@ -20,6 +20,8 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ photo, onClose, onSave }) => 
   const [activeMode, setActiveMode] = useState<string | null>(null);
 
   const {
+    containerRef,
+    imageRef,
     currentZoom,
     xOffset,
     yOffset,
@@ -78,6 +80,7 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ photo, onClose, onSave }) => 
 
         <div css={styles.content}>
           <div
+            ref={containerRef}
             css={styles.photoArea}
             onWheel={handleWheel}
             onMouseDown={handleMouseDown}
@@ -88,10 +91,11 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ photo, onClose, onSave }) => 
             onDragStart={onDragStart}
           >
             <img
+              ref={imageRef}
               src={photo.path}
               alt={`Edit ${photo.id}`}
               css={css(styles.image, {
-                transform: `scale(${currentZoom / 100}) translate(${xOffset}px, ${yOffset}px)`,
+                transform: `translate(${xOffset}px, ${yOffset}px) scale(${currentZoom / 100})`,
                 userSelect: "none",
                 draggable: false,
               })}
