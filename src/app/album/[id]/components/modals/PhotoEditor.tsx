@@ -150,24 +150,40 @@ const styles = {
   editor: css({
     display: "grid",
     gridTemplateRows: "auto 1fr auto",
-    width: "60%",
-    height: "80vh",
+    width: "90%", // Адаптивная ширина по умолчанию
+    height: "90vh", // Адаптивная высота по умолчанию
     background: "var(--modal-background)",
     borderRadius: "12px",
     padding: "1rem",
     boxShadow: colorConst.photoPicker.boxShadow,
     gap: "1rem",
+    "@media (min-width: 992px)": {
+      width: "60%",
+      height: "80vh",
+    },
+    "@media (max-width: 576px)": {
+      width: "100%",
+      height: "100vh",
+      borderRadius: 0,
+      padding: "0.5rem",
+    },
   }),
   header: css({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     padding: "0 0.5rem",
+    "@media (max-width: 576px)": {
+      padding: "0 0.25rem",
+    },
   }),
   title: css({
     color: "#fff",
     fontSize: "18px",
     fontWeight: 600,
+    "@media (max-width: 576px)": {
+      fontSize: "16px",
+    },
   }),
   closeIcon: css({
     background: "none",
@@ -176,12 +192,19 @@ const styles = {
     fontSize: "24px",
     cursor: "pointer",
     "&:hover": { color: colorConst.photoPicker.closeIcon.dim },
+    "@media (max-width: 576px)": {
+      fontSize: "20px",
+    },
   }),
   content: css({
     display: "grid",
     gridTemplateColumns: "70% 28%",
     gap: "1rem",
     overflow: "hidden",
+    "@media (max-width: 768px)": {
+      gridTemplateColumns: "100%",
+      gridTemplateRows: "auto auto",
+    },
   }),
   photoArea: css({
     border: "1px solid #3ccf91",
@@ -192,6 +215,13 @@ const styles = {
     background: "#0f0f1a",
     overflow: "hidden",
     position: "relative",
+    "@media (max-width: 768px)": {
+      height: "60vh",
+    },
+    "@media (max-width: 576px)": {
+      height: "50vh",
+      borderRadius: "4px",
+    },
   }),
   image: css({
     width: "100%",
@@ -209,6 +239,16 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: "0.5rem",
+    maxHeight: "100%", // Ограничение высоты
+    overflowY: "auto", // Прокрутка при переполнении
+    "@media (max-width: 768px)": {
+      order: 2, // Перемещаем панель ниже на мобильных
+      maxHeight: "40vh",
+    },
+    "@media (max-width: 576px)": {
+      fontSize: "12px",
+      padding: "0.25rem",
+    },
   }),
   modeItem: css({
     display: "flex",
@@ -219,6 +259,9 @@ const styles = {
     "&:hover": {
       background: "rgba(122, 92, 255, 0.2)",
     },
+    "@media (max-width: 576px)": {
+      padding: "0.25rem",
+    },
   }),
   activeMode: css({
     background: "rgba(122, 92, 255, 0.4)",
@@ -228,27 +271,46 @@ const styles = {
     marginRight: "0.5rem",
     color: "#7a5cff",
     fontSize: "18px",
+    "@media (max-width: 576px)": {
+      fontSize: "16px",
+    },
   }),
   modeText: css({
     color: "#fff",
+    "@media (max-width: 576px)": {
+      fontSize: "12px",
+    },
   }),
   footer: css({
     display: "grid",
     gridTemplateColumns: "70% 28%",
     gap: "1rem",
     alignItems: "center",
+    "@media (max-width: 768px)": {
+      gridTemplateColumns: "1fr",
+      gridTemplateRows: "auto auto",
+      gap: "0.5rem",
+    },
   }),
   zoomPanel: css({
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "12%",
     border: "1px solid #00bcd4",
     borderRadius: "8px",
     padding: "0.5rem",
     color: "#fff",
     fontSize: "14px",
     background: "#0f0f1a",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "12%",
+    "@media (max-width: 768px)": {
+      width: "100%",
+      justifyContent: "space-around",
+    },
+    "@media (max-width: 576px)": {
+      fontSize: "12px",
+      padding: "0.25rem",
+    },
   }),
   zoomButton: css({
     cursor: "pointer",
@@ -256,10 +318,16 @@ const styles = {
     "&:hover": {
       opacity: "0.7",
     },
+    "@media (max-width: 576px)": {
+      fontSize: "14px",
+    },
   }),
   zoomValue: css({
     margin: "0 0.5rem",
     fontSize: "14px",
+    "@media (max-width: 576px)": {
+      fontSize: "12px",
+    },
   }),
   saveButton: css({
     border: "1px solid #ff9800",
@@ -271,5 +339,13 @@ const styles = {
     justifySelf: "end",
     "&:hover:not(:disabled)": { background: "#ff980020" },
     "&:disabled": { cursor: "not-allowed", opacity: 0.5 },
+    "@media (max-width: 768px)": {
+      justifySelf: "center",
+      width: "100%",
+    },
+    "@media (max-width: 576px)": {
+      padding: "0.25rem 1rem",
+      fontSize: "12px",
+    },
   }),
 };
