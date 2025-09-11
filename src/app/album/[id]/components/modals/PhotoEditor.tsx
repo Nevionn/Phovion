@@ -113,6 +113,7 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ photo, onClose, onSave }) => 
                 <span css={styles.modeText}>{mode.name}</span>
               </div>
             ))}
+            <span css={styles.modeText}>В РАЗРАБОТКЕ</span>
           </div>
         </div>
 
