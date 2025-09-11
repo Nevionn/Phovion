@@ -119,6 +119,8 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
   const handleClose = () => {
     onClose();
     setCurrentPhoto(null);
+    setIsEditModalOpen(false);
+    setIsMoveModalOpen(false);
   };
 
   const handleDelete = async () => {
