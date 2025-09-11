@@ -230,7 +230,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
               </span>
               <TbSeparator />
               <span css={style.actionButton} onClick={() => handleExpand(currentPhoto)}>
-                Увеличить размер
+                Открыть оригинал
               </span>
             </div>
             <div>{photoPosition && <span css={style.photoPosition}>{photoPosition}</span>}</div>
