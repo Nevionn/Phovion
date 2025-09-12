@@ -15,7 +15,7 @@
  * @property {string} boxShadow - Стиль тени
  */
 
-const mainColorInterface = "#00ffea";
+export const mainColorInterface = "#00ffea";
 
 export const colorIcon = {
   bright: mainColorInterface,
@@ -67,6 +67,12 @@ export const colorConst = {
         borderColor: "#00d1ea",
         boxShadow: "0 0 5px #00d1ea",
       },
+    },
+  },
+
+  settingsModal: {
+    designTab: {
+      priorityText: "#00ff00",
     },
   },
 

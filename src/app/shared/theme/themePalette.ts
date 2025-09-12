@@ -1,9 +1,5 @@
-export type Theme =
-  | "SpaceBlue"
-  | "RoseMoon"
-  | "Solarized"
-  | "OnyxStorm"
-  | "Nord";
+export type Theme = "SpaceBlue" | "RoseMoon" | "Solarized" | "OnyxStorm" | "Nord";
+import { colorConst } from "./colorConstant";
 
 export const themeColors: Record<
   Theme,
@@ -31,6 +27,9 @@ export const themeColors: Record<
         inputFieldBorderTarget: string;
         inputFieldBorderNonTarget: string;
       };
+      photoViewer: {
+        borderColor: string;
+      };
     };
     globalButtons: {
       openCreateAlbumModalButton: {
@@ -42,13 +41,11 @@ export const themeColors: Record<
   SpaceBlue: {
     pages: {
       main: {
-        mainGradient:
-          "radial-gradient(150% 100% at 50% 100%, #135bc7 10%, #000814 60%, #041225 100%)",
+        mainGradient: "radial-gradient(150% 100% at 50% 100%, #135bc7 10%, #000814 60%, #041225 100%)",
         albumListContainerBorder: "1px solid rgba(21, 133, 208, 0.94)",
       },
       photoPage: {
-        backgroundColor:
-          "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+        backgroundColor: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
       },
     },
     modals: {
@@ -64,11 +61,13 @@ export const themeColors: Record<
         inputFieldBorderTarget: "rgb(85, 182, 247)",
         inputFieldBorderNonTarget: "rgb(12, 117, 236)",
       },
+      photoViewer: {
+        borderColor: colorConst.photoPicker.border,
+      },
     },
     globalButtons: {
       openCreateAlbumModalButton: {
-        bgColor:
-          "linear-gradient(211deg,rgb(47, 101, 152) 0%,rgb(67, 93, 133) 100%)",
+        bgColor: "linear-gradient(211deg,rgb(47, 101, 152) 0%,rgb(67, 93, 133) 100%)",
       },
     },
   },
@@ -81,14 +80,12 @@ export const themeColors: Record<
       },
 
       photoPage: {
-        backgroundColor:
-          "linear-gradient(135deg, #1f1a2eff 0%, #20163eff 50%, #230f60ff 100%)",
+        backgroundColor: "linear-gradient(135deg, #1f1a2eff 0%, #20163eff 50%, #230f60ff 100%)",
       },
     },
     modals: {
       settingsModal: {
-        settingBoxGradient:
-          "linear-gradient(to right, rgb(94, 19, 199), rgb(9, 0, 20))",
+        settingBoxGradient: "linear-gradient(to right, rgb(94, 19, 199), rgb(9, 0, 20))",
         settingBoxBorder: "#ff69b4",
         modalBackground: "#1a1a2e",
         modalTextColor: "white",
@@ -98,6 +95,9 @@ export const themeColors: Record<
         inputFieldBg: "#35355e",
         inputFieldBorderTarget: "rgba(188, 85, 247, 1)",
         inputFieldBorderNonTarget: "rgba(112, 30, 195, 1)",
+      },
+      photoViewer: {
+        borderColor: colorConst.photoPicker.border,
       },
     },
     globalButtons: {
@@ -109,8 +109,7 @@ export const themeColors: Record<
   Solarized: {
     pages: {
       main: {
-        mainGradient:
-          "radial-gradient(150% 100% at 50% 100%, #073642 10%, #002b36 60%, #001f27 100%)",
+        mainGradient: "radial-gradient(150% 100% at 50% 100%, #073642 10%, #002b36 60%, #001f27 100%)",
         albumListContainerBorder: "1px solid rgba(26, 143, 49, 0.94)",
       },
       photoPage: {
@@ -130,6 +129,9 @@ export const themeColors: Record<
         inputFieldBorderTarget: "",
         inputFieldBorderNonTarget: "",
       },
+      photoViewer: {
+        borderColor: colorConst.photoPicker.border,
+      },
     },
     globalButtons: {
       openCreateAlbumModalButton: {
@@ -140,8 +142,7 @@ export const themeColors: Record<
   OnyxStorm: {
     pages: {
       main: {
-        mainGradient:
-          "radial-gradient(150% 100% at 50% 100%, #282a36 10%, #1e1f29 60%, #14151a 100%)",
+        mainGradient: "radial-gradient(150% 100% at 50% 100%, #282a36 10%, #1e1f29 60%, #14151a 100%)",
         albumListContainerBorder: "1px solid rgba(137, 65, 205, 0.94)",
       },
       photoPage: {
@@ -161,6 +162,9 @@ export const themeColors: Record<
         inputFieldBorderTarget: "",
         inputFieldBorderNonTarget: "",
       },
+      photoViewer: {
+        borderColor: colorConst.photoPicker.border,
+      },
     },
     globalButtons: {
       openCreateAlbumModalButton: {
@@ -171,8 +175,7 @@ export const themeColors: Record<
   Nord: {
     pages: {
       main: {
-        mainGradient:
-          "radial-gradient(150% 100% at 50% 100%, #2e3440 10%, #242931 60%, #1a1f26 100%)",
+        mainGradient: "radial-gradient(150% 100% at 50% 100%, #2e3440 10%, #242931 60%, #1a1f26 100%)",
         albumListContainerBorder: "1px solid rgba(92, 90, 91, 0.94)",
       },
       photoPage: {
@@ -191,6 +194,9 @@ export const themeColors: Record<
         inputFieldBg: "#3c4350ff",
         inputFieldBorderTarget: "",
         inputFieldBorderNonTarget: "",
+      },
+      photoViewer: {
+        borderColor: colorConst.photoPicker.border,
       },
     },
     globalButtons: {

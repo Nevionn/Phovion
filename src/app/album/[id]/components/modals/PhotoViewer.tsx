@@ -280,7 +280,7 @@ const style = {
     maxWidth: "90%",
     maxHeight: "90vh",
     background: "var(--modal-background)",
-    border: colorConst.photoPicker.border,
+    border: "var(--photo-viewer-border-color)",
     borderRadius: "12px",
     padding: "2rem",
     boxShadow: colorConst.photoPicker.boxShadow,
