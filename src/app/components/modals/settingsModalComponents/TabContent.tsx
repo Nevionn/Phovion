@@ -111,7 +111,13 @@ export const TabContent: FC<TabContentProps> = ({
               <input
                 type="checkbox"
                 checked={enablePerformanceMode}
-                onChange={(e) => setEnablePerformanceMode(e.target.checked)}
+                onChange={(e) => {
+                  setEnablePerformanceMode(e.target.checked);
+                  if (e.target.checked) {
+                    setEnablePhotoViewerBorder(false);
+                    setEnableAlbumBorder(false);
+                  }
+                }}
               />
               <span css={styles.sectionTitleText}>
                 Включить режим производительности

@@ -16,7 +16,6 @@ import { themeColors, Theme } from "./themePalette";
  * @property {boolean} enablePerformanceMode - Состояние включения режима производительности, отключающего все обводки.
  * @property {function} setEnablePerformanceMode - Функция для переключения режима производительности.
  */
-
 export function useThemeManager() {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
@@ -52,8 +51,15 @@ export function useThemeManager() {
 
   /** Управление состоянием обводок и режима производительности */
   useEffect(() => {
-    if (enableAlbumBorder || enablePhotoViewerBorder) {
-      setEnablePerformanceMode(false);
+    if (typeof window !== "undefined") {
+      const storedPerformanceMode = localStorage.getItem("enablePerformanceMode");
+
+      if (storedPerformanceMode && JSON.parse(storedPerformanceMode)) {
+        setEnableAlbumBorder(false);
+        setEnablePhotoViewerBorder(false);
+      } else if (enableAlbumBorder || enablePhotoViewerBorder) {
+        setEnablePerformanceMode(false);
+      }
     }
   }, [enableAlbumBorder, enablePhotoViewerBorder]);
 
