@@ -31,6 +31,9 @@ export const themeColors: Record<
         borderColor: string;
         boxShadow: string;
       };
+      photoEditor: {
+        boxShadow: string;
+      };
     };
     globalButtons: {
       openCreateAlbumModalButton: {
@@ -64,6 +67,9 @@ export const themeColors: Record<
       },
       photoViewer: {
         borderColor: colorConst.photoPicker.border,
+        boxShadow: colorConst.photoPicker.boxShadow,
+      },
+      photoEditor: {
         boxShadow: colorConst.photoPicker.boxShadow,
       },
     },
@@ -102,6 +108,9 @@ export const themeColors: Record<
         borderColor: colorConst.photoPicker.border,
         boxShadow: colorConst.photoPicker.boxShadow,
       },
+      photoEditor: {
+        boxShadow: colorConst.photoPicker.boxShadow,
+      },
     },
     globalButtons: {
       openCreateAlbumModalButton: {
@@ -134,6 +143,9 @@ export const themeColors: Record<
       },
       photoViewer: {
         borderColor: colorConst.photoPicker.border,
+        boxShadow: colorConst.photoPicker.boxShadow,
+      },
+      photoEditor: {
         boxShadow: colorConst.photoPicker.boxShadow,
       },
     },
@@ -170,6 +182,9 @@ export const themeColors: Record<
         borderColor: colorConst.photoPicker.border,
         boxShadow: colorConst.photoPicker.boxShadow,
       },
+      photoEditor: {
+        boxShadow: colorConst.photoPicker.boxShadow,
+      },
     },
     globalButtons: {
       openCreateAlbumModalButton: {
@@ -202,6 +217,9 @@ export const themeColors: Record<
       },
       photoViewer: {
         borderColor: colorConst.photoPicker.border,
+        boxShadow: colorConst.photoPicker.boxShadow,
+      },
+      photoEditor: {
         boxShadow: colorConst.photoPicker.boxShadow,
       },
     },

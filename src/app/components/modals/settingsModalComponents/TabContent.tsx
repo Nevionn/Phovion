@@ -49,6 +49,8 @@ export const TabContent: FC<TabContentProps> = ({
     setEnablePhotoViewerBorder,
     enabledPhotoViewerShadow,
     setEnabledPhotoViewerShadow,
+    enabledPhotoEditorShadow,
+    setEnabledPhotoEditorShadow,
   } = useThemeManager();
 
   useEffect(() => {
@@ -115,6 +117,15 @@ export const TabContent: FC<TabContentProps> = ({
               <span css={styles.sectionTitleText}>Включить тень для фото пикера</span>
             </label>
 
+            <label css={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={enabledPhotoEditorShadow}
+                onChange={(e) => setEnabledPhotoEditorShadow(e.target.checked)}
+              />
+              <span css={styles.sectionTitleText}>Включить тень для фото редактора</span>
+            </label>
+
             <Separator css={styles.horizontalSeparator} />
 
             <p css={styles.subSectionTitle}>Производительность</p>
@@ -128,6 +139,7 @@ export const TabContent: FC<TabContentProps> = ({
                     setEnablePhotoViewerBorder(false);
                     setEnableAlbumBorder(false);
                     setEnabledPhotoViewerShadow(false);
+                    setEnabledPhotoEditorShadow(false);
                   }
                 }}
               />

@@ -17,6 +17,8 @@ import { themeColors, Theme } from "./themePalette";
  * @property {function} setEnablePerformanceMode - Функция для переключения режима производительности.
  * @property {boolean} enabledPhotoViewerShadow - Состояние включения тени для фото пикера.
  * @property {function} setEnabledPhotoViewerShadow - Функция для переключения тени для фото пикера.
+ * @property {boolean} enabledPhotoEditorShadow - Состояние включения тени для фото редактора.
+ * @property {function} setEnabledPhotoEditorShadow - Функция для переключения тени для фото редактора.
  */
 export function useThemeManager() {
   const [theme, setTheme] = useState<Theme>(() => {
@@ -51,6 +53,14 @@ export function useThemeManager() {
     return true;
   });
 
+  const [enabledPhotoEditorShadow, setEnabledPhotoEditorShadow] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      const photoEditorStoredShadow = localStorage.getItem("enabledPhotoEditorShadow");
+      return photoEditorStoredShadow ? JSON.parse(photoEditorStoredShadow) : true;
+    }
+    return true;
+  });
+
   const [enablePerformanceMode, setEnablePerformanceMode] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       const storedPerformanceMode = localStorage.getItem("enablePerformanceMode");
@@ -68,11 +78,12 @@ export function useThemeManager() {
         setEnableAlbumBorder(false);
         setEnablePhotoViewerBorder(false);
         setEnabledPhotoViewerShadow(false);
-      } else if (enableAlbumBorder || enablePhotoViewerBorder || enabledPhotoViewerShadow) {
+        setEnabledPhotoEditorShadow(false);
+      } else if (enableAlbumBorder || enablePhotoViewerBorder || enabledPhotoViewerShadow || enabledPhotoEditorShadow) {
         setEnablePerformanceMode(false);
       }
     }
-  }, [enableAlbumBorder, enablePhotoViewerBorder, enabledPhotoViewerShadow]);
+  }, [enableAlbumBorder, enablePhotoViewerBorder, enabledPhotoViewerShadow, enabledPhotoEditorShadow]);
 
   /** Применение стилей и сохранение в localStorage */
   useEffect(() => {
@@ -103,9 +114,16 @@ export function useThemeManager() {
         ? currentTheme.modals.photoViewer.boxShadow
         : "transparent";
 
+      const photoEditorShadow = enablePerformanceMode
+        ? "transparent"
+        : enabledPhotoEditorShadow
+        ? currentTheme.modals.photoEditor.boxShadow
+        : "transparent";
+
       document.documentElement.style.setProperty("--list-container-border-color", albumBorderColor);
       document.documentElement.style.setProperty("--photo-viewer-border-color", photoViewerBorderColor);
       document.documentElement.style.setProperty("--photo-viewer-border-shadow", photoViewerShadow);
+      document.documentElement.style.setProperty("--photo-editor-shadow", photoEditorShadow);
 
       document.documentElement.style.setProperty(
         "--modal-background",
@@ -141,9 +159,17 @@ export function useThemeManager() {
       localStorage.setItem("enableAlbumBorder", JSON.stringify(enableAlbumBorder));
       localStorage.setItem("enablePhotoViewerBorder", JSON.stringify(enablePhotoViewerBorder));
       localStorage.setItem("enabledPhotoViewerShadow", JSON.stringify(enabledPhotoViewerShadow));
+      localStorage.setItem("enabledPhotoEditorShadow", JSON.stringify(enabledPhotoEditorShadow));
       localStorage.setItem("enablePerformanceMode", JSON.stringify(enablePerformanceMode));
     }
-  }, [theme, enableAlbumBorder, enablePhotoViewerBorder, enablePerformanceMode, enabledPhotoViewerShadow]);
+  }, [
+    theme,
+    enableAlbumBorder,
+    enablePhotoViewerBorder,
+    enablePerformanceMode,
+    enabledPhotoViewerShadow,
+    enabledPhotoEditorShadow,
+  ]);
 
   return {
     theme,
@@ -156,5 +182,7 @@ export function useThemeManager() {
     setEnablePerformanceMode,
     enabledPhotoViewerShadow,
     setEnabledPhotoViewerShadow,
+    enabledPhotoEditorShadow,
+    setEnabledPhotoEditorShadow,
   };
 }
