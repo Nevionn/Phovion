@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { customFonts } from "../../shared/theme/customFonts";
 import { Album } from "@/app/types/albumTypes";
@@ -33,6 +33,8 @@ const SearchAlbumModal = ({
 }: SearchAlbumModalProps) => {
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   // Обновление поискового запроса при вводе
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
@@ -47,6 +49,12 @@ const SearchAlbumModal = ({
   };
 
   if (!isOpen) return null;
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
 
   // Фильтрация описаний для отображения (все описания, если галочка включена)
   const descriptions = includeDescription
@@ -69,6 +77,7 @@ const SearchAlbumModal = ({
             placeholder={includeDescription ? "Введите описание..." : "Введите название альбома..."}
             value={localSearchTerm}
             onChange={handleSearch}
+            ref={inputRef}
             css={styles.searchInput}
           />
         </div>
