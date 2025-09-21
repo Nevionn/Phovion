@@ -279,7 +279,7 @@ const style = {
     position: "relative",
     maxWidth: "90%",
     maxHeight: "90vh",
-    background: "var(--modal-background)",
+    background: "#1a1a2e", // var(--modal-background) при желание
     border: "var(--photo-viewer-border-color)",
     borderRadius: "12px",
     padding: "2rem",
