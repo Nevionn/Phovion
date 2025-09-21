@@ -9,4 +9,5 @@ body {
   background-attachment: fixed;
   color: white;
   scroll-behavior: smooth;
+  scrollbar-color: var(--scroll-bar-thumb-color) var(--scroll-bar-track-color);
 }

@@ -153,10 +153,10 @@ const styles = {
     gridTemplateRows: "auto 1fr auto",
     width: "90%",
     height: "90vh",
-    background: "var(--modal-background)",
+    background: "#1a1a2e", // var(--modal-background) при желание
     borderRadius: "12px",
     padding: "1rem",
-    boxShadow: colorConst.photoPicker.boxShadow,
+    boxShadow: "var(--photo-editor-shadow)",
     gap: "1rem",
     "@media (min-width: 992px)": {
       width: "60%",

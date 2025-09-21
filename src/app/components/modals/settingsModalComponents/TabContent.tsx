@@ -10,6 +10,8 @@ import { useThemeManager } from "@/app/shared/theme/useThemeManager";
 import { Theme } from "@/app/shared/theme/themePalette";
 import { customFonts } from "@/app/shared/theme/customFonts";
 import PhovionImage from "../../../../../preview/Phovion.webp";
+import Separator from "@/app/shared/separator/Separator";
+import { colorConst } from "@/app/shared/theme/colorConstant";
 
 interface TabContentProps {
   activeTab: string;
@@ -36,7 +38,20 @@ export const TabContent: FC<TabContentProps> = ({
   setImageFitMode,
   themes,
 }) => {
-  const { theme, setTheme, enableAlbumBorder, setEnableAlbumBorder } = useThemeManager();
+  const {
+    theme,
+    setTheme,
+    enablePerformanceMode,
+    enableAlbumBorder,
+    setEnablePerformanceMode,
+    setEnableAlbumBorder,
+    enablePhotoViewerBorder,
+    setEnablePhotoViewerBorder,
+    enabledPhotoViewerShadow,
+    setEnabledPhotoViewerShadow,
+    enabledPhotoEditorShadow,
+    setEnabledPhotoEditorShadow,
+  } = useThemeManager();
 
   useEffect(() => {
     if (activeTab === "Системная информация") {
@@ -82,6 +97,56 @@ export const TabContent: FC<TabContentProps> = ({
                 onChange={(e) => setEnableAlbumBorder(e.target.checked)}
               />
               <span css={styles.sectionTitleText}>Включить обводку для панели альбомов</span>
+            </label>
+
+            <label css={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={enablePhotoViewerBorder}
+                onChange={(e) => setEnablePhotoViewerBorder(e.target.checked)}
+              />
+              <span css={styles.sectionTitleText}>Включить обводку для панели фото пикера</span>
+            </label>
+
+            <label css={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={enabledPhotoViewerShadow}
+                onChange={(e) => setEnabledPhotoViewerShadow(e.target.checked)}
+              />
+              <span css={styles.sectionTitleText}>Включить тень для фото пикера</span>
+            </label>
+
+            <label css={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={enabledPhotoEditorShadow}
+                onChange={(e) => setEnabledPhotoEditorShadow(e.target.checked)}
+              />
+              <span css={styles.sectionTitleText}>Включить тень для фото редактора</span>
+            </label>
+
+            <Separator css={styles.horizontalSeparator} />
+
+            <p css={styles.subSectionTitle}>Производительность</p>
+            <label css={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={enablePerformanceMode}
+                onChange={(e) => {
+                  setEnablePerformanceMode(e.target.checked);
+                  if (e.target.checked) {
+                    setEnablePhotoViewerBorder(false);
+                    setEnableAlbumBorder(false);
+                    setEnabledPhotoViewerShadow(false);
+                    setEnabledPhotoEditorShadow(false);
+                  }
+                }}
+              />
+              <span css={styles.sectionTitleText}>
+                Включить режим производительности
+                {enablePerformanceMode && <span css={styles.priorityText}> (приоритет)</span>}
+              </span>
             </label>
           </div>
         </div>
@@ -227,6 +292,8 @@ const styles = {
     overflowY: "auto",
     backgroundColor: "rgba(0, 0, 0, 0.1)",
     borderRadius: "4px",
+    msOverflowStyle: "none", // Edge не поддерживает стилизацию
+
     "@media (max-width: 768px)": {
       width: "100%",
       padding: "0.8rem",
@@ -245,6 +312,18 @@ const styles = {
     fontSize: "1.2rem",
     color: "var(--modal-text-color, #00ffea)",
     marginBottom: "0.5rem",
+    "@media (max-width: 480px)": {
+      fontSize: "1rem",
+    },
+  }),
+  subSectionTitle: css({
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    fontFamily: customFonts.fonts.ru,
+    fontSize: "1.2rem",
+    color: "var(--modal-text-color, #00ffea)",
+    margin: "0",
     "@media (max-width: 480px)": {
       fontSize: "1rem",
     },
@@ -287,6 +366,9 @@ const styles = {
     textAlign: "start",
     fontSize: 36,
     margin: 0,
+  }),
+  priorityText: css({
+    color: colorConst.settingsModal.designTab.priorityText,
   }),
   metallicText: css({
     background: "linear-gradient(45deg, #1da8eeff, #4a657a, #d1d9ddff, #4a657a, #0f9af1ff)",
@@ -482,5 +564,11 @@ const styles = {
     "@media (max-width: 480px)": {
       fontSize: "0.9rem",
     },
+  }),
+  horizontalSeparator: css({
+    width: "100%",
+    height: 1,
+    backgroundColor: "white",
+    marginTop: 10,
   }),
 };
