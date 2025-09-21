@@ -292,6 +292,11 @@ const styles = {
     overflowY: "auto",
     backgroundColor: "rgba(0, 0, 0, 0.1)",
     borderRadius: "4px",
+
+    /* Стилизация полосы прокрутки */
+    scrollbarColor: "var(--scroll-bar-thumb-color) var(--scroll-bar-track-color)", // для Firefox
+    msOverflowStyle: "none", // IE и Edge не поддерживают стилизацию
+
     "@media (max-width: 768px)": {
       width: "100%",
       padding: "0.8rem",

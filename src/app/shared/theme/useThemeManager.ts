@@ -153,6 +153,8 @@ export function useThemeManager() {
         "--settings-modal-activeTab-button",
         currentTheme.modals.settingsModal.activeTabButtonColor
       );
+      document.documentElement.style.setProperty("--scroll-bar-thumb-color", currentTheme.scrollBar.thumb);
+      document.documentElement.style.setProperty("--scroll-bar-track-color", currentTheme.scrollBar.track);
 
       /** Сохранение всех состояний в localStorage */
       localStorage.setItem("appTheme", theme);

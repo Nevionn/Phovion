@@ -40,6 +40,10 @@ export const themeColors: Record<
         bgColor: string; // общий цвет и для кнопки "создать" внутри компонента CreateAlbumModal
       };
     };
+    scrollBar: {
+      thumb: string;
+      track: string;
+    };
   }
 > = {
   SpaceBlue: {
@@ -77,6 +81,10 @@ export const themeColors: Record<
       openCreateAlbumModalButton: {
         bgColor: "linear-gradient(211deg,rgb(47, 101, 152) 0%,rgb(67, 93, 133) 100%)",
       },
+    },
+    scrollBar: {
+      thumb: "#00ffea39",
+      track: "#142b5c",
     },
   },
   RoseMoon: {
@@ -117,6 +125,10 @@ export const themeColors: Record<
         bgColor: "linear-gradient(211deg, #846392 0%, #604385 100%)",
       },
     },
+    scrollBar: {
+      thumb: "#282847ff",
+      track: "#1a1a2e",
+    },
   },
   Solarized: {
     pages: {
@@ -153,6 +165,10 @@ export const themeColors: Record<
       openCreateAlbumModalButton: {
         bgColor: "linear-gradient(211deg, #638592ff 0%, #438569ff 100%)",
       },
+    },
+    scrollBar: {
+      thumb: "#00ffea39",
+      track: "#002b36",
     },
   },
   OnyxStorm: {
@@ -191,6 +207,10 @@ export const themeColors: Record<
         bgColor: "linear-gradient(211deg, #444b4eff 0%, #6a887cff 100%)",
       },
     },
+    scrollBar: {
+      thumb: "#282847ff",
+      track: "#1e1f29",
+    },
   },
   Nord: {
     pages: {
@@ -227,6 +247,10 @@ export const themeColors: Record<
       openCreateAlbumModalButton: {
         bgColor: "linear-gradient(211deg, #637492ff 0%, #435885ff 100%)",
       },
+    },
+    scrollBar: {
+      thumb: "#81a1c1",
+      track: "#242931",
     },
   },
 };
