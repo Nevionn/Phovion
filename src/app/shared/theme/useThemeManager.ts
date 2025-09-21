@@ -15,6 +15,8 @@ import { themeColors, Theme } from "./themePalette";
  * @property {function} setEnablePhotoViewerBorder - Функция для переключения обводки панели фото пикера.
  * @property {boolean} enablePerformanceMode - Состояние включения режима производительности, отключающего все обводки.
  * @property {function} setEnablePerformanceMode - Функция для переключения режима производительности.
+ * @property {boolean} enabledPhotoViewerShadow - Состояние включения тени для фото пикера.
+ * @property {function} setEnabledPhotoViewerShadow - Функция для переключения тени для фото пикера.
  */
 export function useThemeManager() {
   const [theme, setTheme] = useState<Theme>(() => {
@@ -41,6 +43,14 @@ export function useThemeManager() {
     return true;
   });
 
+  const [enabledPhotoViewerShadow, setEnabledPhotoViewerShadow] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      const photoViewerStoredShadow = localStorage.getItem("enabledPhotoViewerShadow");
+      return photoViewerStoredShadow ? JSON.parse(photoViewerStoredShadow) : true;
+    }
+    return true;
+  });
+
   const [enablePerformanceMode, setEnablePerformanceMode] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       const storedPerformanceMode = localStorage.getItem("enablePerformanceMode");
@@ -57,11 +67,12 @@ export function useThemeManager() {
       if (storedPerformanceMode && JSON.parse(storedPerformanceMode)) {
         setEnableAlbumBorder(false);
         setEnablePhotoViewerBorder(false);
-      } else if (enableAlbumBorder || enablePhotoViewerBorder) {
+        setEnabledPhotoViewerShadow(false);
+      } else if (enableAlbumBorder || enablePhotoViewerBorder || enabledPhotoViewerShadow) {
         setEnablePerformanceMode(false);
       }
     }
-  }, [enableAlbumBorder, enablePhotoViewerBorder]);
+  }, [enableAlbumBorder, enablePhotoViewerBorder, enabledPhotoViewerShadow]);
 
   /** Применение стилей и сохранение в localStorage */
   useEffect(() => {
@@ -73,18 +84,29 @@ export function useThemeManager() {
         "--theme-photo-page-background",
         currentTheme.pages.photoPage.backgroundColor
       );
+
       const albumBorderColor = enablePerformanceMode
         ? "transparent"
         : enableAlbumBorder
         ? currentTheme.pages.main.albumListContainerBorder
         : "transparent";
+
       const photoViewerBorderColor = enablePerformanceMode
         ? "transparent"
         : enablePhotoViewerBorder
         ? currentTheme.modals.photoViewer.borderColor
         : "transparent";
+
+      const photoViewerShadow = enablePerformanceMode
+        ? "transparent"
+        : enabledPhotoViewerShadow
+        ? currentTheme.modals.photoViewer.boxShadow
+        : "transparent";
+
       document.documentElement.style.setProperty("--list-container-border-color", albumBorderColor);
       document.documentElement.style.setProperty("--photo-viewer-border-color", photoViewerBorderColor);
+      document.documentElement.style.setProperty("--photo-viewer-border-shadow", photoViewerShadow);
+
       document.documentElement.style.setProperty(
         "--modal-background",
         currentTheme.modals.settingsModal.modalBackground
@@ -118,9 +140,10 @@ export function useThemeManager() {
       localStorage.setItem("appTheme", theme);
       localStorage.setItem("enableAlbumBorder", JSON.stringify(enableAlbumBorder));
       localStorage.setItem("enablePhotoViewerBorder", JSON.stringify(enablePhotoViewerBorder));
+      localStorage.setItem("enabledPhotoViewerShadow", JSON.stringify(enabledPhotoViewerShadow));
       localStorage.setItem("enablePerformanceMode", JSON.stringify(enablePerformanceMode));
     }
-  }, [theme, enableAlbumBorder, enablePhotoViewerBorder, enablePerformanceMode]);
+  }, [theme, enableAlbumBorder, enablePhotoViewerBorder, enablePerformanceMode, enabledPhotoViewerShadow]);
 
   return {
     theme,
@@ -131,5 +154,7 @@ export function useThemeManager() {
     setEnablePhotoViewerBorder,
     enablePerformanceMode,
     setEnablePerformanceMode,
+    enabledPhotoViewerShadow,
+    setEnabledPhotoViewerShadow,
   };
 }

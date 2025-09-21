@@ -283,7 +283,7 @@ const style = {
     border: "var(--photo-viewer-border-color)",
     borderRadius: "12px",
     padding: "2rem",
-    boxShadow: colorConst.photoPicker.boxShadow,
+    boxShadow: "var(--photo-viewer-border-shadow)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",

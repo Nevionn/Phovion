@@ -29,6 +29,7 @@ export const themeColors: Record<
       };
       photoViewer: {
         borderColor: string;
+        boxShadow: string;
       };
     };
     globalButtons: {
@@ -63,6 +64,7 @@ export const themeColors: Record<
       },
       photoViewer: {
         borderColor: colorConst.photoPicker.border,
+        boxShadow: colorConst.photoPicker.boxShadow,
       },
     },
     globalButtons: {
@@ -98,6 +100,7 @@ export const themeColors: Record<
       },
       photoViewer: {
         borderColor: colorConst.photoPicker.border,
+        boxShadow: colorConst.photoPicker.boxShadow,
       },
     },
     globalButtons: {
@@ -131,6 +134,7 @@ export const themeColors: Record<
       },
       photoViewer: {
         borderColor: colorConst.photoPicker.border,
+        boxShadow: colorConst.photoPicker.boxShadow,
       },
     },
     globalButtons: {
@@ -164,6 +168,7 @@ export const themeColors: Record<
       },
       photoViewer: {
         borderColor: colorConst.photoPicker.border,
+        boxShadow: colorConst.photoPicker.boxShadow,
       },
     },
     globalButtons: {
@@ -197,6 +202,7 @@ export const themeColors: Record<
       },
       photoViewer: {
         borderColor: colorConst.photoPicker.border,
+        boxShadow: colorConst.photoPicker.boxShadow,
       },
     },
     globalButtons: {
