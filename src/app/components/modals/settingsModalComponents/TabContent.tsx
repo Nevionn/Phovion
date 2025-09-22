@@ -168,7 +168,7 @@ export const TabContent: FC<TabContentProps> = ({
           <h3 css={styles.sectionTitle}>Поведение</h3>
           <div css={styles.settingsContainer}>
             <div css={styles.behaviorRow}>
-              <p css={styles.infoItem}>Режим отображения изображения:</p>
+              <p css={styles.infoItem}>Режим отображения оригинального изображения:</p>
               <div css={styles.radioCardContainer}>
                 <label css={styles.radioCard}>
                   <input

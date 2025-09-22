@@ -76,6 +76,13 @@ export const colorConst = {
     },
   },
 
+  albumsControls: {
+    iconColor: {
+      searchIcon: "#e6e9e9ff",
+      settingsIcon: "black",
+    },
+  },
+
   headerItems: {
     currentAlbumName: mainColorInterface,
     headerContainer: {
