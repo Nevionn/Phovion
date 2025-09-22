@@ -90,6 +90,7 @@ export const TabContent: FC<TabContentProps> = ({
                 <ThemeBox key={themeName} themeName={themeName} currentTheme={theme} onSelect={setTheme} />
               ))}
             </div>
+            <p css={styles.subSectionTitle}>Панель альбомов</p>
             <label css={styles.checkboxLabel}>
               <input
                 type="checkbox"
@@ -98,7 +99,7 @@ export const TabContent: FC<TabContentProps> = ({
               />
               <span css={styles.sectionTitleText}>Включить обводку для панели альбомов</span>
             </label>
-
+            <p css={styles.subSectionTitle}>Фото пикер</p>
             <label css={styles.checkboxLabel}>
               <input
                 type="checkbox"
@@ -107,7 +108,7 @@ export const TabContent: FC<TabContentProps> = ({
               />
               <span css={styles.sectionTitleText}>Включить обводку для панели фото пикера</span>
             </label>
-
+            <p css={styles.subSectionTitle}>Фото редактор</p>
             <label css={styles.checkboxLabel}>
               <input
                 type="checkbox"
