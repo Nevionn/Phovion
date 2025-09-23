@@ -81,7 +81,6 @@ const styles = {
     color: "#e6e9e9ff",
     fontSize: "1rem",
     margin: 0,
-    paddingRight: 12,
   }),
   textButonCreate: css({
     fontFamily: customFonts.fonts.ru,
@@ -122,11 +121,11 @@ const styles = {
   }),
   openSearchAlbumModalButton: css({
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
     cursor: "pointer",
     height: "33px",
-    width: "84px",
+    width: "104px",
     backgroundColor: "transparent",
     border: "1px solid grey",
     borderRadius: 6,
