@@ -2,8 +2,9 @@
 import { css } from "@emotion/react";
 import { AlbumNaming } from "../types/albumTypes";
 import { FaMicrochip, FaSpinner } from "react-icons/fa6";
-import { FaSearch } from "react-icons/fa";
+import { IoSearch } from "react-icons/io5";
 import Separator from "../shared/separator/Separator";
+import { colorConst } from "../shared/theme/colorConstant";
 import { colorIcon } from "../shared/theme/colorConstant";
 import { customFonts } from "../shared/theme/customFonts";
 
@@ -19,7 +20,7 @@ interface AlbumControlsProps {
 }
 
 /**
- * Компонент управления альбомами, отображающий статистику контента (счётчики), и кнопки для создания альбома и открытия настроек.
+ * Компонент управления альбомами, отображающий статистику контента (счётчики), и кнопки для поиска альбома, создания альбома и открытия настроек.
  * @component
  */
 
@@ -36,17 +37,18 @@ const AlbumsControls = ({
       <div css={styles.headerStyle}>
         <p css={styles.titleStyle}>
           Альбомов: {albumCount}; Фотографий: {photoCount}
-          {loading && <FaSpinner css={styles.loadingIcon} style={{ fontSize: 20 }} />}
+          {loading && <FaSpinner css={styles.loadingIcon} style={{ fontSize: "1.25rem" }} />}
         </p>
         <div css={styles.mergeButtonsItem}>
           <button css={styles.openSearchAlbumModalButton} onClick={onOpenSearch}>
-            <FaSearch />
+            <p css={styles.textButonSearch}>поиск</p>
+            <IoSearch color={colorConst.albumsControls.iconColor.searchIcon} fontSize={"1.3rem"} />
           </button>
           <button css={styles.openCreateAlbumModalButton} onClick={onOpenCreateAlbum} disabled={loading}>
-            <p css={styles.textButon}>Создать альбом</p>
+            <p css={styles.textButonCreate}>Создать альбом</p>
           </button>
           <button css={styles.openSettingsModalButton} onClick={onOpenSettings}>
-            <FaMicrochip style={{ fontSize: 20 }} />
+            <FaMicrochip color={colorConst.albumsControls.iconColor.settingsIcon} />
           </button>
         </div>
       </div>
@@ -73,7 +75,14 @@ const styles = {
     color: "white",
     margin: 0,
   }),
-  textButon: css({
+  textButonSearch: css({
+    fontFamily: customFonts.fonts.ru,
+    textAlign: "center",
+    color: "#e6e9e9ff",
+    fontSize: "1rem",
+    margin: 0,
+  }),
+  textButonCreate: css({
     fontFamily: customFonts.fonts.ru,
     letterSpacing: customFonts.fonts.size.ls,
     margin: 0,
@@ -110,18 +119,26 @@ const styles = {
       boxShadow: "none",
     },
   }),
+  openSearchAlbumModalButton: css({
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    cursor: "pointer",
+    height: "33px",
+    width: "104px",
+    backgroundColor: "transparent",
+    border: "1px solid grey",
+    borderRadius: 6,
+    "&:hover": {
+      filter: "brightness(1.15)",
+    },
+  }),
   openSettingsModalButton: css({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
-  }),
-  openSearchAlbumModalButton: css({
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    cursor: "pointer",
-    fontSize: 20,
+    fontSize: 23,
   }),
   loadingIcon: css({
     marginLeft: 10,

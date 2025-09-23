@@ -159,8 +159,8 @@ const styles = {
     boxShadow: "var(--photo-editor-shadow)",
     gap: "1rem",
     "@media (min-width: 992px)": {
-      width: "60%",
-      height: "80vh",
+      width: "70%",
+      height: "90vh",
     },
     "@media (max-width: 576px)": {
       width: "100%",
