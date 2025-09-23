@@ -89,7 +89,7 @@ export const useImageZoomPan = () => {
   };
 
   const handleZoomIn = () => {
-    setCurrentZoom((prev) => Math.min(prev + 10, 200));
+    setCurrentZoom((prev) => Math.min(prev + 10, 300));
   };
 
   /** Уменьшение масштаба (до 100%). При возврате в 100% сбрасываются смещения */
