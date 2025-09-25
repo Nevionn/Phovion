@@ -126,8 +126,8 @@ export const useImageZoomPan = () => {
   /** Движение мыши при перетаскивании */
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isDragging && currentZoom > 100) {
-      let newX = e.clientX - startX;
-      let newY = e.clientY - startY;
+      const newX = e.clientX - startX;
+      const newY = e.clientY - startY;
       const clamped = clampOffsets(newX, newY);
       setTargetXOffset(clamped.x);
       setTargetYOffset(clamped.y);
