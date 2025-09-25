@@ -48,13 +48,13 @@ const SearchAlbumModal = ({
     onClose();
   };
 
-  if (!isOpen) return null;
-
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  if (!isOpen) return null;
 
   // Фильтрация описаний для отображения (все описания, если галочка включена)
   const descriptions = includeDescription
