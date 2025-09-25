@@ -53,7 +53,6 @@ const HeaderItems: React.FC<HeaderItemsProps> = ({
     return russianPattern.test(text) ? "ru" : "en";
   };
 
-  // Динамические стили для имени альбома
   const albumNameStyle = css({
     fontFamily: getLanguage(album?.name) === "ru" ? customFonts.fonts.ru : "'Orbitron', sans-serif",
     fontSize: "inherit",
@@ -150,7 +149,7 @@ const style = {
   }),
   albumNameNavItem: css({
     display: "inline-block",
-    maxWidth: "260px",
+    maxWidth: "350px",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
