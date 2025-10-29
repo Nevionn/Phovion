@@ -23,6 +23,8 @@ interface TabContentProps {
   setUploadFolderSize: (size: string) => void;
   imageFitMode: string;
   setImageFitMode: (mode: string) => void;
+  widthDescription: string;
+  setWidthDescription: (mode: string) => void;
   themes: Theme[];
 }
 
@@ -36,6 +38,8 @@ export const TabContent: FC<TabContentProps> = ({
   setUploadFolderSize,
   imageFitMode,
   setImageFitMode,
+  widthDescription,
+  setWidthDescription,
   themes,
 }) => {
   const {
@@ -76,6 +80,13 @@ export const TabContent: FC<TabContentProps> = ({
     setImageFitMode(mode);
     if (typeof window !== "undefined") {
       localStorage.setItem("imageFitMode", mode);
+    }
+  };
+
+  const handleDescriptionWidth = (mode: string) => {
+    setWidthDescription(mode);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("descriptionWidth", mode);
     }
   };
 
@@ -166,30 +177,61 @@ export const TabContent: FC<TabContentProps> = ({
       {activeTab === "Поведение" && (
         <div css={styles.tabSection}>
           <h3 css={styles.sectionTitle}>Поведение</h3>
-          <div css={styles.settingsContainer}>
-            <div css={styles.behaviorRow}>
-              <p css={styles.infoItem}>Режим отображения оригинального изображения:</p>
-              <div css={styles.radioCardContainer}>
-                <label css={styles.radioCard}>
-                  <input
-                    type="radio"
-                    value="contain"
-                    checked={imageFitMode === "contain"}
-                    onChange={() => handleImageFitChange("contain")}
-                    css={styles.radioInput}
-                  />
-                  <span css={styles.radioLabel}>Contain</span>
-                </label>
-                <label css={styles.radioCard}>
-                  <input
-                    type="radio"
-                    value="fill"
-                    checked={imageFitMode === "fill"}
-                    onChange={() => handleImageFitChange("fill")}
-                    css={styles.radioInput}
-                  />
-                  <span css={styles.radioLabel}>Fill</span>
-                </label>
+          <div css={styles.settingsContainerBehavior}>
+            {/* Блок 1 */}
+            <div css={styles.optionBlock}>
+              <div css={styles.optionHeader}>
+                <p css={styles.optionTitle}>Режим отображения оригинального изображения</p>
+                <div css={styles.optionButtons}>
+                  <label css={styles.optionButton}>
+                    <input
+                      type="radio"
+                      value="contain"
+                      checked={imageFitMode === "contain"}
+                      onChange={() => handleImageFitChange("contain")}
+                      css={styles.radioInput}
+                    />
+                    <span>Contain</span>
+                  </label>
+                  <label css={styles.optionButton}>
+                    <input
+                      type="radio"
+                      value="fill"
+                      checked={imageFitMode === "fill"}
+                      onChange={() => handleImageFitChange("fill")}
+                      css={styles.radioInput}
+                    />
+                    <span>Fill</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            {/* Блок 2 */}
+            <div css={styles.optionBlock}>
+              <div css={styles.optionHeader}>
+                <p css={styles.optionTitle}>Ширина блока описания альбома</p>
+                <div css={styles.optionButtons}>
+                  <label css={styles.optionButton}>
+                    <input
+                      type="radio"
+                      value="100%"
+                      checked={widthDescription === "100%"}
+                      onChange={() => handleDescriptionWidth("100%")}
+                      css={styles.radioInput}
+                    />
+                    <span>100%</span>
+                  </label>
+                  <label css={styles.optionButton}>
+                    <input
+                      type="radio"
+                      value="40%"
+                      checked={widthDescription === "40%"}
+                      onChange={() => handleDescriptionWidth("40%")}
+                      css={styles.radioInput}
+                    />
+                    <span>40%</span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -351,6 +393,13 @@ const styles = {
       gap: "0.8rem",
     },
   }),
+  settingsContainerBehavior: css({
+    display: "flex",
+    flexDirection: "column",
+    "@media (max-width: 480px)": {
+      gap: "0.8rem",
+    },
+  }),
   behaviorRow: css({
     display: "flex",
     alignItems: "center",
@@ -473,50 +522,55 @@ const styles = {
       fontSize: "14px",
     },
   }),
-  radioCardContainer: css({
+  radioInput: css({
+    display: "none",
+  }),
+  optionBlock: css({
     display: "flex",
+    flexDirection: "column",
+    backgroundColor: "transparent",
+    borderRadius: "6px",
+    padding: "0.5rem 0",
+  }),
+  optionHeader: css({
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     gap: "1rem",
-    marginLeft: "1rem",
-    "@media (max-width: 480px)": {
+    "@media (max-width: 768px)": {
       flexDirection: "column",
+      alignItems: "flex-start",
       gap: "0.5rem",
-      marginLeft: "0",
     },
   }),
-  radioCard: css({
+  optionTitle: css({
+    color: "#fff",
+    fontFamily: customFonts.fonts.ru,
+    fontSize: "1rem",
+    margin: 0,
+  }),
+  optionButtons: css({
+    display: "flex",
+    gap: "0.5rem",
+  }),
+  optionButton: css({
     display: "flex",
     alignItems: "center",
-    padding: "0.5rem 1rem",
+    justifyContent: "center",
+    padding: "0.6rem 1.5rem",
     backgroundColor: "#2a2a3e",
-    border: "2px solid transparent",
-    borderRadius: "4px",
+    borderRadius: "6px",
+    color: "#ccc",
+    fontFamily: customFonts.fonts.ru,
+    fontSize: "0.95rem",
     cursor: "pointer",
-    transition: "all 0.3s",
+    transition: "background-color 0.2s, color 0.2s",
     "&:hover": {
       backgroundColor: "#3a3a4e",
     },
     "& input:checked + span": {
-      fontWeight: "bold",
       color: "#00ffea",
-    },
-    "& input:focus + span": {
-      outline: "none",
-      borderColor: "#00ffea",
-    },
-    "@media (max-width: 480px)": {
-      padding: "0.3rem 0.8rem",
-    },
-  }),
-  radioInput: css({
-    display: "none",
-  }),
-  radioLabel: css({
-    fontFamily: customFonts.fonts.ru,
-    color: "#fff",
-    margin: 0,
-    userSelect: "none",
-    "@media (max-width: 480px)": {
-      fontSize: "0.9rem",
+      fontWeight: "bold",
     },
   }),
   keyShortcutsContainer: css({

@@ -26,12 +26,21 @@ interface SettingsModalProps {
  */
 const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, deleteAllAlbums, albumCount, loading = false }) => {
   const [uploadFolderSize, setUploadFolderSize] = useState("");
+
   const [imageFitMode, setImageFitMode] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("imageFitMode") || "contain";
     }
     return "contain";
   });
+
+  const [widthDescriptionStringBlock, setWidthDescriptionStringBlock] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("descriptionWidth") || "100%";
+    }
+    return "100%";
+  });
+
   const [activeTab, setActiveTab] = useState("Оформление");
 
   const themes: Theme[] = ["SpaceBlue", "RoseMoon", "Solarized", "OnyxStorm", "Nord"];
@@ -89,6 +98,8 @@ const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, deleteAllAlbum
             setUploadFolderSize={setUploadFolderSize}
             imageFitMode={imageFitMode}
             setImageFitMode={setImageFitMode}
+            widthDescription={widthDescriptionStringBlock}
+            setWidthDescription={setWidthDescriptionStringBlock}
             themes={themes}
           />
         </div>
