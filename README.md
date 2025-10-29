@@ -63,6 +63,8 @@
 - Node.js: v18.x или выше ([Установить](https://nodejs.org/en))
 - Git ([Установить](https://git-scm.com/downloads/win))
 
+### Первичная сборка
+
 ```bash
 git clone https://github.com/Nevionn/Phovion.git
 
@@ -77,6 +79,12 @@ npx prisma generate
 npm run dev
 
 ctrl + http://localhost:3000
+```
+
+### Последующий запуск приложения
+
+```bash
+npm run dev
 ```
 
 ## Получение обновлений 📦
