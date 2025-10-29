@@ -219,7 +219,10 @@ export const TabContent: FC<TabContentProps> = ({
                       onChange={() => handleDescriptionWidth("100%")}
                       css={styles.radioInput}
                     />
-                    <span>100%</span>
+                    <span>
+                      <span css={styles.numberText}>100</span>
+                      <span css={styles.percentText}>%</span>
+                    </span>
                   </label>
                   <label css={styles.optionButton}>
                     <input
@@ -229,7 +232,10 @@ export const TabContent: FC<TabContentProps> = ({
                       onChange={() => handleDescriptionWidth("40%")}
                       css={styles.radioInput}
                     />
-                    <span>40%</span>
+                    <span>
+                      <span css={styles.numberText}>40</span>
+                      <span css={styles.percentText}>%</span>
+                    </span>
                   </label>
                 </div>
               </div>
@@ -546,7 +552,7 @@ const styles = {
   optionTitle: css({
     color: "#fff",
     fontFamily: customFonts.fonts.ru,
-    fontSize: "1rem",
+    fontSize: "1.1rem",
     margin: 0,
   }),
   optionButtons: css({
@@ -572,6 +578,17 @@ const styles = {
       color: "#00ffea",
       fontWeight: "bold",
     },
+  }),
+  numberText: css({
+    fontFamily: customFonts.fonts.ru, // основной шрифт (цифры)
+    fontSize: "1rem",
+    textAlign: "center",
+  }),
+  percentText: css({
+    fontFamily: "serif",
+    fontSize: "1rem",
+    marginLeft: "2px",
+    textAlign: "center",
   }),
   keyShortcutsContainer: css({
     display: "flex",
