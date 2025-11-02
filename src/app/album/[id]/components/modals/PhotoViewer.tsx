@@ -134,6 +134,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ photoId: Number(currentPhoto.id) }),
       });
+      setCurrentPhoto(null);
 
       if (!res.ok) {
         const errorData = await res.json();
@@ -184,6 +185,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
   const handleMove = () => {
     if (onSyncAfterPhotoMove) {
       onSyncAfterPhotoMove(currentPhoto!.id);
+      setCurrentPhoto(null);
     }
   };
 
