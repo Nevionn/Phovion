@@ -432,7 +432,8 @@ const style = {
     color: colorConst.photoPicker.actionButton.bright,
     cursor: "pointer",
     fontFamily: customFonts.fonts.ru,
-    padding: "0.1rem 0.5rem",
+    textWrap: "nowrap",
+    padding: "0.1rem 0.3rem",
     borderRadius: "4px",
     transition: "background 0.3s",
     "&:hover": { background: colorConst.photoPicker.actionButton.dim },
@@ -445,8 +446,9 @@ const style = {
   photoPosition: css({
     color: colorConst.photoPicker.photoPosition,
     fontFamily: customFonts.fonts.ru,
+    textWrap: "nowrap",
     fontSize: "14px",
-    padding: "0.1rem 0.5rem",
+    padding: "0.1rem 0.3rem",
     borderRadius: "4px",
   }),
 };
