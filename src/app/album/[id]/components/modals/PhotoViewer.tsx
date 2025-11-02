@@ -80,21 +80,23 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
 
   // --- Инициализация текущего фото ---
   useEffect(() => {
-    console.log("пикер открыт с фото:", photo);
     if (photo && photos.length > 0) {
       const initialPhoto = photos.find((p) => p.id === photo.id) || photos[0];
       setCurrentPhoto(initialPhoto);
     }
   }, [photo, photos]);
 
-  // --- Блокируем скролл фона ---
+  // --- Блокируем скролл фона только когда пикер открыт ---
   useEffect(() => {
-    const originalStyle = window.getComputedStyle(document.body).overflow;
+    if (!photo) return;
+
+    const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
     return () => {
-      document.body.style.overflow = originalStyle;
+      document.body.style.overflow = originalOverflow || "";
     };
-  }, []);
+  }, [photo]);
 
   // --- Синхронизация после удаления ---
   useEffect(() => {
@@ -432,7 +434,8 @@ const style = {
     color: colorConst.photoPicker.actionButton.bright,
     cursor: "pointer",
     fontFamily: customFonts.fonts.ru,
-    padding: "0.1rem 0.5rem",
+    textWrap: "nowrap",
+    padding: "0.1rem 0.3rem",
     borderRadius: "4px",
     transition: "background 0.3s",
     "&:hover": { background: colorConst.photoPicker.actionButton.dim },
@@ -445,8 +448,9 @@ const style = {
   photoPosition: css({
     color: colorConst.photoPicker.photoPosition,
     fontFamily: customFonts.fonts.ru,
+    textWrap: "nowrap",
     fontSize: "14px",
-    padding: "0.1rem 0.5rem",
+    padding: "0.1rem 0.3rem",
     borderRadius: "4px",
   }),
 };
