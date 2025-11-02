@@ -285,7 +285,7 @@ export const TabContent: FC<TabContentProps> = ({
               требуя серверной инфраструктуры.
             </p>
             <p css={styles.infoItem}>Разработано Nevionn для удобного хранения и просмотра ваших изображений.</p>
-            <p css={styles.infoItem}>Версия: 1.1.2</p>
+            <p css={styles.infoItem}>Версия: 1.2.2</p>
             <div css={styles.contactsContainer}>
               <p css={styles.infoItem}>
                 <VscGithubInverted />

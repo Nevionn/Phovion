@@ -11,6 +11,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { colorConst } from "@/app/shared/theme/colorConstant";
 import { customFonts } from "@/app/shared/theme/customFonts";
 import { handleExpand } from "../../utils/expandPhotoUtils";
+import { useImageZoomPan } from "../../hooks/useImageZoomPan";
 
 interface PhotoViewerProps {
   photo: Photo | null;
@@ -24,7 +25,8 @@ interface PhotoViewerProps {
 /**
  * Компонент для просмотра, навигации и удаления фотографий
  * Компонент отображает фотографии в оверлее, поддерживает переключение с помощью клавиатуры и удаление через API-запросы,
- * а также синхронизируется с родительским компонентом после удаления. Добавлена возможность открытия фотографии в новой вкладке во весь экран с динамическим режимом отображения.
+ * а также синхронизируется с родительским компонентом после удаления. Имеется возможность открытия фотографии в новой вкладке во весь экран с динамическим режимом отображения.
+ * Поддержка зуммирования фотографии на колесо мыши
  * @component
  * @returns {JSX.Element}
  */
@@ -41,8 +43,42 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [arrowsVisible, setArrowsVisible] = useState(true);
   const viewerRef = useRef<HTMLDivElement>(null);
 
+  const {
+    containerRef,
+    imageRef,
+    currentZoom,
+    xOffset,
+    yOffset,
+    handleWheel: originalHandleWheel,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleMouseLeave,
+    handleContextMenu,
+    onDragStart,
+  } = useImageZoomPan();
+
+  // --- КАСТОМНЫЙ handleWheel на весь viewer ---
+  const handleViewerWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    // Первый зум-ин (вверх) → скрываем стрелки
+    if (e.deltaY < 0 && currentZoom === 100 && arrowsVisible) {
+      setArrowsVisible(false);
+    }
+
+    // Зум-аут до 100% → возвращаем стрелки
+    if (currentZoom <= 100 && e.deltaY > 0 && !arrowsVisible) {
+      setArrowsVisible(true);
+    }
+
+    originalHandleWheel(e);
+  };
+
+  // --- Инициализация текущего фото ---
   useEffect(() => {
     console.log("пикер открыт с фото:", photo);
     if (photo && photos.length > 0) {
@@ -51,38 +87,41 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
     }
   }, [photo, photos]);
 
-  // Корректировка после изменения photos (например, после удаления)
+  // --- Блокируем скролл фона ---
+  useEffect(() => {
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
+
+  // --- Синхронизация после удаления ---
   useEffect(() => {
     if (photos.length === 0) {
-      console.log("массив photos пуст, закрываем пикер");
       onClose();
       return;
     }
-
     if (currentPhoto && !photos.some((p) => p.id === currentPhoto.id)) {
-      console.log("текущая фотография удалена, выбираем новую");
       const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
       const newIndex = currentIndex >= photos.length ? photos.length - 1 : currentIndex;
       setCurrentPhoto(photos[newIndex >= 0 ? newIndex : 0] || null);
     }
   }, [photos, currentPhoto, onClose]);
 
-  // Обработчик клавиш
+  // --- Клавиатура (отключена при зуме) ---
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const isFocusedInViewer = viewerRef.current?.contains(document.activeElement);
-
       if (!currentPhoto || photos.length <= 1 || (!isFocusedInViewer && isMoveModalOpen)) return;
 
       const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
       if (currentIndex === -1) return;
 
-      if (event.key === "ArrowLeft") {
-        const newIndex = (currentIndex - 1 + photos.length) % photos.length;
-        setCurrentPhoto(photos[newIndex]);
-      } else if (event.key === "ArrowRight") {
-        const newIndex = (currentIndex + 1) % photos.length;
-        setCurrentPhoto(photos[newIndex]);
+      if (event.key === "ArrowLeft" && currentZoom <= 100) {
+        handlePrev();
+      } else if (event.key === "ArrowRight" && currentZoom <= 100) {
+        handleNext();
       } else if (event.key === "Escape") {
         handleClose();
       } else if (event.key === "Delete") {
@@ -94,24 +133,18 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [photos, currentPhoto, isMoveModalOpen]);
+  }, [photos, currentPhoto, isMoveModalOpen, currentZoom]);
 
   const handlePrev = () => {
     if (!currentPhoto || photos.length <= 1) return;
-
     const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
-    if (currentIndex === -1) return;
-
     const newIndex = (currentIndex - 1 + photos.length) % photos.length;
     setCurrentPhoto(photos[newIndex]);
   };
 
   const handleNext = () => {
     if (!currentPhoto || photos.length <= 1) return;
-
     const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
-    if (currentIndex === -1) return;
-
     const newIndex = (currentIndex + 1) % photos.length;
     setCurrentPhoto(photos[newIndex]);
   };
@@ -121,6 +154,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
     setCurrentPhoto(null);
     setIsEditModalOpen(false);
     setIsMoveModalOpen(false);
+    setArrowsVisible(true);
   };
 
   const handleDelete = async () => {
@@ -160,27 +194,14 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ photoId: currentPhoto.id, albumId }),
       });
-
-      if (!res.ok) {
-        const text = await res.text();
-        let errorData;
-        try {
-          errorData = JSON.parse(text);
-        } catch {
-          throw new Error("Сервер вернул некорректный ответ");
-        }
-        throw new Error(errorData.error || "Ошибка установки обложки");
-      }
+      if (!res.ok) throw new Error("Ошибка установки обложки");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Ошибка при установке обложки:", errorMessage);
-      alert(`Не удалось установить обложку: ${errorMessage}`);
+      alert(`Ошибка установки обложки: ${errorMessage}`);
     }
   };
 
-  const handleMoveClick = () => {
-    setIsMoveModalOpen(true);
-  };
+  const handleMoveClick = () => setIsMoveModalOpen(true);
 
   const handleMove = () => {
     if (onSyncAfterPhotoMove) {
@@ -191,28 +212,58 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
 
   if (!photo || photos.length === 0 || !currentPhoto) return null;
 
-  // Вычисляем текущий индекс для индикации (например, "2 из 8")
   const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
   const photoPosition = photos.length > 1 ? `${currentIndex + 1} из ${photos.length}` : "";
 
   return (
     <>
       <div css={style.overlay} onClick={handleClose}>
-        <div css={style.viewer} onClick={(e) => e.stopPropagation()} ref={viewerRef}>
+        <div
+          css={style.viewer}
+          onClick={(e) => e.stopPropagation()}
+          ref={viewerRef}
+          onWheel={handleViewerWheel} // wheel на весь viewer
+        >
           <button css={style.closeIcon} onClick={handleClose}>
             <AiOutlineClose />
           </button>
 
-          <button css={style.switchAreaLeft} onClick={handlePrev} disabled={photos.length <= 1}>
-            <SlArrowLeft css={style.arrowIcon} />
-          </button>
+          {arrowsVisible && (
+            <button css={style.switchAreaLeft} onClick={handlePrev} disabled={photos.length <= 1}>
+              <SlArrowLeft css={style.arrowIcon} />
+            </button>
+          )}
 
-          <img src={currentPhoto.path} alt={`Photo ${currentPhoto.id}`} css={style.image} />
+          {/* Фото с зумом */}
+          <div
+            ref={containerRef}
+            css={style.photoContainer}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            onContextMenu={handleContextMenu}
+            onDragStart={onDragStart}
+          >
+            <img
+              ref={imageRef}
+              src={currentPhoto.path}
+              alt={`Photo ${currentPhoto.id}`}
+              css={css(style.image, {
+                transform: `translate(${xOffset}px, ${yOffset}px) scale(${currentZoom / 100})`,
+                userSelect: "none",
+                draggable: false,
+              })}
+            />
+          </div>
 
-          <button css={style.switchAreaRight} onClick={handleNext} disabled={photos.length <= 1}>
-            <SlArrowRight css={style.arrowIcon} />
-          </button>
+          {arrowsVisible && (
+            <button css={style.switchAreaRight} onClick={handleNext} disabled={photos.length <= 1}>
+              <SlArrowRight css={style.arrowIcon} />
+            </button>
+          )}
 
+          {/* Нижняя панель */}
           <div css={style.captionContainer}>
             <div style={{ display: "flex", alignItems: "center" }}>
               <span css={[style.actionButton, isDeleting && style.disabledButton]} onClick={handleDelete}>
@@ -239,6 +290,8 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Модалки */}
       {isMoveModalOpen && (
         <MovePhotoModal
           photoId={currentPhoto.id}
@@ -252,8 +305,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
           photo={currentPhoto}
           onClose={() => setIsEditModalOpen(false)}
           onSave={(editedPhoto) => {
-            // Логика сохранения отредактированного фото (пока лог)
-            console.log("Отредактированное фото:", editedPhoto);
+            console.log("Отредактировано:", editedPhoto);
             setIsEditModalOpen(false);
           }}
         />
@@ -276,6 +328,7 @@ const style = {
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1000,
+    overflow: "hidden",
   }),
   viewer: css({
     position: "relative",
@@ -303,9 +356,7 @@ const style = {
     padding: "0",
     lineHeight: "1",
     zIndex: 1001,
-    "&:hover": {
-      color: colorConst.photoPicker.closeIcon.dim,
-    },
+    "&:hover": { color: colorConst.photoPicker.closeIcon.dim },
   }),
   switchAreaLeft: css({
     position: "absolute",
@@ -322,9 +373,7 @@ const style = {
     borderRadius: "8px 0 0 8px",
     transition: "background 0.3s",
     "&:disabled": { cursor: "not-allowed", opacity: 0.5 },
-    "&:hover > *": {
-      color: colorConst.photoPicker.arrowIcon.bright,
-    },
+    "&:hover > *": { color: colorConst.photoPicker.arrowIcon.bright },
     zIndex: 2010,
   }),
   switchAreaRight: css({
@@ -342,16 +391,28 @@ const style = {
     borderRadius: "0 8px 8px 0",
     transition: "background 0.3s",
     "&:disabled": { cursor: "not-allowed", opacity: 0.5 },
-    "&:hover > *": {
-      color: colorConst.photoPicker.arrowIcon.bright,
-    },
+    "&:hover > *": { color: colorConst.photoPicker.arrowIcon.bright },
     zIndex: 2010,
   }),
   arrowIcon: css({
     color: colorConst.photoPicker.arrowIcon.dim,
     fontSize: "30px",
   }),
-  image: css({ maxWidth: "100%", maxHeight: "91vh", objectFit: "contain" }),
+  photoContainer: css({
+    position: "relative",
+    width: "100%",
+    height: "100%",
+    maxHeight: "91vh",
+    overflow: "hidden",
+    cursor: "grab",
+    "&:active": { cursor: "grabbing" },
+  }),
+  image: css({
+    maxWidth: "100%",
+    maxHeight: "91vh",
+    objectFit: "contain",
+    transition: "none",
+  }),
   captionContainer: css({
     width: "100%",
     display: "flex",
