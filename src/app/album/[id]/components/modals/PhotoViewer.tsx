@@ -80,21 +80,23 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
 
   // --- Инициализация текущего фото ---
   useEffect(() => {
-    console.log("пикер открыт с фото:", photo);
     if (photo && photos.length > 0) {
       const initialPhoto = photos.find((p) => p.id === photo.id) || photos[0];
       setCurrentPhoto(initialPhoto);
     }
   }, [photo, photos]);
 
-  // --- Блокируем скролл фона ---
+  // --- Блокируем скролл фона только когда пикер открыт ---
   useEffect(() => {
-    const originalStyle = window.getComputedStyle(document.body).overflow;
+    if (!photo) return;
+
+    const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
     return () => {
-      document.body.style.overflow = originalStyle;
+      document.body.style.overflow = originalOverflow || "";
     };
-  }, []);
+  }, [photo]);
 
   // --- Синхронизация после удаления ---
   useEffect(() => {
