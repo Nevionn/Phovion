@@ -5,8 +5,8 @@ import React from "react";
 import { Photo } from "../../types/photoTypes";
 import MovePhotoModal from "./MovePhotoModal";
 import PhotoEditor from "./PhotoEditor";
+import ActionMenu from "./ActionMenu";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
-import { TbSeparator } from "react-icons/tb";
 import { AiOutlineClose } from "react-icons/ai";
 import { colorConst } from "@/app/shared/theme/colorConstant";
 import { customFonts } from "@/app/shared/theme/customFonts";
@@ -161,7 +161,6 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
 
   const handleDelete = async () => {
     if (!currentPhoto) return;
-    console.log("удаляем фотографию с id:", currentPhoto.id);
 
     setIsDeleting(true);
     try {
@@ -202,8 +201,6 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
       alert(`Ошибка установки обложки: ${errorMessage}`);
     }
   };
-
-  const handleMoveClick = () => setIsMoveModalOpen(true);
 
   const handleMove = () => {
     if (onSyncAfterPhotoMove) {
@@ -267,33 +264,23 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
 
           {/* Нижняя панель */}
           <div css={style.captionContainer}>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <span css={[style.actionButton, isDeleting && style.disabledButton]} onClick={handleDelete}>
-                {isDeleting ? "Удаление..." : "Удалить"}
-              </span>
-              <TbSeparator />
-              <span css={style.actionButton} onClick={handleMoveClick}>
-                Перенести
-              </span>
-              <TbSeparator />
-              <span css={style.actionButton} onClick={handleSetCover}>
-                Сделать обложкой
-              </span>
-              <TbSeparator />
-              <span css={style.actionButton} onClick={() => setIsEditModalOpen(true)}>
-                Редактировать
-              </span>
-              <TbSeparator />
-              <span css={style.actionButton} onClick={() => handleExpand(currentPhoto)}>
-                Открыть оригинал
-              </span>
-            </div>
             <div>{photoPosition && <span css={style.photoPosition}>{photoPosition}</span>}</div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <ActionMenu
+                isDeleting={isDeleting}
+                onEdit={() => setIsEditModalOpen(true)}
+                onRotateLeft={() => console.log("Повернуть влево")}
+                onRotateRight={() => console.log("Повернуть вправо")}
+                onMove={() => setIsMoveModalOpen(true)}
+                onSetCover={handleSetCover}
+                onOpenOriginal={() => handleExpand(currentPhoto)}
+                onDelete={handleDelete}
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Модалки */}
       {isMoveModalOpen && (
         <MovePhotoModal
           photoId={currentPhoto.id}
@@ -371,7 +358,7 @@ const style = {
     alignItems: "center",
     flexShrink: 0,
     height: "30px",
-    width: "97%",
+    width: "95%",
     borderRadius: "6px",
     marginTop: "10px",
     marginBottom: "4px",
@@ -431,14 +418,14 @@ const style = {
     fontSize: "30px",
   }),
   actionButton: css({
-    color: colorConst.photoPicker.actionButton.bright,
+    color: colorConst.ActionMenuModal.actionButton.bright,
     cursor: "pointer",
     fontFamily: customFonts.fonts.ru,
     textWrap: "nowrap",
     padding: "0.1rem 0.3rem",
     borderRadius: "4px",
     transition: "background 0.3s",
-    "&:hover": { background: colorConst.photoPicker.actionButton.dim },
+    "&:hover": { background: colorConst.ActionMenuModal.actionButton.dim },
   }),
   disabledButton: css({
     cursor: "not-allowed",
