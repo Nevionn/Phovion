@@ -58,6 +58,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
     handleMouseUp,
     handleMouseLeave,
     handleContextMenu,
+    resetZoom,
     onDragStart,
   } = useImageZoomPan();
 
@@ -157,6 +158,7 @@ const PhotoViewer: React.FC<PhotoViewerProps> = ({
     setIsEditModalOpen(false);
     setIsMoveModalOpen(false);
     setArrowsVisible(true);
+    resetZoom();
   };
 
   const handleDelete = async () => {
