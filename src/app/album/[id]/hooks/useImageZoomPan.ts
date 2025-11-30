@@ -20,6 +20,8 @@ import { useState, useEffect, useRef } from "react";
  *   - `startY` (number): Начальная координата Y мыши при начале перетаскивания.
  *   - `handleZoomIn` (function): Увеличивает зум на 10% (максимум 200%).
  *   - `handleZoomOut` (function): Уменьшает зум на 10% (минимум 100%).
+ *   - `resetZoom` (function): Возврат зума в значение по умолчанию (100%).
+ *   - `resetZoomPosition` (function): Возврат смещение при зуме, в значение по умолчанию (0).
  *   - `handleWheel` (function): Обработчик события прокрутки колеса мыши для зума.
  *   - `handleMouseDown` (function): Обработчик начала перетаскивания изображения.
  *   - `handleMouseMove` (function): Обработчик движения мыши для обновления целевого смещения.
@@ -97,13 +99,22 @@ export const useImageZoomPan = () => {
     setCurrentZoom((prev) => {
       const newZoom = Math.max(prev - 10, 100);
       if (newZoom <= 100) {
-        setXOffset(0);
-        setYOffset(0);
-        setTargetXOffset(0);
-        setTargetYOffset(0);
+        resetZoomPosition();
       }
       return newZoom;
     });
+  };
+
+  const resetZoomPosition = () => {
+    setXOffset(0);
+    setYOffset(0);
+    setTargetXOffset(0);
+    setTargetYOffset(0);
+  };
+
+  const resetZoom = () => {
+    setCurrentZoom(100);
+    resetZoomPosition();
   };
 
   /** Зум колесиком мыши */
@@ -176,6 +187,7 @@ export const useImageZoomPan = () => {
     yOffset,
     handleZoomIn,
     handleZoomOut,
+    resetZoom,
     handleWheel,
     handleMouseDown,
     handleMouseMove,

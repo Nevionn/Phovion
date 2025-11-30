@@ -247,8 +247,18 @@ export const TabContent: FC<TabContentProps> = ({
         <div css={styles.tabSection}>
           <h3 css={styles.sectionTitle}>Горячие клавиши</h3>
           <div css={styles.settingsContainer}>
-            <p css={styles.infoItem}>Используйте следующие комбинации для управления:</p>
+            <p css={styles.infoItem}>Используйте следующие комбинации для управления: (раскладка eu)</p>
+
             <div css={styles.keyShortcutsContainer}>
+              <p css={styles.subSectionTitle}>Общее</p>
+              <div css={styles.keyShortcut}>
+                <span css={styles.keyButton}>Esc</span>
+                <span css={styles.keyDescription}>Закрыть окно</span>
+              </div>
+
+              <div css={styles.verticalSeparator} />
+
+              <p css={styles.subSectionTitle}>Просмотр изображений</p>
               <div css={styles.keyShortcut}>
                 <span css={styles.keyButton}>←</span>
                 <span css={styles.keyDescription}>Переключение на предыдущую фотографию</span>
@@ -258,16 +268,16 @@ export const TabContent: FC<TabContentProps> = ({
                 <span css={styles.keyDescription}>Переключение на следующую фотографию</span>
               </div>
               <div css={styles.keyShortcut}>
-                <span css={styles.keyButton}>Esc</span>
-                <span css={styles.keyDescription}>Закрыть окно (Настройки, просмотр фотографий)</span>
-              </div>
-              <div css={styles.keyShortcut}>
                 <span css={styles.keyButton}>Del</span>
                 <span css={styles.keyDescription}>Удалить фото</span>
               </div>
               <div css={styles.keyShortcut}>
                 <span css={styles.keyButton}>I</span>
-                <span css={styles.keyDescription}>Развернуть фото</span>
+                <span css={styles.keyDescription}>Открыть оригинал</span>
+              </div>
+              <div css={styles.keyShortcut}>
+                <span css={styles.keyButton}>M</span>
+                <span css={styles.keyDescription}>Перенос в другой альбом</span>
               </div>
             </div>
           </div>
@@ -642,5 +652,8 @@ const styles = {
     height: 1,
     backgroundColor: "white",
     marginTop: 10,
+  }),
+  verticalSeparator: css({
+    height: 15,
   }),
 };

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useState, useEffect, FC } from "react";
+import { useState, useEffect, useRef, FC } from "react";
 import { Album } from "@/app/types/albumTypes";
 import { AiOutlineClose } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
@@ -19,16 +19,20 @@ interface MovePhotoModalProps {
  * @component
  * @returns {JSX.Element}
  */
-const MovePhotoModal: FC<MovePhotoModalProps> = ({
-  photoId,
-  currentAlbumId,
-  onClose,
-  onMove,
-}) => {
+
+const MovePhotoModal: FC<MovePhotoModalProps> = ({ photoId, currentAlbumId, onClose, onMove }) => {
   const [albums, setAlbums] = useState<Album[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isLoading) {
+      inputRef.current?.focus();
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     const fetchAlbums = async () => {
@@ -39,9 +43,7 @@ const MovePhotoModal: FC<MovePhotoModalProps> = ({
           throw new Error("Ошибка загрузки альбомов");
         }
         const data = await response.json();
-        const filteredAlbums = data.filter(
-          (album: Album) => album.id !== currentAlbumId
-        );
+        const filteredAlbums = data.filter((album: Album) => album.id !== currentAlbumId);
         setAlbums(filteredAlbums);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Неизвестная ошибка");
@@ -85,8 +87,7 @@ const MovePhotoModal: FC<MovePhotoModalProps> = ({
       onMove(albumId);
       onClose();
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
       console.error("Ошибка при перемещении:", errorMessage);
       alert(`Не удалось переместить фотографию: ${errorMessage}`);
     }
@@ -98,9 +99,7 @@ const MovePhotoModal: FC<MovePhotoModalProps> = ({
     }
   };
 
-  const filteredAlbums = albums.filter((album) =>
-    album.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredAlbums = albums.filter((album) => album.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const handleClearSearch = () => {
     setSearchTerm("");
@@ -122,6 +121,7 @@ const MovePhotoModal: FC<MovePhotoModalProps> = ({
             type="text"
             placeholder="Поиск альбома..."
             value={searchTerm}
+            ref={inputRef}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {searchTerm && (
@@ -133,18 +133,10 @@ const MovePhotoModal: FC<MovePhotoModalProps> = ({
         <div css={styles.grid}>
           {filteredAlbums.length > 0 ? (
             filteredAlbums.map((album) => (
-              <div
-                key={album.id}
-                css={styles.albumCard}
-                onClick={() => handleMove(album.id)}
-              >
+              <div key={album.id} css={styles.albumCard} onClick={() => handleMove(album.id)}>
                 <div css={styles.albumCover}>
                   {album.coverPhotoPath ? (
-                    <img
-                      src={album.coverPhotoPath}
-                      alt={album.name}
-                      css={styles.albumImage}
-                    />
+                    <img src={album.coverPhotoPath} alt={album.name} css={styles.albumImage} />
                   ) : (
                     <div css={styles.placeholder}>Нет обложки</div>
                   )}
@@ -154,9 +146,7 @@ const MovePhotoModal: FC<MovePhotoModalProps> = ({
             ))
           ) : (
             <div css={styles.noAlbumsContainer}>
-              <p css={styles.noAlbums}>
-                {searchTerm ? "Альбомы не найдены" : "Нет доступных альбомов"}
-              </p>
+              <p css={styles.noAlbums}>{searchTerm ? "Альбомы не найдены" : "Нет доступных альбомов"}</p>
             </div>
           )}
         </div>
