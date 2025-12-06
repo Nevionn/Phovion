@@ -15,6 +15,8 @@ type SortablePhotoProps = {
 /**
  * Компонент фотографии выбранного альбома с функционалом ручной сортировки через DND.
  * Предотвращает нежелательное копирование изображения в буфер обмена при зажатии ЛКМ.
+ * Отображает расшиерение изображения "WEBP", "AVIF", "GIF"
+ *
  * @component
  * @param {SortablePhotoProps} props - Свойства компонента.
  * @param {Photo} props.photo - Объект фотографии.
@@ -23,26 +25,25 @@ type SortablePhotoProps = {
  * @param {function} [props.onContextMenu] - Необязательный обработчик контекстного меню для отключения копирования (по умолчанию предотвращает).
  * @returns {JSX.Element}
  */
+
 export default function SortablePhoto({
   photo,
   onClick,
   onDragStart = (e) => e.preventDefault(),
   onContextMenu = (e) => e.preventDefault(),
 }: SortablePhotoProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: photo.id,
     transition: {
       duration: 150,
       easing: "ease-out",
     },
   });
+
+  const supportedFormats = ["WEBP", "AVIF", "GIF"];
+
+  const extension = photo.path.split(".").pop()?.toUpperCase() || "";
+  const labelExtension = supportedFormats.includes(extension) ? extension : "";
 
   const styleDnd = {
     transform: CSS.Transform.toString(transform),
@@ -53,12 +54,7 @@ export default function SortablePhoto({
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      css={style.photoContainer}
-      style={styleDnd}
-      onClick={onClick}
-    >
+    <div ref={setNodeRef} css={style.photoContainer} style={styleDnd} onClick={onClick}>
       <div
         css={style.dragHandle}
         {...attributes}
@@ -66,6 +62,13 @@ export default function SortablePhoto({
       >
         <SlSizeFullscreen size={20} />
       </div>
+
+      {supportedFormats.includes(extension) && (
+        <div css={style.extensionLabel}>
+          <p>{labelExtension}</p>
+        </div>
+      )}
+
       <img
         src={photo.path}
         alt={`Фото ${photo.id}`}
@@ -89,6 +92,18 @@ const style = {
     "&:hover": {
       transform: "scale(1.02)",
     },
+  }),
+  extensionLabel: css({
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    padding: "4px 8px",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    color: "white",
+    fontSize: "12px",
+    borderRadius: "4px",
+    pointerEvents: "none",
+    zIndex: 5,
   }),
   photo: css({
     width: "100%",
