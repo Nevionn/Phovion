@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
+import { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SlSizeFullscreen } from "react-icons/sl";
@@ -15,7 +16,7 @@ type SortablePhotoProps = {
 /**
  * Компонент фотографии выбранного альбома с функционалом ручной сортировки через DND.
  * Предотвращает нежелательное копирование изображения в буфер обмена при зажатии ЛКМ.
- * Отображает расшиерение изображения "WEBP", "AVIF", "GIF"
+ * Отображает расшиерение изображения "WEBP", "AVIF", "GIF"..
  *
  * @component
  * @param {SortablePhotoProps} props - Свойства компонента.
@@ -40,10 +41,28 @@ export default function SortablePhoto({
     },
   });
 
-  const supportedFormats = ["WEBP", "AVIF", "GIF"];
+  const [extensionSettings] = useState(() => {
+    try {
+      return (
+        JSON.parse(localStorage.getItem("extensionSettings")!) || {
+          enabled: false,
+          showStatic: true,
+          showAnimated: true,
+        }
+      );
+    } catch {
+      return { enabled: false, showStatic: true, showAnimated: true };
+    }
+  });
 
-  const extension = photo.path.split(".").pop()?.toUpperCase() || "";
-  const labelExtension = supportedFormats.includes(extension) ? extension : "";
+  const ext = photo.path.split(".").pop()?.toUpperCase() || "";
+
+  const isStatic = ["JPG", "JPEG", "PNG", "WEBP"].includes(ext);
+  const isAnimated = ["GIF", "AVIF", "WEBP"].includes(ext);
+
+  const shouldShow =
+    extensionSettings.enabled &&
+    ((extensionSettings.showStatic && isStatic) || (extensionSettings.showAnimated && isAnimated));
 
   const styleDnd = {
     transform: CSS.Transform.toString(transform),
@@ -63,9 +82,9 @@ export default function SortablePhoto({
         <SlSizeFullscreen size={20} />
       </div>
 
-      {supportedFormats.includes(extension) && (
+      {shouldShow && (
         <div css={style.extensionLabel}>
-          <p>{labelExtension}</p>
+          <p>{ext}</p>
         </div>
       )}
 

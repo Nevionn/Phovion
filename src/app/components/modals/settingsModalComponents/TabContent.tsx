@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { PiMemoryFill } from "react-icons/pi";
 import { FaGitlab } from "react-icons/fa6";
 import { VscGithubInverted } from "react-icons/vsc";
@@ -88,6 +88,51 @@ export const TabContent: FC<TabContentProps> = ({
     if (typeof window !== "undefined") {
       localStorage.setItem("descriptionWidth", mode);
     }
+  };
+
+  type ExtensionSettings = {
+    enabled: boolean;
+    showStatic: boolean;
+    showAnimated: boolean;
+  };
+
+  // Состояние настроек расширений (читаем из localStorage)
+  const [extensionSettings, setExtensionSettings] = useState<ExtensionSettings>(() => {
+    if (typeof window === "undefined") {
+      return { enabled: false, showStatic: true, showAnimated: true };
+    }
+    try {
+      const raw = localStorage.getItem("extensionSettings");
+      return raw ? (JSON.parse(raw) as ExtensionSettings) : { enabled: false, showStatic: true, showAnimated: true };
+    } catch {
+      return { enabled: false, showStatic: true, showAnimated: true };
+    }
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("extensionSettings", JSON.stringify(extensionSettings));
+    }
+  }, [extensionSettings]);
+
+  const updateSetting = (key: keyof ExtensionSettings, value: boolean) => {
+    // Если выключили внешний — сбрасываем вложенные
+    if (key === "enabled" && value === false) {
+      setExtensionSettings({
+        enabled: false,
+        showStatic: false,
+        showAnimated: false,
+      });
+      return;
+    }
+
+    // Если включили внешний — просто включаем, внутренние не трогаем
+    if (key === "enabled" && value === true) {
+      setExtensionSettings((prev) => ({ ...prev, enabled: true }));
+      return;
+    }
+
+    setExtensionSettings((prev) => ({ ...prev, [key]: value }));
   };
 
   return (
@@ -240,6 +285,41 @@ export const TabContent: FC<TabContentProps> = ({
                 </div>
               </div>
             </div>
+            {/* Блок 3 */}
+            <div css={styles.block3}>
+              <p css={styles.block3Title}>Включить отображение расширений файла у миниатюры изображения</p>
+
+              <label css={styles.checkboxRow}>
+                <input
+                  type="checkbox"
+                  checked={extensionSettings.enabled}
+                  onChange={(e) => updateSetting("enabled", e.target.checked)}
+                />
+                <span>Доступные форматы</span>
+              </label>
+
+              {extensionSettings.enabled && (
+                <div css={styles.subOptions}>
+                  <label css={styles.checkboxRow}>
+                    <input
+                      type="checkbox"
+                      checked={extensionSettings.showStatic}
+                      onChange={(e) => updateSetting("showStatic", e.target.checked)}
+                    />
+                    <span>Показывать статические форматы (JPG, JPEG, PNG)</span>
+                  </label>
+
+                  <label css={styles.checkboxRow}>
+                    <input
+                      type="checkbox"
+                      checked={extensionSettings.showAnimated}
+                      onChange={(e) => updateSetting("showAnimated", e.target.checked)}
+                    />
+                    <span>Показывать анимированные форматы (GIF, WEBP, AVIF)</span>
+                  </label>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -363,6 +443,13 @@ const styles = {
     "@media (max-width: 480px)": {
       marginBottom: "1rem",
     },
+  }),
+  subOptionBlock: css({
+    marginTop: 10,
+    marginLeft: 22,
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
   }),
   sectionTitle: css({
     display: "flex",
@@ -655,5 +742,40 @@ const styles = {
   }),
   verticalSeparator: css({
     height: 15,
+  }),
+
+  block3: css({
+    display: "flex",
+    flexDirection: "column",
+    gap: 10,
+    padding: "14px 0",
+  }),
+  block3Title: css({
+    color: "#fff",
+    fontFamily: customFonts.fonts.ru,
+    fontSize: "1.1rem",
+    margin: 0,
+  }),
+  checkboxRow: css({
+    fontFamily: customFonts.fonts.ru,
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    "& input[type='checkbox']": {
+      width: 16,
+      height: 16,
+      cursor: "pointer",
+    },
+    "& span": {
+      cursor: "pointer",
+      userSelect: "none",
+    },
+  }),
+  subOptions: css({
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
+    paddingLeft: 24,
+    opacity: 0.9,
   }),
 };
