@@ -1,15 +1,16 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { FC, useState, useEffect } from "react";
+
 import { FaKeyboard, FaPalette } from "react-icons/fa6";
 import { GiTechnoHeart } from "react-icons/gi";
 import { TbAlertOctagonFilled } from "react-icons/tb";
-import { TabContent } from "./settingsModalComponents/TabContent";
-import { Theme } from "@/app/shared/theme/themePalette";
-import { customFonts } from "@/app/shared/theme/customFonts";
 import { PiTreeStructureBold } from "react-icons/pi";
 import { FaTimes } from "react-icons/fa";
 import { BsInfoSquare } from "react-icons/bs";
+
+import TabContent from "./settingsModalComponents/TabContent";
+import { customFonts } from "@/app/shared/theme/customFonts";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -20,30 +21,16 @@ interface SettingsModalProps {
 }
 
 /**
- * Модальное окно настроек с таб-режимом для разделов: Оформление, Системная информация, Поведение, Опасная зона, Горячие клавиши.
+ * Модальное окно настроек с таб-режимом, поделенное на левую и правую части,
+ * Левая часть содержит кнопки разделов: Оформление, Системная информация, Поведение, Опасная зона, Горячие клавиши.
+ * Правая часть является хабом табов-компонентов.
+ *
  * @component
  * @returns {JSX.Element} Рендер модального окна с настройками в таб-режиме.
  */
 const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, deleteAllAlbums, albumCount, loading = false }) => {
-  const [uploadFolderSize, setUploadFolderSize] = useState("");
-
-  const [imageFitMode, setImageFitMode] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("imageFitMode") || "contain";
-    }
-    return "contain";
-  });
-
-  const [widthDescriptionStringBlock, setWidthDescriptionStringBlock] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("descriptionWidth") || "100%";
-    }
-    return "100%";
-  });
-
+  //
   const [activeTab, setActiveTab] = useState("Оформление");
-
-  const themes: Theme[] = ["SpaceBlue", "RoseMoon", "Solarized", "OnyxStorm", "Nord"];
 
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
@@ -87,20 +74,13 @@ const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, deleteAllAlbum
             ))}
           </div>
 
-          {/* Правая часть: Контент таба */}
+          {/* Правая часть: Хаб табов */}
           <TabContent
             activeTab={activeTab}
             onClose={onClose}
             deleteAllAlbums={deleteAllAlbums}
             albumCount={albumCount}
             loading={loading}
-            uploadFolderSize={uploadFolderSize}
-            setUploadFolderSize={setUploadFolderSize}
-            imageFitMode={imageFitMode}
-            setImageFitMode={setImageFitMode}
-            widthDescription={widthDescriptionStringBlock}
-            setWidthDescription={setWidthDescriptionStringBlock}
-            themes={themes}
           />
         </div>
 
