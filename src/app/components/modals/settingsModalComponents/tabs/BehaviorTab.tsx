@@ -3,6 +3,7 @@ import { css } from "@emotion/react";
 import { useEffect, useState } from "react";
 import { customFonts } from "@/app/shared/theme/customFonts";
 import Separator from "@/app/shared/separator/Separator";
+import { tabsStyles } from "@/app/shared/settingsTabStyles/common";
 
 export default function BehaviorTab() {
   const [imageFitMode, setImageFitMode] = useState(() => {
@@ -79,8 +80,8 @@ export default function BehaviorTab() {
   };
 
   return (
-    <div css={styles.tabSection}>
-      <h3 css={styles.sectionTitle}>Поведение</h3>
+    <div css={tabsStyles.tabSection}>
+      <h3 css={tabsStyles.sectionTitle}>Поведение</h3>
       <div css={styles.settingsContainerBehavior}>
         {/* Блок 1 */}
         <div css={styles.optionBlock}>
@@ -148,8 +149,8 @@ export default function BehaviorTab() {
         <Separator css={styles.horizontalSeparator} />
 
         {/* Блок 3 */}
-        <div css={styles.block3}>
-          <p css={styles.block3Title}>Включить отображение расширений файла у миниатюры изображения</p>
+        <div css={styles.extCheckBlock}>
+          <p css={styles.extCheckBlockTitle}>Включить отображение расширений файла у миниатюры изображения</p>
 
           <label css={styles.checkboxRow}>
             <input
@@ -188,12 +189,6 @@ export default function BehaviorTab() {
 }
 
 const styles = {
-  tabSection: css({
-    marginBottom: "1.5rem",
-    "@media (max-width: 480px)": {
-      marginBottom: "1rem",
-    },
-  }),
   settingsContainerBehavior: css({
     display: "flex",
     flexDirection: "column",
@@ -207,17 +202,6 @@ const styles = {
     backgroundColor: "transparent",
     borderRadius: "6px",
     padding: "0.5rem 0",
-  }),
-  sectionTitle: css({
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    fontSize: "1.2rem",
-    color: "var(--modal-text-color, #00ffea)",
-    marginBottom: "0.5rem",
-    "@media (max-width: 480px)": {
-      fontSize: "1rem",
-    },
   }),
   optionHeader: css({
     display: "flex",
@@ -274,13 +258,13 @@ const styles = {
     marginLeft: "2px",
     textAlign: "center",
   }),
-  block3: css({
+  extCheckBlock: css({
     display: "flex",
     flexDirection: "column",
     gap: 10,
     padding: "14px 0",
   }),
-  block3Title: css({
+  extCheckBlockTitle: css({
     color: "#fff",
     fontFamily: customFonts.fonts.ru,
     fontSize: "1.1rem",
