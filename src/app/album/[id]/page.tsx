@@ -37,7 +37,7 @@ import SkeletonLoader from "./components/SkeletonLoader";
 
 const emotionCache = createCache({ key: "css", prepend: true });
 
-const AlbumPage = () => {
+const selectedAlbumPage = () => {
   const { id } = useParams();
 
   const [files, setFiles] = useState<File[]>([]);
@@ -251,7 +251,7 @@ const AlbumPage = () => {
   );
 };
 
-export default dynamic(() => Promise.resolve(AlbumPage), {
+export default dynamic(() => Promise.resolve(selectedAlbumPage), {
   ssr: false,
   loading: () => (
     <main css={style.main}>
