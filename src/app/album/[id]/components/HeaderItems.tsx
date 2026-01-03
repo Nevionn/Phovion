@@ -64,7 +64,7 @@ const HeaderItems: React.FC<HeaderItemsProps> = ({
     <div css={style.navigationItem}>
       <div>
         <p css={style.title}>
-          <Link href="/" css={style.link}>
+          <Link href="/albumsPage" css={style.link}>
             альбомы
           </Link>
           <span>&nbsp;&gt;&nbsp;</span>
