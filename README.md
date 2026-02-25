@@ -85,6 +85,8 @@ ctrl + http://localhost:3000
 
 ```bash
 npm run dev
+
+или запустить start-dev.bat
 ```
 
 ## Получение обновлений 📦
