@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { customFonts } from "../../shared/theme/customFonts";
 import { Album } from "@/app/types/albumTypes";
@@ -62,12 +62,28 @@ const SearchAlbumModal = ({
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleClose();
+    };
+
+    if (isOpen) {
+      window.addEventListener("keydown", handleEsc);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   // Фильтрация описаний для отображения (все описания, если галочка включена)
-  const descriptions = includeDescription
-    ? albums.map((album) => album.description || "Без описания").filter((desc) => desc)
-    : [];
+  const descriptions = useMemo(() => {
+    if (!includeDescription) return [];
+
+    return albums.map((album) => album.description || "Без описания").filter((desc) => desc);
+  }, [includeDescription, albums]);
 
   return (
     <div css={styles.modalOverlay} onClick={handleClose}>
