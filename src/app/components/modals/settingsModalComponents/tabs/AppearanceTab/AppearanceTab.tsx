@@ -42,6 +42,33 @@ export default function AppearanceTab() {
           ))}
         </div>
 
+        {/* Производительность */}
+        <p css={tabsStyles.subSectionTitle}>Производительность</p>
+        <label css={styles.checkboxLabel}>
+          <input
+            type="checkbox"
+            checked={enablePerformanceMode}
+            onChange={(e) => {
+              const on = e.target.checked;
+              setEnablePerformanceMode(on);
+
+              if (on) {
+                setEnablePhotoViewerBorder(false);
+                setEnableAlbumBorder(false);
+                setEnabledPhotoViewerShadow(false);
+                setEnabledPhotoEditorShadow(false);
+              }
+            }}
+          />
+
+          <span css={tabsStyles.sectionTitleText}>
+            Включить режим производительности
+            {enablePerformanceMode && <span css={styles.priorityText}> (приоритет)</span>}
+          </span>
+        </label>
+
+        <Separator css={styles.horizontalSeparator} />
+
         {/* Панель альбомов */}
         <p css={tabsStyles.subSectionTitle}>Панель альбомов</p>
         <label css={styles.checkboxLabel}>
@@ -78,32 +105,6 @@ export default function AppearanceTab() {
             onChange={(e) => setEnabledPhotoEditorShadow(e.target.checked)}
           />
           <span css={tabsStyles.sectionTitleText}>Включить тень для фото редактора</span>
-        </label>
-
-        <Separator css={styles.horizontalSeparator} />
-
-        {/* Производительность */}
-        <p css={tabsStyles.subSectionTitle}>Производительность</p>
-        <label css={styles.checkboxLabel}>
-          <input
-            type="checkbox"
-            checked={enablePerformanceMode}
-            onChange={(e) => {
-              const on = e.target.checked;
-              setEnablePerformanceMode(on);
-
-              if (on) {
-                setEnablePhotoViewerBorder(false);
-                setEnableAlbumBorder(false);
-                setEnabledPhotoViewerShadow(false);
-                setEnabledPhotoEditorShadow(false);
-              }
-            }}
-          />
-          <span css={tabsStyles.sectionTitleText}>
-            Включить режим производительности
-            {enablePerformanceMode && <span css={styles.priorityText}> (приоритет)</span>}
-          </span>
         </label>
       </div>
     </div>
