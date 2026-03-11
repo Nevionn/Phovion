@@ -144,6 +144,13 @@ const AlbumsListContainer = () => {
     setIsSearchAlbumModalOpen(false);
   };
 
+  const handleResetFilters = () => {
+    setSearchTerm("");
+    setIncludeDescription(false);
+    setIsPinned(false);
+    setPinnedAlbums([]);
+  };
+
   return (
     <>
       <div css={styles.containerStyle}>
@@ -193,7 +200,9 @@ const AlbumsListContainer = () => {
           }}
           onSearch={setSearchTerm}
           searchTerm={searchTerm}
+          isPinned={isPinned}
           onPin={handlePinResults}
+          onReset={handleResetFilters}
           includeDescription={includeDescription}
           onToggleDescription={setIncludeDescription}
           albums={albums}

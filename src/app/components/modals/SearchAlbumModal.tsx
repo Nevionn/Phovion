@@ -10,7 +10,9 @@ interface SearchAlbumModalProps {
   onClose: () => void;
   onSearch: (term: string) => void;
   searchTerm: string;
+  isPinned: boolean;
   onPin: () => void;
+  onReset: () => void;
   includeDescription: boolean;
   onToggleDescription: (value: boolean) => void;
   albums: Album[];
@@ -21,15 +23,18 @@ interface SearchAlbumModalProps {
  * Цепочка передачи и вызова: AlbumsListContainer -> AlbumsControls && SearchAlbumModal
  * @component
  */
+
 const SearchAlbumModal = ({
   isOpen,
   onClose,
   onSearch,
   searchTerm,
+  isPinned,
   onPin,
   includeDescription,
   onToggleDescription,
   albums,
+  onReset,
 }: SearchAlbumModalProps) => {
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
 
@@ -50,6 +55,11 @@ const SearchAlbumModal = ({
     }
     onClose();
     onToggleDescription(false);
+  };
+
+  const handleRefresh = () => {
+    setLocalSearchTerm("");
+    onReset();
   };
 
   useEffect(() => {
@@ -133,6 +143,9 @@ const SearchAlbumModal = ({
         <div css={styles.buttonItem}>
           <button css={styles.pinButton} onClick={onPin} disabled={!searchTerm}>
             Сохранить
+          </button>
+          <button css={styles.pinButton} onClick={handleRefresh} disabled={!isPinned}>
+            Обновить
           </button>
         </div>
       </div>
@@ -263,6 +276,7 @@ const styles = {
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center",
+    gap: 10,
     marginTop: 20,
   }),
   pinButton: css({
