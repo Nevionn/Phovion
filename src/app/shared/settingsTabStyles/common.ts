@@ -21,6 +21,7 @@ export const tabsStyles = {
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center",
+    fontFamily: customFonts.fonts.ru,
     fontSize: "1.2rem",
     color: "var(--modal-text-color, #00ffea)",
     marginBottom: "0.5rem",
