@@ -44,7 +44,10 @@ const SearchAlbumModal = ({
 
   const handleClose = () => {
     setLocalSearchTerm("");
-    onSearch("");
+
+    if (searchTerm !== "") {
+      onSearch("");
+    }
     onClose();
     onToggleDescription(false);
   };
