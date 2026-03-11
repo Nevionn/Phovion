@@ -46,6 +46,7 @@ const SearchAlbumModal = ({
     setLocalSearchTerm("");
     onSearch("");
     onClose();
+    onToggleDescription(false);
   };
 
   useEffect(() => {
