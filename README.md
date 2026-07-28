@@ -3,6 +3,8 @@
 <div align="center"> <img src="./preview/phovion-preview.webp"> </div>
 <br>
 
+Проект временно приостановлен и в будущем будет перенесен на rust ввиде desktop программы
+
 Локальное веб-приложение, разработанное для создания и управления альбомами с фотографиями. Phovion работает прямо в браузере, не требуя серверной инфраструктуры.
 
 # Скриншоты
@@ -26,18 +28,25 @@
 
 # Стек технологий
 
-<div align="center" style="display: flex; align-items: center;">
-  <img src="https://cdn.simpleicons.org/nextdotjs/000?width=40" alt="Next.js Logo" width="100" height="100" style="fill:#000000" />
-  <span style="margin: 0 10px; font-size: 24px;"> </span>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg" alt="TS Logo" width="100" height="100">
-  <span style="margin: 0 10px; font-size: 24px;"> </span>
-  <img src="https://cdn.simpleicons.org/prisma" width="100" height="100" alt="Prisma icon"/>
-  <span style="margin: 0 10px; font-size: 24px;"> </span>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/SQLite370.svg/2560px-SQLite370.svg.png" alt="SQlite Logo" width="100" height="100">
-  <span style="margin: 0 10px; font-size: 24px;"> </span>
-  <img src="https://raw.githubusercontent.com/emotion-js/emotion/main/emotion.png" alt="emotion.js" width="100" height="100">
-  <span style="margin: 0 10px; font-size: 24px;"> </span>
-</div>
+<table>
+<tr>
+<td>
+<img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white" />
+</td>
+<td>
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+</td>
+<td>
+<img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" />
+</td>
+<td>
+<img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" />
+</td>
+<td>
+<img src="https://img.shields.io/badge/emotion.js-DB7093?style=for-the-badge&logo=emotion&logoColor=white" />
+</td>
+</tr>
+</table>
 
 # Особенности сборки
 
