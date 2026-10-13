@@ -1,21 +1,15 @@
 import { useCallback } from "react";
 import type { Photo } from "../types/photoTypes";
 
-/**
- * Интерфейс для параметров хука useDownloadAlbum
- */
 interface DownloadAlbumParams {
-	photos: Photo[]; // Массив фотографий альбома
+	photos: Photo[];
 	albumName?: string;
 	albumId?: string | string[] | undefined;
 }
 
-/**
- * Интерфейс для возвращаемого значения хука useDownloadAlbum
- */
 interface DownloadAlbumReturn {
 	downloadAlbum: () => Promise<void>;
-	isFsaSupported: boolean; // Флаг поддержки File System Access API
+	isFsaSupported: boolean;
 }
 
 /**
@@ -23,9 +17,10 @@ interface DownloadAlbumReturn {
  * Цепочка передачи и вызова: page -> HeaderItems -> DownloadAlbumModal
  * Выходной файл будет иметь формат ${index + 1}_${albumName}_${randomSuffix}.${extension}
  *
- * @param params Параметры хука
- * @returns { downloadAlbum: () => void, isFsaSupported: boolean } - Колбек функция для скачивания и флаг поддержки FSA API
+ * @param params
+ * @returns { downloadAlbum: () => void, isFsaSupported: boolean }
  */
+
 export const useDownloadAlbum = ({
 	photos,
 	albumName,
@@ -45,8 +40,13 @@ export const useDownloadAlbum = ({
 		}
 
 		// Функция для запасной логики без FSA API
-		const fallbackDownload = () => {
-			photos.forEach((photo: Photo, index: number) => {
+		const fallbackDownload = async () => {
+			let successCount = 0;
+			const errors: number[] = [];
+			const delay = (ms: number) =>
+				new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+			for (const [index, photo] of photos.entries()) {
 				try {
 					const link = document.createElement("a");
 					const fullPath = `${window.location.origin}${photo.path}`;
@@ -63,11 +63,35 @@ export const useDownloadAlbum = ({
 					document.body.appendChild(link);
 					link.click();
 					document.body.removeChild(link);
+
+					successCount++;
+
+					console.log(
+						`Запущено скачивание ${index + 1}/${photos.length}: ${fileName}`,
+					);
 				} catch (error) {
 					console.error(`Ошибка загрузки фото ${index + 1}:`, error);
-					alert(`Не удалось загрузить фото ${index + 1}. Проверь консоль.`);
+					errors.push(index + 1);
 				}
+
+				// Делаем паузу между скачиваниями, чтобы браузер успевал их обработать
+				if (index < photos.length - 1) {
+					await delay(100);
+				}
+			}
+
+			console.log("Скачивание альбома завершено", {
+				total: photos.length,
+				started: successCount,
+				errors,
 			});
+
+			alert(
+				`Обработка завершена.\n` +
+					`Запущено скачиваний: ${successCount} из ${photos.length}.\n` +
+					`Ошибок запуска: ${errors.length}` +
+					(errors.length ? `\nНомера фотографий: ${errors.join(", ")}` : ""),
+			);
 		};
 
 		// Проверка поддержки API
@@ -75,7 +99,7 @@ export const useDownloadAlbum = ({
 			console.log(
 				"File System Access API не поддерживается, переключение на запасную логику",
 			);
-			fallbackDownload();
+			await fallbackDownload();
 			return;
 		}
 
